@@ -47,14 +47,17 @@ const PlayerDebugInfo = ({
               disabled={isSelectDisabled()}
               key={theClass}
               onClick={() => {
-                // TODO: Put action for selecting class from Rune.actions
+                Rune.actions.selectClass({
+                  nameOfClass: theClass,
+                  suit: cardSuits[i]
+                })
 
                 // TODO: Add a setTimeout call?
               }}
             >
               <ClassImage 
                 theClass={{
-                  name: theClass,
+                  nameOfClass: theClass,
                   suit: cardSuits[i]
                 }}/>
             </button>

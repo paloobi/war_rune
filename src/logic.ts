@@ -4,10 +4,12 @@ import { GameStage } from "./game/types/game";
 import { Card, CardRank, CardSuit, cardRanks, cardSuits } from "./game/types/card";
 import { buildDeck, getCardValueFromRank, shuffle } from "./game/utils";
 import { Player } from "./game/types/player";
+import { Class } from "./components/ClassImage";
 
 type GameActions = {
   setStage: (params: { stage: GameStage }) => void
   dealCards: () => void,
+  selectClass: (classObject: Class) => void,
   drawCards: () => void,
   selectCard: (params: { playerId: "one" | "two", card: Card, cardIndex: number }) => void,
   scoreCards: () => void
@@ -80,7 +82,24 @@ Rune.initLogic({
         }
       });
 
-      game.stage = GameStage.Draw;
+      game.stage = GameStage.ClassSelect;
+    },
+
+    selectClass: (classObject , {playerId, game}) => {
+      if (game.stage !== GameStage.ClassSelect) {
+        throw Rune.invalidAction();
+      }
+
+      if (game.players.one.playerId === playerId) {
+          game.players.one.selectedClass = classObject;
+        } else {
+          game.players.two.selectedClass = classObject;
+        }
+
+      if (game.players.one.selectedClass && game.players.two.selectedClass){
+        game.stage = GameStage.Draw;
+      }
+        
     },
 
     drawCards: (_, {game}) => {

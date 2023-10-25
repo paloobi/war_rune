@@ -2,7 +2,7 @@ import { CardSuit } from "../game/types/card";
 import { NameOfClass } from "../game/types/class";
 
 export interface Class {
-    name: NameOfClass | null
+    nameOfClass: NameOfClass
     suit: CardSuit
 }
 
