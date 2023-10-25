@@ -50,8 +50,8 @@ const getInitialState = (): GameState => {
 }
 
 Rune.initLogic({
-  minPlayers: 1,
-  maxPlayers: 4,
+  minPlayers: 2,
+  maxPlayers: 2,
   setup: (): GameState => {
     return getInitialState();
   },
