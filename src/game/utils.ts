@@ -44,11 +44,17 @@ export function buildDeck() {
   const deck: Card[] = [];
   cardRanks.forEach((rank: CardRank): void => {
     cardSuits.forEach((suit: CardSuit): void => {
+      if (suit === 'joker' || rank === '00') {
+        return;
+      }
       deck.push({ rank, suit });
     });
   });
+  deck.push({suit: 'joker', rank: '00'}, {suit: 'joker', rank: '00'})
 
   shuffle(deck);
   
   return deck;
 }
+// TODO: Jokers successfully added to deck but not getting shuffled? 
+// Haven't looked into this too deeply
