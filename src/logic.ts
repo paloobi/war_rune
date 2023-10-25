@@ -24,7 +24,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
       one: {
         playerId: allPlayerIds[0],
         playerNum: 1,
-        class: null,
+        selectedClass: null,
         deck: [],
         hand: [null, null, null, null],
         war: {
@@ -38,7 +38,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
       two: {
         playerId: allPlayerIds[1],
         playerNum: 2,
-        class: null,
+        selectedClass: null,
         deck: [],
         hand: [null, null, null, null],
         selectedCard: null,

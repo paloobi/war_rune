@@ -2,6 +2,7 @@ import { Card } from "../game/types/card";
 import CardImage from "./CardImage";
 import { GameStage, GameState } from "../game/types/game";
 import { ACTION_DELAY } from "../game/utils";
+import ClassImage from "./ClassImage";
 
 const PlayerDebugInfo = ({
   game,
@@ -32,6 +33,14 @@ const PlayerDebugInfo = ({
 
       <h3>Number of Player Wins</h3>
       <p>{player.wins}</p>
+
+      <h3>Class</h3>
+      <p>{player.selectedClass ? (
+        <ClassImage playerClass={player.selectedClass} />
+      ) : (
+        <p>No class selected</p>
+      )}</p>
+    
 
       <h3>Hit Points Remaining</h3>
       <p>{player.hp >= 0 ? player.hp : 0}</p>
