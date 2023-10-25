@@ -4,6 +4,7 @@ import type { Card } from "./card"
 export type Hand =  [Card | null, Card | null, Card | null, Card | null];
 
 export interface Player {
+    playerId: string,
     playerNum: 1 | 2,
     deck: Card[],
     hand: Hand,

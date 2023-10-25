@@ -6,13 +6,17 @@ import { ACTION_DELAY } from "./game/utils.ts";
 
 function App() {
   const [game, setGame] = useState<GameState>();
+  const [playerId, setPlayerId] = useState<string>();
   useEffect(() => {
     Rune.initClient({
-      onChange: ({ game }) => {
+      onChange: ({ game, yourPlayerId }) => {
+        if (!playerId) {
+          setPlayerId(yourPlayerId);
+        }
         setGame(game);
       },
     });
-  }, []);
+  }, [playerId]);
 
   if (!game) {
     return <div>Loading...</div>;
@@ -35,16 +39,13 @@ function App() {
       {game.stage === GameStage.Start && (
         <button onClick={onDeal}>Deal Cards</button>
       )}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-around",
-          width: "100vw",
-        }}
-      >
-        <PlayerDebugInfo game={game} playerId="one" />
-        <PlayerDebugInfo game={game} playerId="two" />
+      <div>
+        {playerId === game.players.one.playerId && (
+          <PlayerDebugInfo game={game} playerNumber="one" />
+        )}
+        {playerId === game.players.two.playerId && (
+          <PlayerDebugInfo game={game} playerNumber="two" />
+        )}
       </div>
     </>
   );
