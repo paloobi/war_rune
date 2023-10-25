@@ -1,4 +1,4 @@
-import type { Card, CardRank } from "./types/card";
+import { cardRanks, type Card, type CardRank, cardSuits, CardSuit } from "./types/card";
 
 export const ACTION_DELAY = 1000;
 
@@ -37,4 +37,18 @@ export function shuffle(array: Card[]) {
   }
 
   return array;
+}
+
+export function buildDeck() {
+  // build the deck
+  const deck: Card[] = [];
+  cardRanks.forEach((rank: CardRank): void => {
+    cardSuits.forEach((suit: CardSuit): void => {
+      deck.push({ rank, suit });
+    });
+  });
+
+  shuffle(deck);
+  
+  return deck;
 }
