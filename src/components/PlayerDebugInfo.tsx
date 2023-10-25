@@ -22,6 +22,9 @@ const PlayerDebugInfo = ({
       // disable if war select and there is already a hero
       case GameStage.WarSelect:
         return !!player.war.hero;
+      // disable if class select and there is already a class
+      case GameStage.ClassSelect:
+        return !!player.selectedClass;
       default:
         // disable by default
         return true;
@@ -36,14 +39,32 @@ const PlayerDebugInfo = ({
       <p>{player.wins}</p>
 
       <h3>Class</h3>
-      <div>{
-        namesOfClasses.map((theClass, i) => (
-          <ClassImage key={theClass} theClass={{
-            name: theClass,
-            suit: cardSuits[i]
-          }}/>
-        ))
+      <div className="class_container">
+        {!player.selectedClass ? (
+          namesOfClasses.map((theClass, i: number) => (
+            <button
+              className="class_button"
+              disabled={isSelectDisabled()}
+              key={theClass}
+              onClick={() => {
+                // TODO: Put action for selecting class from Rune.actions
+
+                // TODO: Add a setTimeout call?
+              }}
+            >
+              <ClassImage 
+                theClass={{
+                  name: theClass,
+                  suit: cardSuits[i]
+                }}/>
+            </button>
+            )
+          )
+        ) : (
+          ""
+        )        
       }</div>
+
       <p>{player.selectedClass ? (
         <ClassImage theClass={player.selectedClass} />
       ) : (
