@@ -1,8 +1,9 @@
-import { Card } from "../game/types/card";
+import { Card, cardSuits} from "../game/types/card";
+import { namesOfClasses } from "../game/types/class";
 import CardImage from "./CardImage";
 import { GameStage, GameState } from "../game/types/game";
 import { ACTION_DELAY } from "../game/utils";
-import ClassImage from "./ClassImage";
+import ClassImage, { Class } from "./ClassImage";
 
 const PlayerDebugInfo = ({
   game,
@@ -35,8 +36,16 @@ const PlayerDebugInfo = ({
       <p>{player.wins}</p>
 
       <h3>Class</h3>
+      <div>{
+        namesOfClasses.map((theClass, i) => (
+          <ClassImage key={theClass} theClass={{
+            name: theClass,
+            suit: cardSuits[i]
+          }}/>
+        ))
+      }</div>
       <p>{player.selectedClass ? (
-        <ClassImage playerClass={player.selectedClass} />
+        <ClassImage theClass={player.selectedClass} />
       ) : (
         <p>No class selected</p>
       )}</p>
