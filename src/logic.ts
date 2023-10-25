@@ -2,7 +2,7 @@ import type { RuneClient } from "rune-games-sdk/multiplayer"
 import type { GameState } from "./game/types/game";
 import { GameStage } from "./game/types/game";
 import { Card, CardRank, CardSuit, cardRanks, cardSuits } from "./game/types/card";
-import { getCardValueFromRank, shuffle } from "./game/utils";
+import { buildDeck, getCardValueFromRank, shuffle } from "./game/utils";
 import { Player } from "./game/types/player";
 
 type GameActions = {
@@ -67,15 +67,8 @@ Rune.initLogic({
         throw Rune.invalidAction();
       }
 
-      // build the deck
-      const deck: Card[] = [];
-      cardRanks.forEach((rank: CardRank): void => {
-        cardSuits.forEach((suit: CardSuit): void => {
-          deck.push({ rank, suit });
-        });
-      });
-
-      shuffle(deck);
+      const deck = buildDeck();
+      
       // deal the deck between the two player decks
       deck.forEach((card, index) => {
         if (index % 2 === 0) {
