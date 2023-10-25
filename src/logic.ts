@@ -17,11 +17,12 @@ declare global {
   const Rune: RuneClient<GameState, GameActions>
 }
 
-const getInitialState = (): GameState => {
+const getInitialState = (allPlayerIds: string[]): GameState => {
   return {
     stage: GameStage.Start,
     players: {
       one: {
+        playerId: allPlayerIds[0],
         playerNum: 1,
         deck: [],
         hand: [null, null, null, null],
@@ -34,6 +35,7 @@ const getInitialState = (): GameState => {
         wins: 0,
       },
       two: {
+        playerId: allPlayerIds[1],
         playerNum: 2,
         deck: [],
         hand: [null, null, null, null],
@@ -52,8 +54,8 @@ const getInitialState = (): GameState => {
 Rune.initLogic({
   minPlayers: 2,
   maxPlayers: 2,
-  setup: (): GameState => {
-    return getInitialState();
+  setup: (allPlayerIds): GameState => {
+    return getInitialState(allPlayerIds);
   },
   actions: {
     setStage: ({ stage }, { game }) => {

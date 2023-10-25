@@ -5,12 +5,12 @@ import { ACTION_DELAY } from "../game/utils";
 
 const PlayerDebugInfo = ({
   game,
-  playerId,
+  playerNumber,
 }: {
   game: GameState;
-  playerId: "one" | "two";
+  playerNumber: "one" | "two";
 }) => {
-  const player = game.players[playerId];
+  const player = game.players[playerNumber];
 
   const isSelectDisabled = (): boolean => {
     switch (game.stage) {
@@ -30,93 +30,80 @@ const PlayerDebugInfo = ({
     <div className="player_debug_info">
       <h2>Player {player.playerNum} Info</h2>
 
-      <dt>Number of Player Wins</dt>
-      <dd>{player.wins}</dd>
+      <h3>Number of Player Wins</h3>
+      <p>{player.wins}</p>
 
-      <dt>Hit Points Remaining</dt>
-      <dd>{player.hp >= 0 ? player.hp : 0}</dd>
+      <h3>Hit Points Remaining</h3>
+      <p>{player.hp >= 0 ? player.hp : 0}</p>
 
-      <dl>
-        <dt>Current Selected Card</dt>
-        <dd>
-          {player.selectedCard ? (
-            <CardImage card={player.selectedCard} />
-          ) : (
-            <p>No card selected</p>
-          )}
-        </dd>
+      <h3>Current Selected Card</h3>
+      <p>
+        {player.selectedCard ? (
+          <CardImage card={player.selectedCard} />
+        ) : (
+          <p>No card selected</p>
+        )}
+      </p>
 
-        <dt>War Sacrifices</dt>
-        <dd>
-          {player.war.sacrifices.length ? (
-            player.war.sacrifices.map((card: Card) => (
-              <CardImage key={`${card.rank}_${card.suit}`} card={card} />
-            ))
-          ) : (
-            <p>No tie yet, no sacrifice cards selected</p>
-          )}
-        </dd>
-
-        <dt>War Hero</dt>
-        <dd>
-          {player.war.hero ? (
-            <CardImage card={player.war.hero} />
-          ) : (
-            <p>No war hero selected</p>
-          )}
-        </dd>
-
-        <dt>Current Hand</dt>
-        <dd style={{ display: "flex", flexDirection: "row" }}>
-          {player.hand.map((card: Card | null, index: number) =>
-            card ? (
-              <button
-                disabled={isSelectDisabled()}
-                key={`${card.rank}_${card.suit}`}
-                onClick={() => {
-                  Rune.actions.selectCard({
-                    playerId: player.playerNum === 1 ? "one" : "two",
-                    card,
-                    cardIndex: index,
-                  });
-                  setTimeout(() => {
-                    Rune.actions.scoreCards();
-                    // draw cards after a delay
-                    setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
-                  }, ACTION_DELAY);
-                }}
-              >
-                <CardImage card={card} />
-              </button>
-            ) : (
-              <div
-                key={index}
-                style={{
-                  border: "1px solid darkgray",
-                  borderRadius: "4%",
-                  width: 96 + 19 + 19,
-                  height: 99 + 10 + 9,
-                  marginTop: "8px",
-                  display: "flex",
-                  alignContent: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <p>
-                  Empty slot <br /> in hand
-                </p>
-              </div>
-            )
-          )}
-        </dd>
-
-        <dt>Deck</dt>
-        <dd>
-          {player.deck.map((card: Card) => (
+      <h3>War Sacrifices</h3>
+      <p>
+        {player.war.sacrifices.length ? (
+          player.war.sacrifices.map((card: Card) => (
             <CardImage key={`${card.rank}_${card.suit}`} card={card} />
-          ))}
-        </dd>
-      </dl>
+          ))
+        ) : (
+          <p>No tie yet, no sacrifice cards selected</p>
+        )}
+      </p>
+
+      <h3>War Hero</h3>
+      <p>
+        {player.war.hero ? (
+          <CardImage card={player.war.hero} />
+        ) : (
+          <p>No war hero selected</p>
+        )}
+      </p>
+
+      <h3>Current Hand</h3>
+      <div className="hand_container">
+        {player.hand.map((card: Card | null, index: number) =>
+          card ? (
+            <button
+              className="card_button"
+              disabled={isSelectDisabled()}
+              key={`${card.rank}_${card.suit}`}
+              onClick={() => {
+                Rune.actions.selectCard({
+                  playerId: player.playerNum === 1 ? "one" : "two",
+                  card,
+                  cardIndex: index,
+                });
+                setTimeout(() => {
+                  Rune.actions.scoreCards();
+                  // draw cards after a delay
+                  setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+                }, ACTION_DELAY);
+              }}
+            >
+              <CardImage card={card} />
+            </button>
+          ) : (
+            <div key={index} className="card_empty_slot">
+              <p>
+                Empty slot <br /> in hand
+              </p>
+            </div>
+          )
+        )}
+      </div>
+
+      <h3>Deck</h3>
+      <p>
+        {player.deck.map((card: Card) => (
+          <CardImage key={`${card.rank}_${card.suit}`} card={card} />
+        ))}
+      </p>
     </div>
   );
 };
