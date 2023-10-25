@@ -3,7 +3,7 @@ import { namesOfClasses } from "../game/types/class";
 import CardImage from "./CardImage";
 import { GameStage, GameState } from "../game/types/game";
 import { ACTION_DELAY } from "../game/utils";
-import ClassImage, { Class } from "./ClassImage";
+import ClassImage from "./ClassImage";
 
 const PlayerDebugInfo = ({
   game,
