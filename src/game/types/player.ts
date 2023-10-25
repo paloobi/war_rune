@@ -6,6 +6,7 @@ export type Hand =  [Card | null, Card | null, Card | null, Card | null];
 export interface Player {
     playerId: string,
     playerNum: 1 | 2,
+    class: string | null,
     deck: Card[],
     hand: Hand,
     selectedCard: Card | null,
