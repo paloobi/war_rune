@@ -64,7 +64,7 @@ const isClassSelectDisabled = (): boolean => {
             )
           )
         ) : (
-          ""
+          <p>{player.selectedClass}</p>
         )        
       }</div>
 
