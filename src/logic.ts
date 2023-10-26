@@ -8,6 +8,7 @@ import { Player } from "./game/types/player";
 type GameActions = {
   setStage: (params: { stage: GameStage }) => void
   dealCards: () => void,
+  joker: () => void,
   drawCards: () => void,
   selectCard: (params: { playerId: "one" | "two", card: Card, cardIndex: number }) => void,
   scoreCards: () => void
@@ -91,6 +92,10 @@ Rune.initLogic({
       for (let i = 0; i < playerOneHand.length; i++) {
         if (!playerOneHand[i]) {
           const cardToDraw = playerOne.deck.shift();
+          if (cardToDraw?.suit === 'jokerRed' || cardToDraw?.suit === 'jokerBlack') {
+            console.log(cardToDraw, "It's a joker!")
+            game.stage = GameStage.Joker;
+          }
           if (cardToDraw) {
             // TODO: draw a card randomly
             playerOneHand[i] = cardToDraw;
@@ -106,6 +111,10 @@ Rune.initLogic({
       for (let i = 0; i < playerTwoHand.length; i++) {
         if (!playerTwoHand[i]) {
           const cardToDraw = playerTwo.deck.shift();
+          if (cardToDraw?.suit === 'jokerRed' || cardToDraw?.suit === 'jokerBlack') {
+            console.log(cardToDraw, "It's a joker!")
+            game.stage = GameStage.Joker;
+          }
           if (cardToDraw) {
             // TODO: draw a card randomly
             playerTwoHand[i] = cardToDraw;
@@ -115,7 +124,47 @@ Rune.initLogic({
           }
         }
       }
-      game.stage = GameStage.Select;
+      if (game.stage !== GameStage.Joker) {
+        game.stage = GameStage.Select;
+      }
+    },
+
+    joker: (_, {game}) => {
+      if (game.stage !== GameStage.Joker) {
+        console.log("Not the joker stage, skipping joker action");
+        return;
+      }
+      console.log("performing joker action");
+      // put each players hand into their deck
+
+      const playerOne = game.players.one;
+      const playerTwo = game.players.two;
+
+      for (let i = 0; i < playerOne.hand.length; i++) {
+        const card = playerOne.hand[i];
+        if (card) {
+          // push card into other players deck
+          playerTwo.deck.push(card)
+        
+          // remove card from players hand
+          playerOne.hand[i] = null;
+        }
+      }
+      for (let i = 0; i < playerTwo.hand.length; i++) {
+        const card = playerTwo.hand[i];
+        if (card) {
+          // push card into other players deck
+          playerOne.deck.push(card)
+          // remove card from players hand
+          playerTwo.hand[i] = null;
+        }
+      }
+      // shuffle each players deck
+      shuffle(playerOne.deck)
+      shuffle(playerTwo.deck)
+      // move to draw phase
+      game.stage = GameStage.Draw;
+      // call draw action
     },
 
     selectCard: (

@@ -2,6 +2,7 @@ import { Card } from "../game/types/card";
 import CardImage from "./CardImage";
 import { GameStage, GameState } from "../game/types/game";
 import { ACTION_DELAY } from "../game/utils";
+import { act } from "react-dom/test-utils";
 
 const PlayerDebugInfo = ({
   game,
@@ -37,16 +38,16 @@ const PlayerDebugInfo = ({
       <p>{player.hp >= 0 ? player.hp : 0}</p>
 
       <h3>Current Selected Card</h3>
-      <p>
+      <div>
         {player.selectedCard ? (
           <CardImage card={player.selectedCard} />
         ) : (
           <p>No card selected</p>
         )}
-      </p>
+      </div>
 
       <h3>War Sacrifices</h3>
-      <p>
+      <div>
         {player.war.sacrifices.length ? (
           player.war.sacrifices.map((card: Card) => (
             <CardImage key={`${card.rank}_${card.suit}`} card={card} />
@@ -54,16 +55,16 @@ const PlayerDebugInfo = ({
         ) : (
           <p>No tie yet, no sacrifice cards selected</p>
         )}
-      </p>
+      </div>
 
       <h3>War Hero</h3>
-      <p>
+      <div>
         {player.war.hero ? (
           <CardImage card={player.war.hero} />
         ) : (
           <p>No war hero selected</p>
         )}
-      </p>
+      </div>
 
       <h3>Current Hand</h3>
       <div className="hand_container">
@@ -82,7 +83,15 @@ const PlayerDebugInfo = ({
                 setTimeout(() => {
                   Rune.actions.scoreCards();
                   // draw cards after a delay
-                  setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+                  setTimeout(() => { 
+                    Rune.actions.drawCards()
+                    setTimeout(() => {
+                      Rune.actions.joker();
+                      setTimeout(() => {
+                        Rune.actions.drawCards();
+                      }, ACTION_DELAY);
+                    }, ACTION_DELAY)
+                  }, ACTION_DELAY);
                 }, ACTION_DELAY);
               }}
             >
@@ -99,11 +108,11 @@ const PlayerDebugInfo = ({
       </div>
 
       <h3>Deck</h3>
-      <p>
+      <div>
         {player.deck.map((card: Card) => (
           <CardImage key={`${card.rank}_${card.suit}`} card={card} />
         ))}
-      </p>
+      </div>
     </div>
   );
 };

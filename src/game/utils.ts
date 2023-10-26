@@ -44,13 +44,13 @@ export function buildDeck() {
   const deck: Card[] = [];
   cardRanks.forEach((rank: CardRank): void => {
     cardSuits.forEach((suit: CardSuit): void => {
-      if (suit === 'joker' || rank === '00') {
+      if (suit === 'jokerRed' || suit === 'jokerBlack' || rank === '00') {
         return;
       }
       deck.push({ rank, suit });
     });
   });
-  deck.push({suit: 'joker', rank: '00'}, {suit: 'joker', rank: '00'})
+  deck.push({suit: 'jokerRed', rank: '00'}, {suit: 'jokerBlack', rank: '00'})
 
   shuffle(deck);
   

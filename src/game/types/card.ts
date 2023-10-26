@@ -2,7 +2,7 @@
 // to make it easier to load the correct image based on suit and rank
 
 // create an array of available suits, so we can use it to generate the deck
-export const cardSuits = ['hearts', 'diamonds', 'clubs', 'spades', 'joker'] as const;
+export const cardSuits = ['hearts', 'diamonds', 'clubs', 'spades', 'jokerRed', 'jokerBlack'] as const;
 
 // create a type of 'heart' | 'diamonds' | 'clubs' | 'spades'
 // to be able to use it as a type-constrained string union type
