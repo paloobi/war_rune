@@ -14,7 +14,7 @@ export interface classSuitMapType {
     knight: string
 }
 
-export const getClassSuit = (playerClass: string) => {
+export const getSuitFromClass = (playerClass: string) => {
     const classSuitMap: classSuitMapType= {
         cleric: "hearts",
         mage: "diamonds",
