@@ -1,10 +1,10 @@
 import type { Player } from "./player";
 
 export enum GameStage {
+  ClassSelect = "CLASS_SELECT",
   Start = "START",
   Shuffle = "SHUFFLE",
   Deal = "DEAL",
-  ClassSelect = "CLASS_SELECT",
   Draw = "DRAW",
   Select = "SELECT",
   Score = "SCORE",

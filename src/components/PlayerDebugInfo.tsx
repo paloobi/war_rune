@@ -1,5 +1,5 @@
 import { Card, cardSuits} from "../game/types/card";
-import { namesOfClasses } from "../game/types/class";
+import { playerClasses } from "../game/types/class";
 import CardImage from "./CardImage";
 import { GameStage, GameState } from "../game/types/game";
 import { ACTION_DELAY } from "../game/utils";
@@ -22,14 +22,23 @@ const PlayerDebugInfo = ({
       // disable if war select and there is already a hero
       case GameStage.WarSelect:
         return !!player.war.hero;
-      // disable if class select and there is already a class
-      case GameStage.ClassSelect:
-        return !!player.selectedClass;
       default:
         // disable by default
         return true;
     }
   };
+
+
+
+const isClassSelectDisabled = (): boolean => {
+    // disable if class select and there is already a class
+    if (game.stage === GameStage.ClassSelect) {
+      return !!player.selectedClass;
+    } else {
+      return true;
+    }
+}
+
 
   return (
     <div className="player_debug_info">
@@ -41,25 +50,16 @@ const PlayerDebugInfo = ({
       <h3>Class</h3>
       <div className="class_container">
         {!player.selectedClass ? (
-          namesOfClasses.map((theClass, i: number) => (
+          playerClasses.map((playerClass) => (
             <button
               className="class_button"
-              disabled={isSelectDisabled()}
-              key={theClass}
+              disabled={isClassSelectDisabled()}
+              key={playerClass}
               onClick={() => {
-                Rune.actions.selectClass({
-                  nameOfClass: theClass,
-                  suit: cardSuits[i]
-                })
-
-                // TODO: Add a setTimeout call?
+                Rune.actions.selectClass(playerClass);
               }}
             >
-              <ClassImage 
-                theClass={{
-                  nameOfClass: theClass,
-                  suit: cardSuits[i]
-                }}/>
+              <ClassImage playerClass={playerClass} />
             </button>
             )
           )
@@ -69,7 +69,7 @@ const PlayerDebugInfo = ({
       }</div>
 
       <p>{player.selectedClass ? (
-        <ClassImage theClass={player.selectedClass} />
+        <ClassImage playerClass={player.selectedClass} />
       ) : (
         <p>No class selected</p>
       )}</p>

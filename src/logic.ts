@@ -4,12 +4,12 @@ import { GameStage } from "./game/types/game";
 import { Card, CardRank, CardSuit, cardRanks, cardSuits } from "./game/types/card";
 import { buildDeck, getCardValueFromRank, shuffle } from "./game/utils";
 import { Player } from "./game/types/player";
-import { Class } from "./components/ClassImage";
+import { PlayerClass } from "./game/types/class";
 
 type GameActions = {
   setStage: (params: { stage: GameStage }) => void
   dealCards: () => void,
-  selectClass: (classObject: Class) => void,
+  selectClass: (playerClass: PlayerClass) => void,
   drawCards: () => void,
   selectCard: (params: { playerId: "one" | "two", card: Card, cardIndex: number }) => void,
   scoreCards: () => void
@@ -21,7 +21,7 @@ declare global {
 
 const getInitialState = (allPlayerIds: string[]): GameState => {
   return {
-    stage: GameStage.Start,
+    stage: GameStage.ClassSelect,
     players: {
       one: {
         playerId: allPlayerIds[0],
@@ -66,6 +66,25 @@ Rune.initLogic({
       game.stage = stage;
     },
 
+    selectClass: (playerClass, {playerId, game}) => {
+      if (game.stage !== GameStage.ClassSelect) {
+        throw Rune.invalidAction();
+      }
+
+      if (game.players.one.playerId === playerId) {
+          game.players.one.selectedClass = playerClass;
+        } else if (game.players.two.playerId === playerId) {
+          game.players.two.selectedClass = playerClass
+        } else {
+          throw Rune.invalidAction()
+        }
+
+      if (game.players.one.selectedClass && game.players.two.selectedClass){
+        game.stage = GameStage.Start;
+      }
+        
+    },
+
     dealCards: (_, {game}) => {
       if (game.stage !== GameStage.Deal) {
         throw Rune.invalidAction();
@@ -82,26 +101,7 @@ Rune.initLogic({
         }
       });
 
-      game.stage = GameStage.ClassSelect;
-    },
-
-    selectClass: (playerClass , {playerId, game}) => {
-      if (game.stage !== GameStage.ClassSelect) {
-        throw Rune.invalidAction();
-      }
-
-      if (game.players.one.playerId === playerId) {
-          game.players.one.selectedClass = playerClass;
-        } else if (game.players.two.playerId === playerId) {
-          game.players.two.selectedClass = playerClass
-        } else {
-          throw Rune.invalidAction()
-        }
-
-      if (game.players.one.selectedClass && game.players.two.selectedClass){
-        game.stage = GameStage.Draw;
-      }
-        
+      game.stage = GameStage.Draw;
     },
 
     drawCards: (_, {game}) => {
