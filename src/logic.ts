@@ -85,15 +85,17 @@ Rune.initLogic({
       game.stage = GameStage.ClassSelect;
     },
 
-    selectClass: (classObject , {playerId, game}) => {
+    selectClass: (playerClass , {playerId, game}) => {
       if (game.stage !== GameStage.ClassSelect) {
         throw Rune.invalidAction();
       }
 
       if (game.players.one.playerId === playerId) {
-          game.players.one.selectedClass = classObject;
+          game.players.one.selectedClass = playerClass;
+        } else if (game.players.two.playerId === playerId) {
+          game.players.two.selectedClass = playerClass
         } else {
-          game.players.two.selectedClass = classObject;
+          throw Rune.invalidAction()
         }
 
       if (game.players.one.selectedClass && game.players.two.selectedClass){
