@@ -123,7 +123,11 @@ const isClassSelectDisabled = (): boolean => {
                 });
                 setTimeout(() => {
                   Rune.actions.scoreCards();
-                  // draw cards after a delay
+                  
+
+                  
+            
+                  // TODO: delete this timeout and change to have the draw phase after rogue ability choice
                   setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
                 }, ACTION_DELAY);
               }}
