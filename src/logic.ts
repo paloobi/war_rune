@@ -199,17 +199,34 @@ Rune.initLogic({
       if (!playerOneCard || !playerTwoCard) {
         throw new Error("Both players must have a selected card");
       }
-      const playerOneValue = getCardValueFromRank(playerOneCard.rank);
-      const playerTwoValue = getCardValueFromRank(playerTwoCard.rank);
+     
+      let playerOneValue = getCardValueFromRank(playerOneCard.rank);
+      let playerTwoValue = getCardValueFromRank(playerTwoCard.rank);
+
+      // if player 1 is a mage and card is diamond, add 2 to value
+      if (
+        playerOne.selectedClass === "mage" && 
+        playerOneCard.suit === 'diamonds' 
+      ) {
+        playerOneValue = playerOneValue + 2;
+      }
+
+        // if player 2 is a mage and card is diamond, add 2 to value
+        if (
+          playerTwo.selectedClass === "mage" && 
+          playerTwoCard.suit === 'diamonds' 
+        ) {
+          playerTwoValue = playerTwoValue + 2;
+        }
 
       let winner: 'one' | 'two' | null = null;
       if (playerOneValue > playerTwoValue) {
         // player 1 wins...
         winner = 'one';
         playerOne.wins++;
-        // ...and they are a cleric
-        if (playerOne.selectedClass === "cleric") {
-          game.stage = GameStage.ClericDecide;
+        // ...and they are a rogue
+        if (playerOne.selectedClass === "rogue") {
+          game.stage = GameStage.PostScoreAbility;
         }
         // player 2 loses HP
         playerTwo.hp -= playerOneValue - playerTwoValue;
@@ -218,9 +235,9 @@ Rune.initLogic({
         // player 2 wins... 
         winner = 'two';
         playerTwo.wins++;
-        // ...and they are a cleric
-        if (playerTwo.selectedClass === "cleric") {
-          game.stage = GameStage.ClericDecide;
+        // ...and they are a rogue
+        if (playerTwo.selectedClass === "rogue") {
+          game.stage = GameStage.PostScoreAbility;
         }
        // player 1 loses HP
         playerOne.hp -= playerTwoValue - playerOneValue;
