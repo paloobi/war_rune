@@ -8,6 +8,7 @@ export enum GameStage {
   Draw = "DRAW",
   Select = "SELECT",
   Score = "SCORE",
+  ClericDecide = "CLERIC_DECIDE",
   WarSelect = "WAR_SELECT",
   WarScore = "WAR_SCORE",
   Discard = "DISCARD",

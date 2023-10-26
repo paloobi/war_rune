@@ -184,13 +184,17 @@ Rune.initLogic({
         console.log("STAGE: ", game.stage);
         return;
       }
+
+      const playerOne = game.players.one;
+      const playerTwo = game.players.two;
+
       const playerOneCard = game.stage === GameStage.WarScore
-        ? game.players.one.war.hero
-        : game.players.one.selectedCard;
+        ? playerOne.war.hero
+        : playerOne.selectedCard;
       
       const playerTwoCard = game.stage === GameStage.WarScore
-        ? game.players.two.war.hero
-        : game.players.two.selectedCard;
+        ? playerTwo.war.hero
+        : playerTwo.selectedCard;
 
       if (!playerOneCard || !playerTwoCard) {
         throw new Error("Both players must have a selected card");
@@ -200,16 +204,26 @@ Rune.initLogic({
 
       let winner: 'one' | 'two' | null = null;
       if (playerOneValue > playerTwoValue) {
-        // player 1 wins, player 2 loses HP
+        // player 1 wins...
         winner = 'one';
-        game.players.one.wins++;
-        game.players.two.hp -= playerOneValue - playerTwoValue;
+        playerOne.wins++;
+        // ...and they are a cleric
+        if (playerOne.selectedClass === "cleric") {
+          game.stage = GameStage.ClericDecide;
+        }
+        // player 2 loses HP
+        playerTwo.hp -= playerOneValue - playerTwoValue;
         game.stage = GameStage.Discard;
       } else if (playerOneValue < playerTwoValue) {
-        // player 2 wins, player 1 loses HP
+        // player 2 wins... 
         winner = 'two';
-        game.players.two.wins++;
-        game.players.one.hp -= playerTwoValue - playerOneValue;
+        playerTwo.wins++;
+        // ...and they are a cleric
+        if (playerTwo.selectedClass === "cleric") {
+          game.stage = GameStage.ClericDecide;
+        }
+       // player 1 loses HP
+        playerOne.hp -= playerTwoValue - playerOneValue;
         game.stage = GameStage.Discard;
       } else {
         // begin war
@@ -220,26 +234,26 @@ Rune.initLogic({
       if (game.stage === GameStage.Discard && winner) {
         game.players[winner].deck.push(playerOneCard, playerTwoCard);
 
-        if (game.players.one.war.hero && game.players.two.war.hero) {
+        if (playerOne.war.hero && playerTwo.war.hero) {
           // in a tie, all the cards go to the winner
           game.players[winner].deck.push(
-            game.players.one.war.hero,
-            game.players.two.war.hero,
-            ...game.players.one.war.sacrifices,
-            ...game.players.two.war.sacrifices
+            playerOne.war.hero,
+            playerTwo.war.hero,
+            ...playerOne.war.sacrifices,
+            ...playerTwo.war.sacrifices
           );
-          game.players.one.war = {
+          playerOne.war = {
             hero: null,
             sacrifices: [],
           };
-          game.players.two.war = {
+          playerTwo.war = {
             hero: null,
             sacrifices: [],
           }
         }
         // reset selected cards to null
-        game.players.one.selectedCard = null;
-        game.players.two.selectedCard = null;
+        playerOne.selectedCard = null;
+        playerTwo.selectedCard = null;
         game.stage = GameStage.Draw;
       }
     },
