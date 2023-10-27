@@ -122,8 +122,7 @@ Rune.initLogic({
       
       if (game.stage !== GameStage.WarSelect) {
         if (!player.selectedCard) {
-          player.selectedCard = card;
-          console.log(player.hand, cardIndex);
+          player.selectedCard = {...card, isHidden: true};
           player.hand[cardIndex] = null;
         }
         // if both players have selected cards
@@ -136,9 +135,9 @@ Rune.initLogic({
         }
       } else {
         if (player.war.sacrifices.length < 2) {
-          player.war.sacrifices.push(card);
+          player.war.sacrifices.push({...card, isHidden: true});
         } else if (!player.war.hero) {
-          player.war.hero = card;
+          player.war.hero = {...card, isHidden: true};
         } else {
           throw new Error('The tie-breaker already ended');
         }
