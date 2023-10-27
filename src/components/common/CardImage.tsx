@@ -1,4 +1,4 @@
-import { Card } from "../game/types/card";
+import { Card } from "../../game/types/card";
 
 const CardImage = ({ card }: { card: Card }) => {
   return (

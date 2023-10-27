@@ -1,5 +1,5 @@
 import { Card } from "../../game/types/card";
-import CardImage from "../CardImage";
+import CardImage from "../common/CardImage";
 import { GameStage, GameState } from "../../game/types/game";
 import { ACTION_DELAY } from "../../game/utils";
 
