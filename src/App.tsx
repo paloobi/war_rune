@@ -1,22 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "./App.css";
-import { GameStage, type GameState } from "./game/types/game.ts";
+import { GameStage } from "./game/types/game.ts";
 import PlayerDebugInfo from "./components/PlayerDebugInfo.tsx";
 import { ACTION_DELAY } from "./game/utils.ts";
+import { useDispatch, useSelector } from "react-redux";
+import { setGame } from "./redux/gameSlice.ts";
+import type { RootState } from "./redux/store.ts";
 
 function App() {
-  const [game, setGame] = useState<GameState>();
-  const [playerId, setPlayerId] = useState<string>();
+  const { game, player } = useSelector((state: RootState) => state.game);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     Rune.initClient({
       onChange: ({ game, yourPlayerId }) => {
-        if (!playerId) {
-          setPlayerId(yourPlayerId);
+        if (!player && yourPlayerId) {
+          dispatch(setGame({ game, playerId: yourPlayerId }));
+        } else {
+          dispatch(setGame({ game }));
         }
-        setGame(game);
       },
     });
-  }, [playerId]);
+  }, [player, dispatch]);
 
   if (!game) {
     return <div>Loading...</div>;
@@ -40,12 +45,7 @@ function App() {
         <button onClick={onDeal}>Deal Cards</button>
       )}
       <div>
-        {playerId === game.players.one.playerId && (
-          <PlayerDebugInfo game={game} playerNumber="one" />
-        )}
-        {playerId === game.players.two.playerId && (
-          <PlayerDebugInfo game={game} playerNumber="two" />
-        )}
+        <PlayerDebugInfo />
       </div>
     </>
   );

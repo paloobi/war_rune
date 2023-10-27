@@ -1,16 +1,16 @@
 import { Card } from "../game/types/card";
 import CardImage from "./CardImage";
-import { GameStage, GameState } from "../game/types/game";
+import { GameStage } from "../game/types/game";
 import { ACTION_DELAY } from "../game/utils";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
-const PlayerDebugInfo = ({
-  game,
-  playerNumber,
-}: {
-  game: GameState;
-  playerNumber: "one" | "two";
-}) => {
-  const player = game.players[playerNumber];
+const PlayerDebugInfo = () => {
+  const { game, player } = useSelector((state: RootState) => state.game);
+
+  if (!game || !player) {
+    return null;
+  }
 
   const isSelectDisabled = (): boolean => {
     switch (game.stage) {
