@@ -39,6 +39,15 @@ const isClassSelectDisabled = (): boolean => {
     }
 }
 
+const isClassAbilityDisabled = (): boolean => {
+  // disable if already used ability that turn
+  if (game.stage === GameStage.PreScoreAbility || game.stage === GameStage.PostScoreAbility) {
+    return !!player.usingAbility;
+  } else {
+    return true;
+  }
+}
+
 
   return (
     <div className="player_debug_info">
@@ -64,7 +73,26 @@ const isClassSelectDisabled = (): boolean => {
             )
           )
         ) : (
-          <p>{player.selectedClass}</p>
+          // TODO: Remove this test button
+          // TODO: Several bugs to fix with this
+          <>
+            <p>{player.selectedClass}</p>
+            <button
+              type="button"
+              className="ability_button"
+              disabled={isClassAbilityDisabled()}
+              onClick={() => {
+                Rune.actions.useClassAbility()
+                setTimeout(() => {
+                  Rune.actions.scoreCards();
+                  setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+                }, ACTION_DELAY);
+              }}
+            >
+              {player.selectedClass !== "mage" ? "Use Class Ability" : ""}
+            </button>
+          </>
+
         )        
       }</div>
 
@@ -125,7 +153,7 @@ const isClassSelectDisabled = (): boolean => {
                   Rune.actions.scoreCards();
                   
 
-                  
+
             
                   // TODO: delete this timeout and change to have the draw phase after rogue ability choice
                   setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
