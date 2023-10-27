@@ -1,7 +1,7 @@
-import { Card } from "../game/types/card";
-import CardImage from "./CardImage";
-import { GameStage, GameState } from "../game/types/game";
-import { ACTION_DELAY } from "../game/utils";
+import { Card } from "../../game/types/card";
+import CardImage from "../CardImage";
+import { GameStage, GameState } from "../../game/types/game";
+import { ACTION_DELAY } from "../../game/utils";
 
 const PlayerDebugInfo = ({
   game,

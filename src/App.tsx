@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { GameStage, type GameState } from "./game/types/game.ts";
-import PlayerDebugInfo from "./components/PlayerDebugInfo.tsx";
+import PlayerDebugInfo from "./components/debug/PlayerDebugInfo.tsx";
 import { ACTION_DELAY } from "./game/utils.ts";
 
 function App() {
