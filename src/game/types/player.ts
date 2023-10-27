@@ -9,6 +9,7 @@ export interface Player {
     playerNum: 1 | 2,
     selectedClass: PlayerClass | null,
     usingAbility: boolean,
+    rogueStealCardOptions: Card[],
     deck: Card[],
     hand: Hand,
     selectedCard: Card | null,

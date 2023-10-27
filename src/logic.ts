@@ -13,8 +13,9 @@ type GameActions = {
   drawCards: () => void,
   selectCard: (params: { playerId: "one" | "two", card: Card, cardIndex: number }) => void,
   scoreCards: () => void
-  useClassAbility: () => void
-  // TODO: stealCard: () => void 
+  useClericAbility: () => void
+  stealCard: (params: { playerId: "one" | "two", index: number }) => void 
+  doNotUseClericAbility: () => void
 }
 
 declare global {
@@ -30,6 +31,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
         playerNum: 1,
         selectedClass: null,
         usingAbility: false,
+        rogueStealCardOptions: [],
         deck: [],
         hand: [null, null, null, null],
         war: {
@@ -45,6 +47,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
         playerNum: 2,
         selectedClass: null,
         usingAbility: false,
+        rogueStealCardOptions: [],
         deck: [],
         hand: [null, null, null, null],
         selectedCard: null,
@@ -117,6 +120,8 @@ Rune.initLogic({
       }
 
       const playerOne = game.players.one;
+      const playerTwo = game.players.two;
+
       const playerOneHand = playerOne.hand;
       for (let i = 0; i < playerOneHand.length; i++) {
         if (!playerOneHand[i]) {
@@ -131,7 +136,7 @@ Rune.initLogic({
         }
       }
 
-      const playerTwo = game.players.two;
+
       const playerTwoHand = playerTwo.hand;
       for (let i = 0; i < playerTwoHand.length; i++) {
         if (!playerTwoHand[i]) {
@@ -153,11 +158,12 @@ Rune.initLogic({
       {game}
     ) => {
       const player = game.players[playerId];
+      if (game.stage !== GameStage.Select && game.stage !== GameStage.WarSelect) {
+        console.log("skipping SelectCard for now because stage was not Select or WarSelect")
+        console.log("game stage: ", game.stage)
+      }
 
-      // Reset in order to use ability again this round or next round
-      player.usingAbility = false;
-      
-      if (game.stage !== GameStage.WarSelect) {
+      if (game.stage === GameStage.Select) {
         if (!player.selectedCard) {
           player.selectedCard = card;
           console.log(player.hand, cardIndex);
@@ -169,14 +175,9 @@ Rune.initLogic({
             (player: Player) => !!player.selectedCard
           )
         ) {
-          // If at least one player is a cleric, change to prescore ability stage
-          if (game.players.one.selectedClass === "cleric" || game.players.two.selectedClass === "cleric") {
-            game.stage = GameStage.PreScoreAbility;
-          } else {
-            // Otherwise go to score stage
-            game.stage = GameStage.Score;
-          } 
-
+  
+          //TODO: Fix bug that does only does cleric ability during war
+          // TODO: There is a bug in here that doesn't move from WarSelect to WarScore
           if (
             game.players.one.selectedCard &&
             (game.players.one.selectedClass === "knight" && 
@@ -185,12 +186,19 @@ Rune.initLogic({
             (game.players.two.selectedClass === "knight" && 
             game.players.two.selectedCard.suit === "spades")
           ) {
-            console.log("KNIGHT ABILITY ACTIVE: WARRRR!!")
             game.stage = GameStage.WarSelect;
-          } else {
-            game.stage = GameStage.Score;
+            console.log("KNIGHT ABILITY ACTIVE: WARRRR!!")
+          } else if (game.players.one.selectedCard && game.players.two.selectedCard) {
+            // If at least one player is a cleric and selected hearts, change to cleric ability stage
+            if (
+              (game.players.one.selectedClass === "cleric" && game.players.one.selectedCard.suit === "hearts") || 
+              game.players.two.selectedClass === "cleric" && game.players.two.selectedCard.suit === "hearts") {
+              game.stage = GameStage.ClericAbility;
+            } else {
+              // Otherwise go to score stage
+              game.stage = GameStage.Score;
+            } 
           }
-
         }
       } else {
         if (player.war.sacrifices.length < 2) {
@@ -206,85 +214,46 @@ Rune.initLogic({
         if (game.players.one.war.hero && game.players.two.war.hero) {
           game.stage = GameStage.WarScore;
           if (game.players.one.selectedClass === "cleric" || game.players.two.selectedClass === "cleric") {
-            game.stage = GameStage.PreScoreAbility;
+            game.stage = GameStage.ClericAbility;
           } 
         }
       }
     },
 
     // TODO: change to work only when selecting card of certain suit
-    useClassAbility: (_, {playerId, game}) => {
-      if (
-        game.stage !== `${GameStage.PreScoreAbility}` && 
-        game.stage !== `${GameStage.PostScoreAbility}`
-      ) {
+    useClericAbility: (_, {playerId, game}) => {
+      if (game.stage !== GameStage.ClericAbility) {
+        console.log("Cannot use cleric ability if not in ClericAbility game stage")
         throw Rune.invalidAction()
       }
 
       const playerOne = game.players.one;
       const playerTwo = game.players.two;
 
-      // Use class ability at this pre-score stage if you are cleric or knight
-      if (game.stage === `${GameStage.PreScoreAbility}`) {
-        if (playerOne.playerId === playerId &&
-          (playerOne.selectedClass === "cleric" || playerOne.selectedClass === "knight") 
-        ) {
+        if (playerOne.playerId === playerId && playerOne.selectedClass === "cleric") {
           playerOne.usingAbility = true;
         }
 
-        if (playerTwo.playerId === playerId &&
-          (playerTwo.selectedClass === "cleric" || playerTwo.selectedClass === "knight")
-        ) {
+        if (playerTwo.playerId === playerId && playerTwo.selectedClass === "cleric") {
           playerTwo.usingAbility = true;
-
         }
 
-        if (playerOne.selectedClass === "rogue") {
-          if (playerTwo.usingAbility) {
-            if(!playerOne.war.hero && !playerOne.war.hero) {
-              game.stage = GameStage.Score;
-            } else {
-              game.stage = GameStage.WarScore;
-            }
-          } 
+        if (playerOne.war.hero && playerTwo.war.hero) {
+          game.stage = GameStage.WarScore
+        } else {
+          game.stage = GameStage.Score
         }
+    },
 
-        if (playerTwo.selectedClass === "rogue") {
-          if (playerOne.usingAbility) {
-            if(!playerOne.war.hero && !playerOne.war.hero) {
-              game.stage = GameStage.Score;
-            } else {
-              game.stage = GameStage.WarScore;
-            }
-          } 
-        }
-        
+    doNotUseClericAbility: (_, {game}) => {
+      const playerOne = game.players.one;
+      const playerTwo = game.players.two;
 
-        
-    }
-      // Use class ability at this post-score stage if you are rogue
-      if (game.stage === `${GameStage.PostScoreAbility}`) {
-        if (
-          playerOne.playerId === playerId &&
-          playerOne.selectedClass === "rogue"
-        ) {
-          playerOne.usingAbility = true;
-
-        }
-
-        if (
-          playerTwo.playerId === playerId &&
-          playerTwo.selectedClass === "rogue"
-        ) {
-          playerTwo.usingAbility = true;
-
-        }
-
-        if (playerOne.usingAbility && playerTwo.usingAbility) {
-          game.stage = GameStage.Draw;
-        }
-        
-      }
+      if (playerOne.war.hero && playerTwo.war.hero) {
+        game.stage = GameStage.WarScore
+      } else {
+        game.stage = GameStage.Score
+      } 
     },
 
     scoreCards: (_, {game}) => {
@@ -333,24 +302,39 @@ Rune.initLogic({
         // player 1 wins...
         winner = 'one';
         playerOne.wins++;
-        // ...and they are a rogue
-        if (playerOne.selectedClass === "rogue") {
-          game.stage = GameStage.PostScoreAbility;
+        // if winner is cleric using ability
+        if (
+          playerOne.selectedClass === "cleric" && 
+          playerOne.usingAbility &&
+          playerOneCard.suit === "hearts"
+        ) {
+          // player 1 heals hp
+          playerOne.hp += playerOneValue - playerTwoValue;
+        } else {
+          // ...player 2 loses HP
+          playerTwo.hp -= playerOneValue - playerTwoValue;
         }
-        // player 2 loses HP
-        playerTwo.hp -= playerOneValue - playerTwoValue;
+        
         game.stage = GameStage.Discard;
+        
       } else if (playerOneValue < playerTwoValue) {
         // player 2 wins... 
         winner = 'two';
         playerTwo.wins++;
-        // ...and they are a rogue
-        if (playerTwo.selectedClass === "rogue") {
-          game.stage = GameStage.PostScoreAbility;
+        // if winner is cleric using ability
+        if (
+          playerTwo.selectedClass === "cleric" && 
+          playerTwo.usingAbility &&
+          playerTwoCard.suit === "hearts"
+        ) {
+          // player 2 heals hp
+          playerTwo.hp += playerTwoValue - playerOneValue;
+        } else {
+          // ...player 1 loses HP
+          playerOne.hp -= playerTwoValue - playerOneValue;
         }
-       // player 1 loses HP
-        playerOne.hp -= playerTwoValue - playerOneValue;
         game.stage = GameStage.Discard;
+  
       } else {
         // begin war
         // TODO: handle logic for this
@@ -361,6 +345,16 @@ Rune.initLogic({
         game.players[winner].deck.push(playerOneCard, playerTwoCard);
 
         if (playerOne.war.hero && playerTwo.war.hero) {
+          // if War winner was a rogue who played a club
+          // TODO: fix this null-suppressing operator for TS
+          if (
+            game.players[winner].selectedClass === "rogue" &&
+            game.players[winner].war.hero!.suit === "clubs"
+          ) {
+            game.stage = GameStage.Steal;
+          } else {
+            game.stage = GameStage.Draw;
+          }
           // in a tie, all the cards go to the winner
           game.players[winner].deck.push(
             playerOne.war.hero,
@@ -376,16 +370,64 @@ Rune.initLogic({
             hero: null,
             sacrifices: [],
           }
+        } else {
+          // if winner was a rogue who played a club
+          // TODO: fix this null-suppressing operator for TS
+          if (
+            game.players[winner].selectedClass === "rogue" &&
+            game.players[winner].selectedCard!.suit === "clubs"
+          ) {
+            game.stage = GameStage.Steal;
+          } else {
+            game.stage = GameStage.Draw;
+          }
         }
+
         // reset selected cards to null
         playerOne.selectedCard = null;
         playerTwo.selectedCard = null;
-        game.stage = GameStage.Draw;
+
+        // Stop using cleric or knight ability
+        if (playerOne.selectedClass === "cleric") {
+          playerOne.usingAbility = false;
+        }
+
+        if (playerTwo.selectedClass === "cleric") {
+          playerTwo.usingAbility = false;
+        }
       }
     },
 
-    // stealCard: () => {
+    stealCard: ({playerId, index}, {game}) => {
+      if (game.stage !== GameStage.Steal) {
+        console.log("skipping steal for now, the stage isn't Steal")
+        console.log("STAGE: ", game.stage);
+        return;
+      }
 
-    // }
+      const player = game.players[playerId];
+      const opposingPlayer = playerId === "one" ? game.players.two : game.players.one;
+
+      // Check if rogue is using ability
+      if (player.selectedClass === "rogue" && player.usingAbility) {
+        // get two random cards from opponent's deck to choose from
+        const cardOne = opposingPlayer.deck[Math.floor(Math.random() * opposingPlayer.deck.length)];
+        const deckWithoutCardOne = opposingPlayer.deck.filter(card => card !== cardOne)
+        const cardTwo = deckWithoutCardOne[Math.floor(Math.random() * deckWithoutCardOne.length)];
+        const deckWithoutCardOneOrTwo = deckWithoutCardOne.filter(card => card !== cardTwo);
+
+        //steal card
+        player.rogueStealCardOptions.push(cardOne, cardTwo);
+        player.deck.push(player.rogueStealCardOptions[index]);
+
+        // return other card to opponent's deck
+        const cardToReturnToOpposingPlayer = player.rogueStealCardOptions.filter((card, i) => i !== index)[0];
+        opposingPlayer.deck = deckWithoutCardOneOrTwo;
+        opposingPlayer.deck.push(cardToReturnToOpposingPlayer);
+
+      }
+
+      game.stage = GameStage.Draw
+    }
   },
 })

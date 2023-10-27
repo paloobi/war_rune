@@ -39,10 +39,9 @@ const isClassSelectDisabled = (): boolean => {
     }
 }
 
-const isClassAbilityDisabled = (): boolean => {
-  // disable if already used ability that turn
-  if (game.stage === GameStage.PreScoreAbility || game.stage === GameStage.PostScoreAbility) {
-    return !!player.usingAbility;
+const isClericAbilityDisabled = (): boolean => {
+  if (game.stage === GameStage.ClericAbility) {
+    return false;
   } else {
     return true;
   }
@@ -73,29 +72,79 @@ const isClassAbilityDisabled = (): boolean => {
             )
           )
         ) : (
-          // TODO: Remove this test button
-          // TODO: Several bugs to fix with this
+          <p>{player.selectedClass}</p>)}
+          </div>
+
+      <div className="ability_buttons_container">
+        {/* Cleric buttons for healing or not */}
+        {/* TODO: These buttons only appearing during war and pressing them does nothing (probably because stage is undefined) */}
+        {(player.selectedClass === "cleric" && game.stage === GameStage.ClericAbility) && (
           <>
-            <p>{player.selectedClass}</p>
             <button
               type="button"
-              className="ability_button"
-              disabled={isClassAbilityDisabled()}
+              className="cleric_ability_button"
+              disabled={isClericAbilityDisabled()}
               onClick={() => {
-                Rune.actions.useClassAbility()
+                Rune.actions.useClericAbility()
                 setTimeout(() => {
                   Rune.actions.scoreCards();
                   setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
                 }, ACTION_DELAY);
               }}
             >
-              {player.selectedClass !== "mage" ? "Use Class Ability" : ""}
+              Heal HP
+            </button>
+          
+            <button
+              type="button"
+              className="cleric_ability_button"
+              disabled={isClericAbilityDisabled()}
+              onClick={() => {
+                Rune.actions.doNotUseClericAbility();
+                setTimeout(() => {
+                  Rune.actions.scoreCards();
+                  setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+                }, ACTION_DELAY);
+              }}
+            >
+              Deal Damage
             </button>
           </>
+        )}
 
-        )        
-      }</div>
-
+        {/* Rogue buttons for stealing cards */}
+        {(player.selectedClass === "rogue" && game.stage === GameStage.Steal) && (
+              <>
+                <button
+                type="button"
+                className="rogue_ability_button"
+                onClick={() => {
+                  Rune.actions.stealCard({
+                    playerId: player.playerNum === 1 ? "one" : "two",
+                    index: 0
+                  });
+                  setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+                }}
+              >
+              <CardImage card={player.rogueStealCardOptions[0]} />
+            </button>
+            <button
+                type="button"
+                className="rogue_ability_button"
+                onClick={() => {
+                  Rune.actions.stealCard({
+                      playerId: player.playerNum === 1 ? "one" : "two",
+                      index: 1
+                    });
+                    setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+                }}
+              >
+              <CardImage card={player.rogueStealCardOptions[1]} />
+            </button>
+              </>
+            )}  
+      </div>
+    
       <p>{player.selectedClass ? (
         <ClassImage playerClass={player.selectedClass} />
       ) : (
