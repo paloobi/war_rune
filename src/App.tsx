@@ -4,7 +4,6 @@ import { GameStage, type GameState } from "./game/types/game.ts";
 import PlayerDebugInfo from "./components/PlayerDebugInfo.tsx";
 import { ACTION_DELAY } from "./game/utils.ts";
 import { GameContext } from "./game/GameContext.ts";
-import PlayerHand from "./components/PlayerHand.tsx";
 
 function App() {
   const [game, setGame] = useState<GameState>();
