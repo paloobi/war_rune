@@ -87,9 +87,6 @@ const PlayerDebugInfo = ({
                     // draw cards after a delay
                     setTimeout(() => { 
                       Rune.actions.drawCards()
-                      // setTimeout(() => {
-                      //   Rune.actions.drawCards();
-                      // }, ACTION_DELAY);
                     }, ACTION_DELAY) //
                   }, ACTION_DELAY);
                 }, ACTION_DELAY);
@@ -109,7 +106,6 @@ const PlayerDebugInfo = ({
 
       <h3>Deck</h3>
 
-      {/* for debugging */}
       <div>{player.deck.length}</div>  
 
       <div>

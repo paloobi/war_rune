@@ -152,7 +152,6 @@ Rune.initLogic({
         }
       }
       const playerOneCard = playerOne.selectedCard ? playerOne.selectedCard : null;
-      console.log(playerOneCard, "I am player one's card")
       if (playerOneCard) playerTwo.deck.push(playerOneCard)
       playerOne.selectedCard = null;
 
@@ -166,7 +165,6 @@ Rune.initLogic({
         }
       }
       const playerTwoCard = playerTwo.selectedCard ? playerTwo.selectedCard : null;
-      console.log(playerTwoCard, "I am player two's card")
       if (playerTwoCard) playerOne.deck.push(playerTwoCard)
       playerTwo.selectedCard = null;
 
