@@ -164,12 +164,33 @@ Rune.initLogic({
           player.hand[cardIndex] = null;
         }
         // if both players have selected cards
-        if (
+        if ( 
           Object.values(game.players).every(
             (player: Player) => !!player.selectedCard
           )
         ) {
-          game.stage = GameStage.PreScoreAbility;
+          // If at least one player is a cleric, change to prescore ability stage
+          if (game.players.one.selectedClass === "cleric" || game.players.two.selectedClass === "cleric") {
+            game.stage = GameStage.PreScoreAbility;
+          } else {
+            // Otherwise go to score stage
+            game.stage = GameStage.Score;
+          } 
+
+          if (
+            game.players.one.selectedCard &&
+            (game.players.one.selectedClass === "knight" && 
+            game.players.one.selectedCard.suit === "spades") ||
+            game.players.two.selectedCard &&
+            (game.players.two.selectedClass === "knight" && 
+            game.players.two.selectedCard.suit === "spades")
+          ) {
+            console.log("KNIGHT ABILITY ACTIVE: WARRRR!!")
+            game.stage = GameStage.WarSelect;
+          } else {
+            game.stage = GameStage.Score;
+          }
+
         }
       } else {
         if (player.war.sacrifices.length < 2) {
@@ -183,10 +204,10 @@ Rune.initLogic({
         player.hand[cardIndex] = null;
         
         if (game.players.one.war.hero && game.players.two.war.hero) {
-          if (game.players.one.selectedClass === "cleric" || game.players.two.selectedClass === "cleric")
-          game.stage = GameStage.PreScoreAbility;
-        } else {
           game.stage = GameStage.WarScore;
+          if (game.players.one.selectedClass === "cleric" || game.players.two.selectedClass === "cleric") {
+            game.stage = GameStage.PreScoreAbility;
+          } 
         }
       }
     },

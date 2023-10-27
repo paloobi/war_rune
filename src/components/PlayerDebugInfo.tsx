@@ -149,15 +149,12 @@ const isClassAbilityDisabled = (): boolean => {
                   card,
                   cardIndex: index,
                 });
-                setTimeout(() => {
-                  Rune.actions.scoreCards();
-                  
-
-
-            
-                  // TODO: delete this timeout and change to have the draw phase after rogue ability choice
-                  setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
-                }, ACTION_DELAY);
+                  setTimeout(() => {
+                    Rune.actions.scoreCards();
+                    setTimeout(() => {
+                      Rune.actions.drawCards();
+                    }, ACTION_DELAY);
+                  }, ACTION_DELAY);
               }}
             >
               <CardImage card={card} />
