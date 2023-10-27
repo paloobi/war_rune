@@ -82,15 +82,15 @@ const PlayerDebugInfo = ({
                 });
                 setTimeout(() => {
                   Rune.actions.scoreCards();
-                  // draw cards after a delay
-                  setTimeout(() => { 
-                    Rune.actions.drawCards()
-                    setTimeout(() => {
-                      Rune.actions.joker();
-                      setTimeout(() => {
-                        Rune.actions.drawCards();
-                      }, ACTION_DELAY);
-                    }, ACTION_DELAY)
+                  setTimeout(() => {
+                    Rune.actions.joker();
+                    // draw cards after a delay
+                    setTimeout(() => { 
+                      Rune.actions.drawCards()
+                      // setTimeout(() => {
+                      //   Rune.actions.drawCards();
+                      // }, ACTION_DELAY);
+                    }, ACTION_DELAY) //
                   }, ACTION_DELAY);
                 }, ACTION_DELAY);
               }}
@@ -108,6 +108,10 @@ const PlayerDebugInfo = ({
       </div>
 
       <h3>Deck</h3>
+
+      {/* for debugging */}
+      <div>{player.deck.length}</div>  
+
       <div>
         {player.deck.map((card: Card) => (
           <CardImage key={`${card.rank}_${card.suit}`} card={card} />

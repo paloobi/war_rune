@@ -56,5 +56,3 @@ export function buildDeck() {
   
   return deck;
 }
-// TODO: Jokers successfully added to deck but not getting shuffled? 
-// Haven't looked into this too deeply

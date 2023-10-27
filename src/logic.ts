@@ -87,15 +87,16 @@ Rune.initLogic({
         console.log(`Skipping draw for now, it's ${game.stage} stage`);
         return;
       }
+      console.log("Hello I am the Draw stage");
       const playerOne = game.players.one;
       const playerOneHand = playerOne.hand;
       for (let i = 0; i < playerOneHand.length; i++) {
         if (!playerOneHand[i]) {
           const cardToDraw = playerOne.deck.shift();
-          if (cardToDraw?.suit === 'joker') {
-            console.log(cardToDraw, "It's a joker!")
-            game.stage = GameStage.Joker;
-          }
+          // if (cardToDraw?.suit === 'joker') {
+          //   console.log(cardToDraw, "It's a joker!")
+          //   game.stage = GameStage.Joker;
+          // }
           if (cardToDraw) {
             // TODO: draw a card randomly
             playerOneHand[i] = cardToDraw;
@@ -111,10 +112,10 @@ Rune.initLogic({
       for (let i = 0; i < playerTwoHand.length; i++) {
         if (!playerTwoHand[i]) {
           const cardToDraw = playerTwo.deck.shift();
-          if (cardToDraw?.suit === 'joker') {
-            console.log(cardToDraw, "It's a joker!")
-            game.stage = GameStage.Joker;
-          }
+          // if (cardToDraw?.suit === 'joker') {
+          //   console.log(cardToDraw, "It's a joker!")
+          //   game.stage = GameStage.Joker;
+          // }
           if (cardToDraw) {
             // TODO: draw a card randomly
             playerTwoHand[i] = cardToDraw;
@@ -124,9 +125,9 @@ Rune.initLogic({
           }
         }
       }
-      if (game.stage !== GameStage.Joker) {
+      // if (game.stage !== GameStage.Joker) {
         game.stage = GameStage.Select;
-      }
+      // }
     },
 
     joker: (_, {game}) => {
@@ -135,8 +136,8 @@ Rune.initLogic({
         return;
       }
       console.log("performing joker action");
-      // put each players hand into their deck
 
+      // put each players hand and selected card into their deck
       const playerOne = game.players.one;
       const playerTwo = game.players.two;
 
@@ -150,6 +151,11 @@ Rune.initLogic({
           playerOne.hand[i] = null;
         }
       }
+      const playerOneCard = playerOne.selectedCard ? playerOne.selectedCard : null;
+      console.log(playerOneCard, "I am player one's card")
+      if (playerOneCard) playerTwo.deck.push(playerOneCard)
+      playerOne.selectedCard = null;
+
       for (let i = 0; i < playerTwo.hand.length; i++) {
         const card = playerTwo.hand[i];
         if (card) {
@@ -159,7 +165,13 @@ Rune.initLogic({
           playerTwo.hand[i] = null;
         }
       }
+      const playerTwoCard = playerTwo.selectedCard ? playerTwo.selectedCard : null;
+      console.log(playerTwoCard, "I am player two's card")
+      if (playerTwoCard) playerOne.deck.push(playerTwoCard)
+      playerTwo.selectedCard = null;
+
       // shuffle each players deck
+      console.log("shuffling the deck");
       shuffle(playerOne.deck)
       shuffle(playerTwo.deck)
       // move to draw phase
@@ -205,6 +217,7 @@ Rune.initLogic({
     },
 
     scoreCards: (_, {game}) => {
+
       if (game.stage !== GameStage.Score && game.stage !== GameStage.WarScore) {
         console.log("skipping scoring for now, the stage isn't Score or WarScore yet")
         console.log("STAGE: ", game.stage);
@@ -221,6 +234,7 @@ Rune.initLogic({
       if (!playerOneCard || !playerTwoCard) {
         throw new Error("Both players must have a selected card");
       }
+      
       const playerOneValue = getCardValueFromRank(playerOneCard.rank);
       const playerTwoValue = getCardValueFromRank(playerTwoCard.rank);
 
@@ -237,10 +251,12 @@ Rune.initLogic({
         game.players.two.wins++;
         game.players.one.hp -= playerTwoValue - playerOneValue;
         game.stage = GameStage.Discard;
-      } else {
+      } else if (playerOneValue === playerTwoValue) {
         // begin war
         // TODO: handle logic for this
         game.stage = GameStage.WarSelect;
+      } else if (playerOneCard.suit === 'joker' || playerTwoCard.suit === 'joker') {  // if either player plays a joker, initiate joker phase
+        game.stage = GameStage.Joker
       }
 
       if (game.stage === GameStage.Discard && winner) {
