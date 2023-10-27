@@ -1,4 +1,4 @@
-import { Card, cardSuits} from "../game/types/card";
+import { Card, cardSuits } from "../game/types/card";
 import { playerClasses } from "../game/types/class";
 import CardImage from "./CardImage";
 import { GameStage, GameState } from "../game/types/game";
@@ -28,17 +28,14 @@ const PlayerDebugInfo = ({
     }
   };
 
-
-
-const isClassSelectDisabled = (): boolean => {
+  const isClassSelectDisabled = (): boolean => {
     // disable if class select and there is already a class
     if (game.stage === GameStage.ClassSelect) {
       return !!player.selectedClass;
     } else {
       return true;
     }
-}
-
+  };
 
   return (
     <div className="player_debug_info">
@@ -61,19 +58,19 @@ const isClassSelectDisabled = (): boolean => {
             >
               <ClassImage playerClass={playerClass} />
             </button>
-            )
-          )
+          ))
         ) : (
           <p>{player.selectedClass}</p>
-        )        
-      }</div>
+        )}
+      </div>
 
-      <p>{player.selectedClass ? (
-        <ClassImage playerClass={player.selectedClass} />
-      ) : (
-        <p>No class selected</p>
-      )}</p>
-    
+      <p>
+        {player.selectedClass ? (
+          <ClassImage playerClass={player.selectedClass} />
+        ) : (
+          <p>No class selected</p>
+        )}
+      </p>
 
       <h3>Hit Points Remaining</h3>
       <p>{player.hp >= 0 ? player.hp : 0}</p>
@@ -122,9 +119,14 @@ const isClassSelectDisabled = (): boolean => {
                   cardIndex: index,
                 });
                 setTimeout(() => {
-                  Rune.actions.scoreCards();
-                  // draw cards after a delay
-                  setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+                  // attempt to reveal the cards after a delay
+                  Rune.actions.revealCards();
+                  setTimeout(() => {
+                    // attempt to score cards after a delay
+                    Rune.actions.scoreCards();
+                    // draw cards after a delay
+                    setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+                  }, ACTION_DELAY);
                 }, ACTION_DELAY);
               }}
             >

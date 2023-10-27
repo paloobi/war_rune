@@ -12,6 +12,7 @@ type GameActions = {
   selectClass: (playerClass: PlayerClass) => void,
   drawCards: () => void,
   selectCard: (params: { playerId: "one" | "two", card: Card, cardIndex: number }) => void,
+  revealCards: () => void,
   scoreCards: () => void
 }
 
@@ -131,7 +132,7 @@ Rune.initLogic({
             (player: Player) => !!player.selectedCard
           )
         ) {
-          game.stage = GameStage.Score;
+          game.stage = GameStage.Reveal;
         }
       } else {
         if (player.war.sacrifices.length < 2) {
@@ -145,8 +146,41 @@ Rune.initLogic({
         player.hand[cardIndex] = null;
         
         if (game.players.one.war.hero && game.players.two.war.hero) {
-          game.stage = GameStage.WarScore;
+          game.stage = GameStage.WarReveal;
         }
+      }
+    },
+
+    revealCards: (_, {game}) => {
+      if (game.stage !== GameStage.WarReveal && game.stage !== GameStage.Reveal) {
+        console.log("skipping scoring for now, the stage isn't Score or WarScore yet")
+        console.log("STAGE: ", game.stage);
+        return;
+      }
+      const playerOne = game.players.one;
+      const playerTwo = game.players.two;
+      if (!playerOne.selectedCard || !playerTwo.selectedCard) {
+        throw Rune.invalidAction();
+      }
+      // reveal all selected cards
+      playerOne.selectedCard = {...playerOne.selectedCard, isHidden: false};
+      playerTwo.selectedCard = {...playerTwo.selectedCard, isHidden: false};
+
+      if (game.stage === GameStage.WarReveal && playerOne.war.hero && playerTwo.war.hero) {
+        // reveal player one's war cards
+        playerOne.war.hero = {...playerOne.war.hero, isHidden: false};
+        playerOne.war.sacrifices = playerOne.war.sacrifices.map(card => ({...card, isHidden: false}))
+
+        // reveal player two's war cards
+        playerTwo.war.hero = {...playerTwo.war.hero, isHidden: false};
+        playerTwo.war.sacrifices = playerTwo.war.sacrifices.map(card => ({...card, isHidden: false}))
+      }
+
+      if (game.stage === GameStage.Reveal) {
+        game.stage = GameStage.Score;
+      }
+      if (game.stage === GameStage.WarReveal) {
+        game.stage = GameStage.WarScore;
       }
     },
 
