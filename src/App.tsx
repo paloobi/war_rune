@@ -3,6 +3,8 @@ import "./App.css";
 import { GameStage, type GameState } from "./game/types/game.ts";
 import PlayerDebugInfo from "./components/PlayerDebugInfo.tsx";
 import { ACTION_DELAY } from "./game/utils.ts";
+import { GameContext } from "./game/gameContext.ts";
+import PlayerHand from "./components/PlayerHand.tsx";
 
 function App() {
   const [game, setGame] = useState<GameState>();
@@ -35,18 +37,29 @@ function App() {
 
   return (
     <>
-      <h1>War</h1>
-      {game.stage === GameStage.Start && (
-        <button onClick={onDeal}>Deal Cards</button>
-      )}
-      <div>
-        {playerId === game.players.one.playerId && (
-          <PlayerDebugInfo game={game} playerNumber="one" />
+      <GameContext.Provider
+        value={{
+          game,
+          player:
+            playerId === game.players.one.playerId
+              ? game.players.one
+              : game.players.two,
+        }}
+      >
+        <h1>War</h1>
+        {game.stage === GameStage.Start && (
+          <button onClick={onDeal}>Deal Cards</button>
         )}
-        {playerId === game.players.two.playerId && (
-          <PlayerDebugInfo game={game} playerNumber="two" />
-        )}
-      </div>
+        <div>
+          <PlayerHand />
+          {playerId === game.players.one.playerId && (
+            <PlayerDebugInfo game={game} playerNumber="one" />
+          )}
+          {playerId === game.players.two.playerId && (
+            <PlayerDebugInfo game={game} playerNumber="two" />
+          )}
+        </div>
+      </GameContext.Provider>
     </>
   );
 }
