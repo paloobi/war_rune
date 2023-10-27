@@ -44,7 +44,7 @@ export function buildDeck() {
   const deck: Card[] = [];
   cardRanks.forEach((rank: CardRank): void => {
     cardSuits.forEach((suit: CardSuit): void => {
-      deck.push({ rank, suit });
+      deck.push({ rank, suit, isHidden: true });
     });
   });
 

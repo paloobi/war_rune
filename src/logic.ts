@@ -1,8 +1,8 @@
 import type { RuneClient } from "rune-games-sdk/multiplayer"
 import type { GameState } from "./game/types/game";
 import { GameStage } from "./game/types/game";
-import { Card, CardRank, CardSuit, cardRanks, cardSuits } from "./game/types/card";
-import { buildDeck, getCardValueFromRank, shuffle } from "./game/utils";
+import { Card } from "./game/types/card";
+import { buildDeck, getCardValueFromRank } from "./game/utils";
 import { Player } from "./game/types/player";
 import { PlayerClass } from "./game/types/class";
 

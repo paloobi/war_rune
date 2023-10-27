@@ -7,6 +7,7 @@ export enum GameStage {
   Deal = "DEAL",
   Draw = "DRAW",
   Select = "SELECT",
+  Reveal = "REVEAL",
   Score = "SCORE",
   WarSelect = "WAR_SELECT",
   WarScore = "WAR_SCORE",
