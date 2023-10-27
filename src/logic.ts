@@ -2,7 +2,7 @@ import type { RuneClient } from "rune-games-sdk/multiplayer"
 import type { GameState } from "./game/types/game";
 import { GameStage } from "./game/types/game";
 import { Card } from "./game/types/card";
-import { buildDeck, getCardValueFromRank } from "./game/utils";
+import { buildDeck, drawHand, getCardValueFromRank } from "./game/utils";
 import { Player } from "./game/types/player";
 import { PlayerClass } from "./game/types/class";
 
@@ -109,35 +109,8 @@ Rune.initLogic({
         console.log(`Skipping draw for now, it's ${game.stage} stage`);
         return;
       }
-      const playerOne = game.players.one;
-      const playerOneHand = playerOne.hand;
-      for (let i = 0; i < playerOneHand.length; i++) {
-        if (!playerOneHand[i]) {
-          const cardToDraw = playerOne.deck.shift();
-          if (cardToDraw) {
-            // TODO: draw a card randomly
-            playerOneHand[i] = cardToDraw;
-          } else {
-            // TODO: figure out if this is a game over condition?
-            throw new Error("No cards left in deck");
-          }
-        }
-      }
-
-      const playerTwo = game.players.two;
-      const playerTwoHand = playerTwo.hand;
-      for (let i = 0; i < playerTwoHand.length; i++) {
-        if (!playerTwoHand[i]) {
-          const cardToDraw = playerTwo.deck.shift();
-          if (cardToDraw) {
-            // TODO: draw a card randomly
-            playerTwoHand[i] = cardToDraw;
-          } else {
-            // TODO: figure out if this is a game over condition?
-            throw new Error("No cards left in deck");
-          }
-        }
-      }
+      drawHand(game.players.one);
+      drawHand(game.players.two);
       game.stage = GameStage.Select;
     },
 

@@ -1,4 +1,5 @@
 import { cardRanks, type Card, type CardRank, cardSuits, CardSuit } from "./types/card";
+import { Player } from "./types/player";
 
 export const ACTION_DELAY = 1000;
 
@@ -51,4 +52,19 @@ export function buildDeck() {
   shuffle(deck);
   
   return deck;
+}
+
+export function drawHand(player: Player) {
+  const {hand} = player;
+  for (let i = 0; i < hand.length; i++) {
+      if (!hand[i]) {
+      const cardToDraw = player.deck.shift();
+      if (cardToDraw) {
+        hand[i] = cardToDraw;
+      } else {
+        // TODO: figure out if this is a game over condition?
+        throw new Error("No cards left in deck");
+      }
+    }
+  }
 }
