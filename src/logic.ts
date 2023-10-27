@@ -92,7 +92,7 @@ Rune.initLogic({
       for (let i = 0; i < playerOneHand.length; i++) {
         if (!playerOneHand[i]) {
           const cardToDraw = playerOne.deck.shift();
-          if (cardToDraw?.suit === 'jokerRed' || cardToDraw?.suit === 'jokerBlack') {
+          if (cardToDraw?.suit === 'joker') {
             console.log(cardToDraw, "It's a joker!")
             game.stage = GameStage.Joker;
           }
@@ -111,7 +111,7 @@ Rune.initLogic({
       for (let i = 0; i < playerTwoHand.length; i++) {
         if (!playerTwoHand[i]) {
           const cardToDraw = playerTwo.deck.shift();
-          if (cardToDraw?.suit === 'jokerRed' || cardToDraw?.suit === 'jokerBlack') {
+          if (cardToDraw?.suit === 'joker') {
             console.log(cardToDraw, "It's a joker!")
             game.stage = GameStage.Joker;
           }
