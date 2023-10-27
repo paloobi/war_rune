@@ -10,6 +10,7 @@ export enum GameStage {
   Reveal = "REVEAL",
   Score = "SCORE",
   WarSelect = "WAR_SELECT",
+  WarReveal = "WAR_REVEAL",
   WarScore = "WAR_SCORE",
   Discard = "DISCARD",
   End = "END",
