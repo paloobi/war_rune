@@ -4,12 +4,10 @@ import { GameStage } from "./game/types/game";
 import { Card } from "./game/types/card";
 import { buildDeck, drawHand, getCardValueFromRank } from "./game/utils";
 import { Player } from "./game/types/player";
-import { PlayerClass } from "./game/types/class";
 
 type GameActions = {
   setStage: (params: { stage: GameStage }) => void
   dealCards: () => void,
-  selectClass: (playerClass: PlayerClass) => void,
   drawCards: () => void,
   selectCard: (params: { playerId: "one" | "two", card: Card, cardIndex: number }) => void,
   revealCards: () => void,
@@ -22,12 +20,11 @@ declare global {
 
 const getInitialState = (allPlayerIds: string[]): GameState => {
   return {
-    stage: GameStage.ClassSelect,
+    stage: GameStage.Start,
     players: {
       one: {
         playerId: allPlayerIds[0],
         playerNum: 1,
-        selectedClass: null,
         deck: [],
         hand: [null, null, null, null],
         war: {
@@ -41,7 +38,6 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
       two: {
         playerId: allPlayerIds[1],
         playerNum: 2,
-        selectedClass: null,
         deck: [],
         hand: [null, null, null, null],
         selectedCard: null,
@@ -65,25 +61,6 @@ Rune.initLogic({
   actions: {
     setStage: ({ stage }, { game }) => {
       game.stage = stage;
-    },
-
-    selectClass: (playerClass, {playerId, game}) => {
-      if (game.stage !== GameStage.ClassSelect) {
-        throw Rune.invalidAction();
-      }
-
-      if (game.players.one.playerId === playerId) {
-          game.players.one.selectedClass = playerClass;
-        } else if (game.players.two.playerId === playerId) {
-          game.players.two.selectedClass = playerClass
-        } else {
-          throw Rune.invalidAction()
-        }
-
-      if (game.players.one.selectedClass && game.players.two.selectedClass){
-        game.stage = GameStage.Start;
-      }
-        
     },
 
     dealCards: (_, {game}) => {

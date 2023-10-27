@@ -1,9 +1,7 @@
-import { Card, cardSuits } from "../game/types/card";
-import { playerClasses } from "../game/types/class";
+import { Card } from "../game/types/card";
 import CardImage from "./CardImage";
 import { GameStage, GameState } from "../game/types/game";
 import { ACTION_DELAY } from "../game/utils";
-import ClassImage from "./ClassImage";
 
 const PlayerDebugInfo = ({
   game,
@@ -28,49 +26,12 @@ const PlayerDebugInfo = ({
     }
   };
 
-  const isClassSelectDisabled = (): boolean => {
-    // disable if class select and there is already a class
-    if (game.stage === GameStage.ClassSelect) {
-      return !!player.selectedClass;
-    } else {
-      return true;
-    }
-  };
-
   return (
     <div className="player_debug_info">
       <h2>Player {player.playerNum} Info</h2>
 
       <h3>Number of Player Wins</h3>
       <p>{player.wins}</p>
-
-      <h3>Class</h3>
-      <div className="class_container">
-        {!player.selectedClass ? (
-          playerClasses.map((playerClass) => (
-            <button
-              className="class_button"
-              disabled={isClassSelectDisabled()}
-              key={playerClass}
-              onClick={() => {
-                Rune.actions.selectClass(playerClass);
-              }}
-            >
-              <ClassImage playerClass={playerClass} />
-            </button>
-          ))
-        ) : (
-          <p>{player.selectedClass}</p>
-        )}
-      </div>
-
-      <p>
-        {player.selectedClass ? (
-          <ClassImage playerClass={player.selectedClass} />
-        ) : (
-          <p>No class selected</p>
-        )}
-      </p>
 
       <h3>Hit Points Remaining</h3>
       <p>{player.hp >= 0 ? player.hp : 0}</p>
