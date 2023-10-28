@@ -65,4 +65,7 @@ export function drawHand(player: Player) {
       }
     }
   }
+
+  // Return boolean that is true if player's deck is empty
+    return player.deck.length === 0;
 }

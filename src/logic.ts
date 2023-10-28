@@ -87,8 +87,28 @@ Rune.initLogic({
         console.log(`Skipping draw for now, it's ${game.stage} stage`);
         return;
       }
-      drawHand(game.players.one);
-      drawHand(game.players.two);
+      const isPlayerOneDeckEmpty = drawHand(game.players.one);
+      const isPlayerTwoDeckEmpty = drawHand(game.players.two);
+
+      // If player 1 has no cards in deck
+      if (isPlayerOneDeckEmpty) {
+        Rune.gameOver({
+          players: {
+            [game.players.two.playerId]: "WON",
+            [game.players.one.playerId]: "LOST",
+          }
+        })
+      }
+
+    // If player 2 has no cards in deck
+    if (isPlayerTwoDeckEmpty) {
+      Rune.gameOver({
+        players: {
+          [game.players.one.playerId]: "WON",
+          [game.players.two.playerId]: "LOST",
+        }
+      })
+    }
 
       game.stage = GameStage.Select;
     },
@@ -189,32 +209,12 @@ Rune.initLogic({
         winner = 'one';
         game.players.one.wins++;
         game.players.two.hp -= playerOneValue - playerTwoValue;
-
-        // If there are no cards in deck after losing
-        if (game.players.two.deck.length === 0) {
-          Rune.gameOver({
-            players: {
-              [game.players.one.playerId]: "WON",
-              [game.players.two.playerId]: "LOST",
-            }
-          })
-        }
         game.stage = GameStage.Discard;
       } else if (playerOneValue < playerTwoValue) {
         // player 2 wins, player 1 loses HP
         winner = 'two';
         game.players.two.wins++;
         game.players.one.hp -= playerTwoValue - playerOneValue;
-
-        // If there are no cards in deck after losing
-        if (game.players.one.deck.length === 0) {
-          Rune.gameOver({
-            players: {
-              [game.players.two.playerId]: "WON",
-              [game.players.one.playerId]: "LOST",
-            }
-          })
-        }
         game.stage = GameStage.Discard;
       } else {
         // begin war
