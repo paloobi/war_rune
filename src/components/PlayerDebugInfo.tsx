@@ -72,8 +72,11 @@ const PlayerDebugInfo = () => {
                 onClick={() => {
                   Rune.actions.useClericAbility();
                   setTimeout(() => {
-                    Rune.actions.scoreCards();
-                    setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+                    Rune.actions.revealCards();
+                    setTimeout(() => {
+                      Rune.actions.scoreCards()
+                      setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+                    }, ACTION_DELAY);
                   }, ACTION_DELAY);
                 }}
               >
@@ -87,9 +90,13 @@ const PlayerDebugInfo = () => {
                 onClick={() => {
                   Rune.actions.doNotUseClericAbility();
                   setTimeout(() => {
-                    Rune.actions.scoreCards();
-                    setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+                    Rune.actions.revealCards();
+                    setTimeout(() => {
+                      Rune.actions.scoreCards()
+                      setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+                    }, ACTION_DELAY);
                   }, ACTION_DELAY);
+
                 }}
               >
                 Deal Damage

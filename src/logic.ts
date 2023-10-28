@@ -162,14 +162,14 @@ Rune.initLogic({
             // If at least one player is a cleric and selected hearts, change to cleric ability stage
             if (
               (game.players.one.selectedClass === "cleric" && game.players.one.selectedCard.suit === "hearts") || 
-              game.players.two.selectedClass === "cleric" && game.players.two.selectedCard.suit === "hearts") {
+              (game.players.two.selectedClass === "cleric" && game.players.two.selectedCard.suit === "hearts")
+            ) {
               game.stage = GameStage.ClericAbility;
             } else {
-              // Otherwise go to score stage
-              game.stage = GameStage.Score;
+              // Otherwise go to reveal stage
+              game.stage = GameStage.Reveal;
             } 
           }
-          game.stage = GameStage.Reveal;
         }
       } else {
         if (player.war.sacrifices.length < 2) {
@@ -210,9 +210,9 @@ Rune.initLogic({
         }
 
         if (playerOne.war.hero && playerTwo.war.hero) {
-          game.stage = GameStage.WarScore
+          game.stage = GameStage.WarReveal
         } else {
-          game.stage = GameStage.Score
+          game.stage = GameStage.Reveal
         }
     },
 
@@ -221,9 +221,9 @@ Rune.initLogic({
       const playerTwo = game.players.two;
 
       if (playerOne.war.hero && playerTwo.war.hero) {
-        game.stage = GameStage.WarScore
+        game.stage = GameStage.WarReveal
       } else {
-        game.stage = GameStage.Score
+        game.stage = GameStage.Reveal
       }
     },
 
