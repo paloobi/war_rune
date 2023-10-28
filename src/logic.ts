@@ -89,12 +89,43 @@ Rune.initLogic({
         return;
       }
       const playerOne = game.players.one;
-      // set the stage to joker if one occurs, otherwise it'll move to select
-      game.stage = drawHand(playerOne);
+      const playerOneHand = playerOne.hand;
+      for (let i = 0; i < playerOneHand.length; i++) {
+          if (!playerOneHand[i]) {
+            const cardToDraw = playerOne.deck.shift();
+            if (cardToDraw?.suit === 'joker') {
+              console.log(cardToDraw, "It's a joker!")
+              game.stage = GameStage.Joker;
+            }
+            if (cardToDraw) {
+              playerOneHand[i] = cardToDraw;
+              cardToDraw.isHidden = false;
+            } else {
+              // TODO: figure out if this is a game over condition?
+              throw new Error("No cards left in deck");
+            }
+          }
+        }
 
       const playerTwo = game.players.two;
-      game.stage = drawHand(playerTwo);
-
+      const playerTwoHand = playerTwo.hand;
+      for (let i = 0; i < playerTwoHand.length; i++) {
+        if (!playerTwoHand[i]) {
+          const cardToDraw = playerOne.deck.shift();
+          if (cardToDraw?.suit === 'joker') {
+            console.log(cardToDraw, "It's a joker!")
+            game.stage = GameStage.Joker;
+          }
+          if (cardToDraw) {
+            playerTwoHand[i] = cardToDraw;
+            cardToDraw.isHidden = false;
+          } else {
+            // TODO: figure out if this is a game over condition?
+            throw new Error("No cards left in deck");
+          }
+        }
+      }
+      
       if (game.stage !== GameStage.Joker) {
         game.stage = GameStage.Select;
       }
@@ -270,17 +301,17 @@ Rune.initLogic({
 
       if (game.stage === GameStage.Discard && winner) {
         game.players[winner].deck.push(
-          {...playerOneCard, isHidden: true},
-          {...playerTwoCard, isHidden: true}
+          playerOneCard,
+          playerTwoCard
         );
 
         if (game.players.one.war.hero && game.players.two.war.hero) {
           // in a tie, all the cards go to the winner
           game.players[winner].deck.push(
-            {...game.players.one.war.hero, isHidden: true},
-            {...game.players.two.war.hero, isHidden: true},
-            ...game.players.one.war.sacrifices.map(card => ({...card, isHidden: true})),
-            ...game.players.two.war.sacrifices.map(card => ({...card, isHidden: true}))
+            game.players.one.war.hero,
+            game.players.two.war.hero,
+            ...game.players.one.war.sacrifices,
+            ...game.players.two.war.sacrifices
           );
           game.players.one.war = {
             hero: null,

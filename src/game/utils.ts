@@ -49,13 +49,13 @@ export function buildDeck() {
       if (suit === 'joker' || rank === 'red' || rank === 'black') {
         return;
       }
-      deck.push({ rank, suit, isHidden: true });
+      deck.push({ rank, suit, isHidden: false });
     });
   });
   
   deck.push(
-    {suit: 'joker', rank: 'red', isHidden: true},
-    {suit: 'joker', rank: 'black', isHidden: true}
+    {suit: 'joker', rank: 'red', isHidden: false},
+    {suit: 'joker', rank: 'black', isHidden: false}
   );
 
   shuffle(deck);
@@ -66,23 +66,3 @@ export function buildDeck() {
 // TODO: Jokers successfully added to deck but not getting shuffled? 
 // Haven't looked into this too deeply
 
-export function drawHand(player: Player): GameStage {
-  const {hand} = player;
-  for (let i = 0; i < hand.length; i++) {
-      if (!hand[i]) {
-        const cardToDraw = player.deck.shift();
-        if (cardToDraw?.suit === 'joker') {
-          console.log(cardToDraw, "It's a joker!")
-          return GameStage.Joker;
-        }
-        if (cardToDraw) {
-          hand[i] = cardToDraw;
-          cardToDraw.isHidden = false;
-        } else {
-          // TODO: figure out if this is a game over condition?
-          throw new Error("No cards left in deck");
-        }
-      }
-    }
-    return GameStage.Select;
-}

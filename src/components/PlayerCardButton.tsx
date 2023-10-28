@@ -51,7 +51,17 @@ const PlayerCardButton = ({
             // attempt to score cards after a delay
             Rune.actions.scoreCards();
             // draw cards after a delay
-            setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+            setTimeout(() => {
+              Rune.actions.drawCards();
+              // check for joker phase after a delay
+              setTimeout(() => {
+                Rune.actions.joker();
+                // draw cards again after joker
+                setTimeout(() => {
+                  Rune.actions.drawCards();
+                }, ACTION_DELAY);
+              }, ACTION_DELAY);
+            }, ACTION_DELAY);
           }, ACTION_DELAY);
         }, ACTION_DELAY);
       }}
