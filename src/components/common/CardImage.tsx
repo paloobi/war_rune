@@ -1,4 +1,5 @@
 import { Card } from "../../game/types/card";
+import "./CardImage.css";
 
 const CardImage = ({ card }: { card: Card }) => {
   return (

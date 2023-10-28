@@ -1,3 +1,5 @@
+import "./EmptyCardSlot.css";
+
 const EmptyCardSlot = () => {
   return <div className="card_empty_slot"></div>;
 };

@@ -36,7 +36,7 @@ img {
   height: 60px;
 }
 
-.card_empty_slot {
+.card_empty_slot_debug {
   border: 1px dashed darkgray;
   border-radius: 4%;
   /* match the content + padding width from .card_button that has an image */

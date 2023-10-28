@@ -94,7 +94,7 @@ const PlayerDebugInfo = () => {
               <CardImage card={card} />
             </button>
           ) : (
-            <div key={index} className="card_empty_slot">
+            <div key={index} className="card_empty_slot_debug">
               <p>
                 Empty slot <br /> in hand
               </p>

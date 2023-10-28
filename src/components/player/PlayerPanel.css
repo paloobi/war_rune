@@ -1,7 +1,7 @@
 .playerPanel {
   display: grid; 
   grid-template-columns: 1fr 1fr 1fr; 
-  grid-template-rows: 1fr 1fr 1fr; 
+  grid-template-rows: 2fr 1fr; 
   gap: 8px; 
   grid-template-areas: 
     "panelLeft panelLeft play"
@@ -11,7 +11,7 @@
 
 .playerPanel_left {
   grid-area: panelLeft;
-  align-content: baseline;
+  align-self: baseline;
 }
 
 .playerPanel_deck {

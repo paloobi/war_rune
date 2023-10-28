@@ -2,6 +2,7 @@ import { useContext } from "react";
 import CardImage from "../common/CardImage";
 import EmptyCardSlot from "../common/EmptyCardSlot";
 import { GameContext } from "../../game/GameContext";
+import "./PlayerHand.css";
 
 const PlayerHand = () => {
   const { player } = useContext(GameContext);
@@ -10,7 +11,7 @@ const PlayerHand = () => {
   }
   const { hand } = player;
   return (
-    <div>
+    <div className="playerHand_container">
       {hand.map((card) =>
         card ? (
           <CardImage card={card} key={`${card.rank}-${card.suit}`} />
