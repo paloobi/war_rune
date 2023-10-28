@@ -9,6 +9,10 @@
   box-sizing: border-box;
 }
 
+body {
+  overflow-y:scroll;
+}
+
 img {
   image-rendering: pixelated;
 }

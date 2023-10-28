@@ -25,13 +25,11 @@ function App() {
   useEffect(() => {
     Rune.initClient({
       onChange: ({ game, yourPlayerId }) => {
-        if (!playerId) {
-          setPlayerId(yourPlayerId);
-        }
+        setPlayerId(yourPlayerId);
         setGame(game);
       },
     });
-  }, [playerId]);
+  }, []);
 
   if (!game) {
     return <div>Loading...</div>;
