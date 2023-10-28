@@ -1,16 +1,16 @@
 import { Card } from "../game/types/card";
 import CardImage from "./CardImage";
-import { GameStage, GameState } from "../game/types/game";
+import { GameStage } from "../game/types/game";
 import { ACTION_DELAY } from "../game/utils";
+import { useContext } from "react";
+import { GameContext } from "../game/GameContext";
 
-const PlayerDebugInfo = ({
-  game,
-  playerNumber,
-}: {
-  game: GameState;
-  playerNumber: "one" | "two";
-}) => {
-  const player = game.players[playerNumber];
+const PlayerDebugInfo = () => {
+  const { game, player } = useContext(GameContext);
+
+  if (!game || !player) {
+    return null;
+  }
 
   const isSelectDisabled = (): boolean => {
     switch (game.stage) {
