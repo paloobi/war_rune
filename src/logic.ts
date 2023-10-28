@@ -201,15 +201,18 @@ Rune.initLogic({
       }
 
       if (game.stage === GameStage.Discard && winner) {
-        game.players[winner].deck.push(playerOneCard, playerTwoCard);
+        game.players[winner].deck.push(
+          {...playerOneCard, isHidden: true},
+          {...playerTwoCard, isHidden: true}
+        );
 
         if (game.players.one.war.hero && game.players.two.war.hero) {
           // in a tie, all the cards go to the winner
           game.players[winner].deck.push(
-            game.players.one.war.hero,
-            game.players.two.war.hero,
-            ...game.players.one.war.sacrifices,
-            ...game.players.two.war.sacrifices
+            {...game.players.one.war.hero, isHidden: true},
+            {...game.players.two.war.hero, isHidden: true},
+            ...game.players.one.war.sacrifices.map(card => ({...card, isHidden: true})),
+            ...game.players.two.war.sacrifices.map(card => ({...card, isHidden: true}))
           );
           game.players.one.war = {
             hero: null,
