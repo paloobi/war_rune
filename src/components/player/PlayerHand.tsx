@@ -1,7 +1,17 @@
 import { Player } from "../../game/types/player";
+import CardImage from "../common/CardImage";
 
 const PlayerHand = ({ player }: { player: Player }) => {
-  return <div>Player Hand</div>;
+  const { hand } = player;
+  return (
+    <div>
+      {hand.map((card) =>
+        card ? (
+          <CardImage card={card} key={`${card.rank}-${card.suit}`} />
+        ) : null
+      )}
+    </div>
+  );
 };
 
 export default PlayerHand;
