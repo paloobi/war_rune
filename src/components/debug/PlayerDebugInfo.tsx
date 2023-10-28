@@ -1,6 +1,6 @@
 import { Card } from "../../game/types/card";
 import CardImage from "../common/CardImage";
-import PlayerCardButton from "../PlayerCardButton";
+import PlayerCardButton from "../player/PlayerCardButton";
 import { useContext } from "react";
 import { GameContext } from "../../game/GameContext";
 

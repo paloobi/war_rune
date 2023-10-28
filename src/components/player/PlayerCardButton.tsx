@@ -1,9 +1,11 @@
 import { useContext } from "react";
-import { Card } from "../game/types/card";
-import { GameStage } from "../game/types/game";
-import { ACTION_DELAY } from "../game/utils";
-import CardImage from "./CardImage";
-import { GameContext } from "../game/GameContext";
+import { Card } from "../../game/types/card";
+import { GameStage } from "../../game/types/game";
+import { ACTION_DELAY } from "../../game/utils";
+import CardImage from "../common/CardImage";
+import { GameContext } from "../../game/GameContext";
+
+import "./PlayerCardButton.css";
 
 const PlayerCardButton = ({
   card,

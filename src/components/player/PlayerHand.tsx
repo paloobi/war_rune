@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import CardImage from "../common/CardImage";
 import EmptyCardSlot from "../common/EmptyCardSlot";
 import { GameContext } from "../../game/GameContext";
 import "./PlayerHand.css";
+import PlayerCardButton from "./PlayerCardButton";
 
 const PlayerHand = () => {
   const { player } = useContext(GameContext);
@@ -12,9 +12,9 @@ const PlayerHand = () => {
   const { hand } = player;
   return (
     <div className="playerHand_container">
-      {hand.map((card) =>
+      {hand.map((card, index) =>
         card ? (
-          <CardImage card={card} key={`${card.rank}-${card.suit}`} />
+          <PlayerCardButton card={card} cardIndex={index} />
         ) : (
           <EmptyCardSlot />
         )

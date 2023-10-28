@@ -1,0 +1,9 @@
+.card_button {
+  padding: 0;
+  height:fit-content;
+  border: none;
+}
+
+.card_button:hover {
+  transform: translateY(-3px) scale(1.05,1.05);
+}

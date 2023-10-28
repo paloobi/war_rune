@@ -6,6 +6,7 @@
   align-items: center;
   justify-content: center;
   width: 100vw;
+  box-sizing: border-box;
 }
 
 img {
@@ -29,11 +30,6 @@ img {
 .card_image {
   width: 80px;
   height: 80px;
-}
-
-.card_button .card_image {
-  width: 60px;
-  height: 60px;
 }
 
 .card_empty_slot_debug {
