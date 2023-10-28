@@ -1,9 +1,6 @@
 import { PlayerClass, getSuitFromClass } from "../game/types/class";
 
-
-
-const ClassImage = ({playerClass}: {playerClass: PlayerClass}) => {
-  
+const ClassImage = ({ playerClass }: { playerClass: PlayerClass }) => {
   const classSuit = getSuitFromClass(playerClass);
 
   return (

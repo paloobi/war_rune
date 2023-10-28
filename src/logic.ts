@@ -1,10 +1,10 @@
 import type { RuneClient } from "rune-games-sdk/multiplayer"
 import type { GameState } from "./game/types/game";
-import { GameStage } from "./game/types/game";
-import { Card, CardRank, CardSuit, cardRanks, cardSuits } from "./game/types/card";
-import { buildDeck, getCardValueFromRank, shuffle, getTwoRandomCardsFromDeck } from "./game/utils";
-import { Player } from "./game/types/player";
 import { PlayerClass } from "./game/types/class";
+import { GameStage } from "./game/types/game";
+import { Card } from "./game/types/card";
+import { buildDeck, drawHand, getCardValueFromRank, getTwoRandomCardsFromDeck } from "./game/utils";
+import { Player } from "./game/types/player";
 
 type GameActions = {
   setStage: (params: { stage: GameStage }) => void
@@ -12,6 +12,7 @@ type GameActions = {
   selectClass: (playerClass: PlayerClass) => void,
   drawCards: () => void,
   selectCard: (params: { playerId: "one" | "two", card: Card, cardIndex: number }) => void,
+  revealCards: () => void,
   scoreCards: () => void
   useClericAbility: () => void
   stealCard: (params: { playerId: "one" | "two", index: number }) => void 
@@ -24,7 +25,7 @@ declare global {
 
 const getInitialState = (allPlayerIds: string[]): GameState => {
   return {
-    stage: GameStage.ClassSelect,
+    stage: GameStage.Start,
     players: {
       one: {
         playerId: allPlayerIds[0],
@@ -39,7 +40,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           hero: null
         },
         selectedCard: null,
-        hp: 10,
+        hp: 50,
         wins: 0,
       },
       two: {
@@ -55,7 +56,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           sacrifices: [],
           hero: null
         },
-        hp: 10,
+        hp: 50,
         wins: 0,
       },
     },
@@ -118,38 +119,8 @@ Rune.initLogic({
         console.log(`Skipping draw for now, it's ${game.stage} stage`);
         return;
       }
-
-      const playerOne = game.players.one;
-      const playerTwo = game.players.two;
-
-      const playerOneHand = playerOne.hand;
-      for (let i = 0; i < playerOneHand.length; i++) {
-        if (!playerOneHand[i]) {
-          const cardToDraw = playerOne.deck.shift();
-          if (cardToDraw) {
-            // TODO: draw a card randomly
-            playerOneHand[i] = cardToDraw;
-          } else {
-            // TODO: figure out if this is a game over condition?
-            throw new Error("No cards left in deck");
-          }
-        }
-      }
-
-
-      const playerTwoHand = playerTwo.hand;
-      for (let i = 0; i < playerTwoHand.length; i++) {
-        if (!playerTwoHand[i]) {
-          const cardToDraw = playerTwo.deck.shift();
-          if (cardToDraw) {
-            // TODO: draw a card randomly
-            playerTwoHand[i] = cardToDraw;
-          } else {
-            // TODO: figure out if this is a game over condition?
-            throw new Error("No cards left in deck");
-          }
-        }
-      }
+      drawHand(game.players.one);
+      drawHand(game.players.two);
       game.stage = GameStage.Select;
     },
 
@@ -165,8 +136,7 @@ Rune.initLogic({
 
       if (game.stage === GameStage.Select) {
         if (!player.selectedCard) {
-          player.selectedCard = card;
-          console.log(player.hand, cardIndex);
+          player.selectedCard = {...card, isHidden: true};
           player.hand[cardIndex] = null;
         }
         // if both players have selected cards
@@ -199,12 +169,13 @@ Rune.initLogic({
               game.stage = GameStage.Score;
             } 
           }
+          game.stage = GameStage.Reveal;
         }
       } else {
         if (player.war.sacrifices.length < 2) {
-          player.war.sacrifices.push(card);
+          player.war.sacrifices.push({...card, isHidden: true});
         } else if (!player.war.hero) {
-          player.war.hero = card;
+          player.war.hero = {...card, isHidden: true};
         } else {
           throw new Error('The tie-breaker already ended');
         }
@@ -212,7 +183,7 @@ Rune.initLogic({
         player.hand[cardIndex] = null;
         
         if (game.players.one.war.hero && game.players.two.war.hero) {
-          game.stage = GameStage.WarScore;
+          game.stage = GameStage.WarReveal;
           if (game.players.one.selectedClass === "cleric" || game.players.two.selectedClass === "cleric") {
             game.stage = GameStage.ClericAbility;
           } 
@@ -253,7 +224,40 @@ Rune.initLogic({
         game.stage = GameStage.WarScore
       } else {
         game.stage = GameStage.Score
-      } 
+      }
+    },
+
+    revealCards: (_, {game}) => {
+      if (game.stage !== GameStage.WarReveal && game.stage !== GameStage.Reveal) {
+        console.log("skipping scoring for now, the stage isn't Score or WarScore yet")
+        console.log("STAGE: ", game.stage);
+        return;
+      }
+      const playerOne = game.players.one;
+      const playerTwo = game.players.two;
+      if (!playerOne.selectedCard || !playerTwo.selectedCard) {
+        throw Rune.invalidAction();
+      }
+      // reveal all selected cards
+      playerOne.selectedCard = {...playerOne.selectedCard, isHidden: false};
+      playerTwo.selectedCard = {...playerTwo.selectedCard, isHidden: false};
+
+      if (game.stage === GameStage.WarReveal && playerOne.war.hero && playerTwo.war.hero) {
+        // reveal player one's war cards
+        playerOne.war.hero = {...playerOne.war.hero, isHidden: false};
+        playerOne.war.sacrifices = playerOne.war.sacrifices.map(card => ({...card, isHidden: false}))
+
+        // reveal player two's war cards
+        playerTwo.war.hero = {...playerTwo.war.hero, isHidden: false};
+        playerTwo.war.sacrifices = playerTwo.war.sacrifices.map(card => ({...card, isHidden: false}))
+      }
+
+      if (game.stage === GameStage.Reveal) {
+        game.stage = GameStage.Score;
+      }
+      if (game.stage === GameStage.WarReveal) {
+        game.stage = GameStage.WarScore;
+      }
     },
 
     scoreCards: (_, {game}) => {
@@ -289,15 +293,16 @@ Rune.initLogic({
         playerOneValue = playerOneValue + 2;
       }
 
-        // if player 2 is a mage and card is diamond, add 2 to value
-        if (
-          playerTwo.selectedClass === "mage" && 
-          playerTwoCard.suit === 'diamonds' 
-        ) {
-          playerTwoValue = playerTwoValue + 2;
-        }
+      // if player 2 is a mage and card is diamond, add 2 to value
+      if (
+        playerTwo.selectedClass === "mage" && 
+        playerTwoCard.suit === 'diamonds' 
+      ) {
+        playerTwoValue = playerTwoValue + 2;
+      }
 
       let winner: 'one' | 'two' | null = null;
+
       if (playerOneValue > playerTwoValue) {
         // player 1 wins...
         winner = 'one';
@@ -314,13 +319,25 @@ Rune.initLogic({
           // ...player 2 loses HP
           playerTwo.hp -= playerOneValue - playerTwoValue;
         }
-        
+
+        // If player 2 is reduced to 0 HP
+        if (game.players.two.hp < 1) {
+          Rune.gameOver({
+            players: {
+              [game.players.one.playerId]: "WON",
+              [game.players.two.playerId]: "LOST"
+            },
+            delayPopUp: false
+          })
+        }
+
         game.stage = GameStage.Discard;
         
       } else if (playerOneValue < playerTwoValue) {
         // player 2 wins... 
         winner = 'two';
         playerTwo.wins++;
+
         // if winner is cleric using ability
         if (
           playerTwo.selectedClass === "cleric" && 
@@ -333,6 +350,18 @@ Rune.initLogic({
           // ...player 1 loses HP
           playerOne.hp -= playerTwoValue - playerOneValue;
         }
+
+        // If player 1 is reduced to 0 HP
+        if (game.players.one.hp < 1) {
+          Rune.gameOver({
+            players: {
+              [game.players.two.playerId]: "WON",
+              [game.players.one.playerId]: "LOST"
+            },
+            delayPopUp: false
+          })
+        }
+        
         game.stage = GameStage.Discard;
   
       } else {
@@ -342,14 +371,17 @@ Rune.initLogic({
       }
 
       if (game.stage === GameStage.Discard && winner) {
-        game.players[winner].deck.push(playerOneCard, playerTwoCard);
+        game.players[winner].deck.push(
+          {...playerOneCard, isHidden: true},
+          {...playerTwoCard, isHidden: true}
+        );
 
         if (playerOne.war.hero && playerTwo.war.hero) {
           // if War winner was a rogue who played a club
           // TODO: fix this null-suppressing operator for TS
           if (
             game.players[winner].selectedClass === "rogue" &&
-            game.players[winner].war.hero!.suit === "clubs"
+            game.players[winner].war.hero?.suit === "clubs"
           ) {
             game.stage = GameStage.Steal;
           } else {
@@ -357,10 +389,10 @@ Rune.initLogic({
           }
           // in a tie, all the cards go to the winner
           game.players[winner].deck.push(
-            playerOne.war.hero,
-            playerTwo.war.hero,
-            ...playerOne.war.sacrifices,
-            ...playerTwo.war.sacrifices
+            {...playerOne.war.hero, isHidden: true},
+            {...playerTwo.war.hero, isHidden: true},
+            ...playerOne.war.sacrifices.map(card => ({...card, isHidden: true})),
+            ...playerTwo.war.sacrifices.map(card => ({...card, isHidden: true}))
           );
           playerOne.war = {
             hero: null,
@@ -375,7 +407,7 @@ Rune.initLogic({
           // TODO: fix this null-suppressing operator for TS
           if (
             game.players[winner].selectedClass === "rogue" &&
-            game.players[winner].selectedCard!.suit === "clubs"
+            game.players[winner].selectedCard?.suit === "clubs"
           ) {
             game.stage = GameStage.Steal;
           } else {

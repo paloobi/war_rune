@@ -1,4 +1,5 @@
 import { cardRanks, type Card, type CardRank, cardSuits, CardSuit } from "./types/card";
+import { Player } from "./types/player";
 
 export const ACTION_DELAY = 1000;
 
@@ -44,7 +45,7 @@ export function buildDeck() {
   const deck: Card[] = [];
   cardRanks.forEach((rank: CardRank): void => {
     cardSuits.forEach((suit: CardSuit): void => {
-      deck.push({ rank, suit });
+      deck.push({ rank, suit, isHidden: true });
     });
   });
 
@@ -59,4 +60,20 @@ export const getTwoRandomCardsFromDeck = (deck: Card[]) => {
   const cardTwo = deckWithoutCardOne[Math.floor(Math.random() * deckWithoutCardOne.length)];
 
   return [cardOne, cardTwo];
+}
+
+export function drawHand(player: Player) {
+  const {hand} = player;
+  for (let i = 0; i < hand.length; i++) {
+      if (!hand[i]) {
+      const cardToDraw = player.deck.shift();
+      if (cardToDraw) {
+        hand[i] = cardToDraw;
+        cardToDraw.isHidden = false;
+      } else {
+        // TODO: figure out if this is a game over condition?
+        throw new Error("No cards left in deck");
+      }
+    }
+  }
 }
