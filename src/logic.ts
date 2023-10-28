@@ -32,7 +32,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           hero: null
         },
         selectedCard: null,
-        hp: 10,
+        hp: 50,
         wins: 0,
       },
       two: {
@@ -45,7 +45,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           sacrifices: [],
           hero: null
         },
-        hp: 10,
+        hp: 50,
         wins: 0,
       },
     },
