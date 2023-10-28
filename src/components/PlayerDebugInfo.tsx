@@ -67,7 +67,7 @@ const PlayerDebugInfo = () => {
 
       <h3>Deck</h3>
       <p>
-        {player.deck.map((card: Card) => ( //TODO: hide deck cards again
+        {player.deck.map((card: Card) => (
           <CardImage key={`${card.rank}_${card.suit}`} card={card} />
         ))}
       </p>
