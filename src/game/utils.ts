@@ -1,6 +1,4 @@
 import { cardRanks, type Card, type CardRank, cardSuits, CardSuit } from "./types/card";
-import { GameStage, GameState } from "./types/game";
-import { Player } from "./types/player";
 
 export const ACTION_DELAY = 1000;
 
