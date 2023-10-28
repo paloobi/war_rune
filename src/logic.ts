@@ -89,9 +89,11 @@ Rune.initLogic({
       }
       drawHand(game.players.one);
       drawHand(game.players.two);
+
       game.stage = GameStage.Select;
     },
 
+    // TODO: Game over logic for if you run out of cards in the middle of a war
     selectCard: (
       {playerId, card, cardIndex},
       {game}
@@ -187,12 +189,32 @@ Rune.initLogic({
         winner = 'one';
         game.players.one.wins++;
         game.players.two.hp -= playerOneValue - playerTwoValue;
+
+        // If there are no cards in deck after losing
+        if (game.players.two.deck.length === 0) {
+          Rune.gameOver({
+            players: {
+              [game.players.one.playerId]: "WON",
+              [game.players.two.playerId]: "LOST",
+            }
+          })
+        }
         game.stage = GameStage.Discard;
       } else if (playerOneValue < playerTwoValue) {
         // player 2 wins, player 1 loses HP
         winner = 'two';
         game.players.two.wins++;
         game.players.one.hp -= playerTwoValue - playerOneValue;
+
+        // If there are no cards in deck after losing
+        if (game.players.one.deck.length === 0) {
+          Rune.gameOver({
+            players: {
+              [game.players.two.playerId]: "WON",
+              [game.players.one.playerId]: "LOST",
+            }
+          })
+        }
         game.stage = GameStage.Discard;
       } else {
         // begin war
