@@ -1,6 +1,8 @@
 .card_empty_slot {
-  border: 1px dashed darkgray;
-  border-radius: 4%;
+  box-sizing: border-box;
+  border: 4px dashed #ccc;
+  background-color: #eee;
+  border-radius: 5%;
   width: 80px;
   height: 80px;
   display: flex;
