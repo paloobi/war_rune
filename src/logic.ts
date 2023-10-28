@@ -25,7 +25,7 @@ declare global {
 
 const getInitialState = (allPlayerIds: string[]): GameState => {
   return {
-    stage: GameStage.Start,
+    stage: GameStage.ClassSelect,
     players: {
       one: {
         playerId: allPlayerIds[0],
