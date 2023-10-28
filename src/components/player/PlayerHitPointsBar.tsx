@@ -1,7 +1,7 @@
 import { Player } from "../../game/types/player";
 
 const PlayerHitPointsBar = ({ player }: { player: Player }) => {
-  return <div>Player Hit Points</div>;
+  return <div>{player.hp}</div>;
 };
 
 export default PlayerHitPointsBar;

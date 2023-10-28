@@ -37,12 +37,12 @@ img {
 }
 
 .card_empty_slot {
-  border: 1px solid darkgray;
+  border: 1px dashed darkgray;
   border-radius: 4%;
   /* match the content + padding width from .card_button that has an image */
-  width: 60 + 19 + 19;
+  width: calc(60px + 19px + 19px);
   /* match the content + padding height from .card_button that has an image */
-  height: 63 + 10 + 9;
+  height: calc(63px + 10px + 9px);
   margin-top: 8px;
   display: flex;
   align-content: center;

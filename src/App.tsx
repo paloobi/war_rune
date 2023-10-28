@@ -40,13 +40,15 @@ function App() {
       {game.stage === GameStage.Start && (
         <button onClick={onDeal}>Deal Cards</button>
       )}
-      <PlayerPanel
-        player={
-          playerId === game.players.one.playerId
-            ? game.players.one
-            : game.players.two
-        }
-      />
+      {game.stage !== GameStage.Start && (
+        <PlayerPanel
+          player={
+            playerId === game.players.one.playerId
+              ? game.players.one
+              : game.players.two
+          }
+        />
+      )}
       <div>
         {playerId === game.players.one.playerId && (
           <PlayerDebugInfo game={game} playerNumber="one" />
