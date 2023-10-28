@@ -187,12 +187,34 @@ Rune.initLogic({
         winner = 'one';
         game.players.one.wins++;
         game.players.two.hp -= playerOneValue - playerTwoValue;
+
+      // If player 2 is reduced to 0 HP
+      if (game.players.two.hp < 1) {
+        Rune.gameOver({
+          players: {
+            [game.players.one.playerId]: "WON",
+            [game.players.two.playerId]: "LOST"
+          },
+          delayPopUp: false
+        })
+      }
         game.stage = GameStage.Discard;
       } else if (playerOneValue < playerTwoValue) {
         // player 2 wins, player 1 loses HP
         winner = 'two';
         game.players.two.wins++;
         game.players.one.hp -= playerTwoValue - playerOneValue;
+
+        // If player 1 is reduced to 0 HP
+        if (game.players.one.hp < 1) {
+          Rune.gameOver({
+            players: {
+              [game.players.two.playerId]: "WON",
+              [game.players.one.playerId]: "LOST"
+            },
+            delayPopUp: false
+          })
+        }
         game.stage = GameStage.Discard;
       } else {
         // begin war
@@ -227,28 +249,6 @@ Rune.initLogic({
         game.players.one.selectedCard = null;
         game.players.two.selectedCard = null;
         game.stage = GameStage.Draw;
-      }
-      
-      // If player 1 is reduced to 0 HP
-      if (game.players.one.hp < 1) {
-        Rune.gameOver({
-          players: {
-            [game.players.two.playerId]: "WON",
-            [game.players.one.playerId]: "LOST"
-          },
-          delayPopUp: false
-        })
-      }
-
-      // If player 2 is reduced to 0 HP
-      if (game.players.two.hp < 1) {
-        Rune.gameOver({
-          players: {
-            [game.players.one.playerId]: "WON",
-            [game.players.two.playerId]: "LOST"
-          },
-          delayPopUp: false
-        })
       }
     },
   },
