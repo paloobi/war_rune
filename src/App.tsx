@@ -3,6 +3,7 @@ import "./App.css";
 import { GameStage, type GameState } from "./game/types/game.ts";
 import PlayerDebugInfo from "./components/debug/PlayerDebugInfo.tsx";
 import { ACTION_DELAY } from "./game/utils.ts";
+import PlayerPanel from "./components/player/PlayerPanel.tsx";
 
 function App() {
   const [game, setGame] = useState<GameState>();
@@ -39,6 +40,13 @@ function App() {
       {game.stage === GameStage.Start && (
         <button onClick={onDeal}>Deal Cards</button>
       )}
+      <PlayerPanel
+        player={
+          playerId === game.players.one.playerId
+            ? game.players.one
+            : game.players.two
+        }
+      />
       <div>
         {playerId === game.players.one.playerId && (
           <PlayerDebugInfo game={game} playerNumber="one" />
