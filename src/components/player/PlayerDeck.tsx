@@ -2,10 +2,10 @@ import { Player } from "../../game/types/player";
 import CardImage from "../common/CardImage";
 
 const PlayerDeck = ({ player }: { player: Player }) => {
-  const { hand } = player;
+  const { deck } = player;
   return (
     <div>
-      {hand.map((card) =>
+      {deck.map((card) =>
         card ? (
           <CardImage card={card} key={`${card.rank}-${card.suit}`} />
         ) : null
