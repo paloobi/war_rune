@@ -2,7 +2,7 @@ import { Card, cardSuits} from "../game/types/card";
 import { playerClasses } from "../game/types/class";
 import CardImage from "./CardImage";
 import { GameStage, GameState } from "../game/types/game";
-import { ACTION_DELAY } from "../game/utils";
+import { ACTION_DELAY, getTwoRandomCardsFromDeck} from "../game/utils";
 import ClassImage from "./ClassImage";
 
 const PlayerDebugInfo = ({

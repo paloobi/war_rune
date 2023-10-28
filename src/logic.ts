@@ -2,7 +2,7 @@ import type { RuneClient } from "rune-games-sdk/multiplayer"
 import type { GameState } from "./game/types/game";
 import { GameStage } from "./game/types/game";
 import { Card, CardRank, CardSuit, cardRanks, cardSuits } from "./game/types/card";
-import { buildDeck, getCardValueFromRank, shuffle } from "./game/utils";
+import { buildDeck, getCardValueFromRank, shuffle, getTwoRandomCardsFromDeck } from "./game/utils";
 import { Player } from "./game/types/player";
 import { PlayerClass } from "./game/types/class";
 
@@ -396,6 +396,10 @@ Rune.initLogic({
           playerTwo.usingAbility = false;
         }
       }
+
+      // select two random cards from opponent's deck in reserve for a rogue steal ability
+      playerOne.rogueStealCardOptions = getTwoRandomCardsFromDeck(playerTwo.deck);
+      playerTwo.rogueStealCardOptions = getTwoRandomCardsFromDeck(playerOne.deck);
     },
 
     stealCard: ({playerId, index}, {game}) => {
@@ -408,24 +412,24 @@ Rune.initLogic({
       const player = game.players[playerId];
       const opposingPlayer = playerId === "one" ? game.players.two : game.players.one;
 
-      // Check if rogue is using ability
-      if (player.selectedClass === "rogue" && player.usingAbility) {
-        // get two random cards from opponent's deck to choose from
-        const cardOne = opposingPlayer.deck[Math.floor(Math.random() * opposingPlayer.deck.length)];
-        const deckWithoutCardOne = opposingPlayer.deck.filter(card => card !== cardOne)
-        const cardTwo = deckWithoutCardOne[Math.floor(Math.random() * deckWithoutCardOne.length)];
-        const deckWithoutCardOneOrTwo = deckWithoutCardOne.filter(card => card !== cardTwo);
+      //steal card
+      player.deck.push(player.rogueStealCardOptions[index]);
 
-        //steal card
-        player.rogueStealCardOptions.push(cardOne, cardTwo);
-        player.deck.push(player.rogueStealCardOptions[index]);
+      // give opponent new deck without stolen card
+      const newOpponentDeck = opposingPlayer.deck.filter(card => {
+        const cardValues = Object.values(card);
+        console.log(cardValues)
+        const stolenCardValues = Object.values(player.rogueStealCardOptions[index])
+        console.log(stolenCardValues)
 
-        // return other card to opponent's deck
-        const cardToReturnToOpposingPlayer = player.rogueStealCardOptions.filter((card, i) => i !== index)[0];
-        opposingPlayer.deck = deckWithoutCardOneOrTwo;
-        opposingPlayer.deck.push(cardToReturnToOpposingPlayer);
+        console.log(!cardValues.includes(stolenCardValues[0]), !cardValues.includes(stolenCardValues[1]))
+        if (!cardValues.includes(stolenCardValues[0]) && !cardValues.includes(stolenCardValues[1])) {
+          return true;
+        }
+      });
 
-      }
+      
+      opposingPlayer.deck = newOpponentDeck;
 
       game.stage = GameStage.Draw
     }

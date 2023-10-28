@@ -52,3 +52,11 @@ export function buildDeck() {
   
   return deck;
 }
+
+export const getTwoRandomCardsFromDeck = (deck: Card[]) => {
+  const cardOne = deck[Math.floor(Math.random() * deck.length)];
+  const deckWithoutCardOne = deck.filter(card => card !== cardOne)
+  const cardTwo = deckWithoutCardOne[Math.floor(Math.random() * deckWithoutCardOne.length)];
+
+  return [cardOne, cardTwo];
+}
