@@ -1,20 +1,25 @@
+import { useContext } from "react";
 import { Card } from "../game/types/card";
 import { GameStage, GameState } from "../game/types/game";
-import { Player } from "../game/types/player";
 import { ACTION_DELAY } from "../game/utils";
 import CardImage from "./CardImage";
+import { GameContext } from "../game/GameContext";
 
 const PlayerCardButton = ({
   card,
   cardIndex,
-  player,
-  game,
 }: {
   card: Card;
   cardIndex: number;
-  player: Player;
-  game: GameState;
 }) => {
+  const { player, game } = useContext(GameContext);
+
+  if (!player || !game) {
+    throw new Error(
+      "Attempted to render player card before game state instantiated"
+    );
+  }
+
   const isSelectDisabled = (): boolean => {
     switch (game.stage) {
       // disable if select and there is already a selected card

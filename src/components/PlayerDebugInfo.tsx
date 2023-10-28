@@ -1,16 +1,15 @@
 import { Card } from "../game/types/card";
 import CardImage from "./CardImage";
-import { GameState } from "../game/types/game";
 import PlayerCardButton from "./PlayerCardButton";
+import { useContext } from "react";
+import { GameContext } from "../game/GameContext";
 
-const PlayerDebugInfo = ({
-  game,
-  playerNumber,
-}: {
-  game: GameState;
-  playerNumber: "one" | "two";
-}) => {
-  const player = game.players[playerNumber];
+const PlayerDebugInfo = () => {
+  const { game, player } = useContext(GameContext);
+
+  if (!game || !player) {
+    return null;
+  }
 
   return (
     <div className="player_debug_info">
@@ -55,12 +54,7 @@ const PlayerDebugInfo = ({
       <div className="hand_container">
         {player.hand.map((card: Card | null, index: number) =>
           card ? (
-            <PlayerCardButton
-              player={player}
-              game={game}
-              cardIndex={index}
-              card={card}
-            />
+            <PlayerCardButton cardIndex={index} card={card} />
           ) : (
             <div key={index} className="card_empty_slot">
               <p>
