@@ -118,7 +118,10 @@ const PlayerDebugInfo = () => {
                 setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
               }}
             >
-              <CardImage card={player.rogueStealCardOptions[0]} />
+              <CardImage card={{
+                suit: player.rogueStealCardOptions[0].suit,
+                rank: player.rogueStealCardOptions[0].rank,
+                isHidden: false}} />
             </button>
             <button
               type="button"
@@ -131,7 +134,10 @@ const PlayerDebugInfo = () => {
                 setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
               }}
             >
-              <CardImage card={player.rogueStealCardOptions[1]} />
+              <CardImage card={{
+                suit: player.rogueStealCardOptions[1].suit,
+                rank: player.rogueStealCardOptions[1].rank,
+                isHidden: false}} />
             </button>
           </>
         )}
