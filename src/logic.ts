@@ -2,7 +2,7 @@ import type { RuneClient } from "rune-games-sdk/multiplayer"
 import type { GameState } from "./game/types/game";
 import { GameStage } from "./game/types/game";
 import { Card } from "./game/types/card";
-import { buildDeck, drawHand, getCardValueFromRank, shuffle } from "./game/utils";
+import { buildDeck, getCardValueFromRank, shuffle } from "./game/utils";
 import { Player } from "./game/types/player";
 
 type GameActions = {
@@ -111,7 +111,7 @@ Rune.initLogic({
       const playerTwoHand = playerTwo.hand;
       for (let i = 0; i < playerTwoHand.length; i++) {
         if (!playerTwoHand[i]) {
-          const cardToDraw = playerOne.deck.shift();
+          const cardToDraw = playerTwo.deck.shift();
           if (cardToDraw?.suit === 'joker') {
             console.log(cardToDraw, "It's a joker!")
             game.stage = GameStage.Joker;
@@ -125,7 +125,7 @@ Rune.initLogic({
           }
         }
       }
-      
+
       if (game.stage !== GameStage.Joker) {
         game.stage = GameStage.Select;
       }
