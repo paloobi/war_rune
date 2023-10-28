@@ -50,9 +50,9 @@ export function buildDeck() {
       deck.push({ rank, suit });
     });
   });
-  deck.push({suit: 'joker', rank: 'red'}, {suit: 'joker', rank: 'black'})
-
+  
   shuffle(deck);
+  deck.push({suit: 'joker', rank: 'red'}, {suit: 'joker', rank: 'black'})
   
   return deck;
 }
