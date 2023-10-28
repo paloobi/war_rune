@@ -1,15 +1,13 @@
-import { Player } from "../../game/types/player";
-
 import PlayerDeck from "./PlayerDeck";
 import PlayerHand from "./PlayerHand";
 import PlayerHitPointsBar from "./PlayerHitPointsBar";
 
-const PlayerPanel = ({ player }: { player: Player }) => {
+const PlayerPanel = () => {
   return (
     <>
-      <PlayerHitPointsBar player={player} />
-      <PlayerDeck player={player} />
-      <PlayerHand player={player} />
+      <PlayerHitPointsBar />
+      <PlayerDeck />
+      <PlayerHand />
     </>
   );
 };

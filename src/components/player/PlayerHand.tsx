@@ -1,8 +1,13 @@
-import { Player } from "../../game/types/player";
+import { useContext } from "react";
 import CardImage from "../common/CardImage";
 import EmptyCardSlot from "../common/EmptyCardSlot";
+import { GameContext } from "../../game/GameContext";
 
-const PlayerHand = ({ player }: { player: Player }) => {
+const PlayerHand = () => {
+  const { player } = useContext(GameContext);
+  if (!player) {
+    throw new Error("cannot render hit bar before game start");
+  }
   const { hand } = player;
   return (
     <div>

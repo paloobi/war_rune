@@ -1,6 +1,11 @@
-import { Player } from "../../game/types/player";
+import { useContext } from "react";
+import { GameContext } from "../../game/GameContext";
 
-const PlayerHitPointsBar = ({ player }: { player: Player }) => {
+const PlayerHitPointsBar = () => {
+  const { player } = useContext(GameContext);
+  if (!player) {
+    throw new Error("cannot render hit bar before game start");
+  }
   return <div>{player.hp}</div>;
 };
 
