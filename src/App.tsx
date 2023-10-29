@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import { GameStage, type GameState } from "./game/types/game.ts";
-import PlayerDebugInfo from "./components/PlayerDebugInfo.tsx";
 import { ACTION_DELAY } from "./game/utils.ts";
+import PlayerPanel from "./components/player/PlayerPanel.tsx";
 import { GameContext } from "./game/GameContext.ts";
+import OpponentPanel from "./components/opponent/OpponentPanel.tsx";
+import Table from "./components/table/Table.tsx";
 
 function App() {
   const [game, setGame] = useState<GameState>();
@@ -15,6 +17,12 @@ function App() {
         (game &&
           Object.values(game.players).find(
             (player) => player.playerId === playerId
+          )) ||
+        null,
+      opponent:
+        (game &&
+          Object.values(game.players).find(
+            (player) => player.playerId !== playerId
           )) ||
         null,
     }),
@@ -46,17 +54,16 @@ function App() {
   };
 
   return (
-    <>
-      <GameContext.Provider value={gameContext}>
-        <h1>War</h1>
-        {game.stage === GameStage.Start && (
-          <button onClick={onDeal}>Deal Cards</button>
-        )}
-        <div>
-          <PlayerDebugInfo />
-        </div>
-      </GameContext.Provider>
-    </>
+    <GameContext.Provider value={gameContext}>
+      {game.stage === GameStage.Start && (
+        <button onClick={onDeal}>Deal Cards</button>
+      )}
+      <div className="game-container">
+        {game.stage !== GameStage.Start && <OpponentPanel />}
+        {game.stage !== GameStage.Start && <Table />}
+        {game.stage !== GameStage.Start && <PlayerPanel />}
+      </div>
+    </GameContext.Provider>
   );
 }
 

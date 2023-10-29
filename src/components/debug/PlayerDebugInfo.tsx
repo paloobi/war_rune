@@ -1,14 +1,14 @@
-import { Card } from "../game/types/card";
-import CardImage from "./CardImage";
+import { Card } from "../../game/types/card";
 import { useContext } from "react";
-import { GameContext } from "../game/GameContext";
-import PlayerCardButton from "./PlayerCardButton";
+import CardImage from "../common/CardImage";
+import PlayerCardButton from "../player/PlayerCardButton";
+import { GameContext } from "../../game/GameContext";
 
 const PlayerDebugInfo = () => {
   const { game, player } = useContext(GameContext);
 
   if (!game || !player) {
-    return null;
+    throw new Error("Cannot show debug info before game start");
   }
 
   return (
@@ -56,7 +56,7 @@ const PlayerDebugInfo = () => {
           card ? (
             <PlayerCardButton cardIndex={index} card={card} />
           ) : (
-            <div key={index} className="card_empty_slot">
+            <div key={index} className="card_empty_slot_debug">
               <p>
                 Empty slot <br /> in hand
               </p>

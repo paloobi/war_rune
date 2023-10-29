@@ -1,0 +1,21 @@
+.playerScore {
+  background-color: #F52C4E;
+  color: #FFFFFF;
+  border-radius: 100%;
+  padding: 4px;
+  text-align: center;
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.playerScore p {
+  margin: 0;
+  padding: 0;
+}

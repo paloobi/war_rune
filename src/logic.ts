@@ -5,6 +5,8 @@ import { Card } from "./game/types/card";
 import { buildDeck, getCardValueFromRank, shuffle } from "./game/utils";
 import { Player } from "./game/types/player";
 
+export const MAX_HP = 50;
+
 type GameActions = {
   setStage: (params: { stage: GameStage }) => void
   dealCards: () => void,
@@ -33,7 +35,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           hero: null
         },
         selectedCard: null,
-        hp: 50,
+        hp: MAX_HP,
         wins: 0,
       },
       two: {
@@ -46,7 +48,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           sacrifices: [],
           hero: null
         },
-        hp: 50,
+        hp: MAX_HP,
         wins: 0,
       },
     },
@@ -88,7 +90,7 @@ Rune.initLogic({
         console.log(`Skipping draw for now, it's ${game.stage} stage`);
         return;
       }
-      console.log("Hello I am the Draw stage");
+
       const playerOne = game.players.one;
       const playerOneHand = playerOne.hand;
       for (let i = 0; i < playerOneHand.length; i++) {
@@ -119,7 +121,34 @@ Rune.initLogic({
         }
       }
 
-      game.stage = GameStage.Select;
+      const isPlayerOneDeckEmpty = game.players.one.deck.length < 1;
+      const isPlayerTwoDeckEmpty = game.players.two.deck.length < 1;
+
+      // If player 1 has no cards in deck
+      if (isPlayerOneDeckEmpty) {
+        game.stage = GameStage.End;
+        Rune.gameOver({
+          players: {
+            [game.players.two.playerId]: "WON",
+            [game.players.one.playerId]: "LOST",
+          }
+        })
+      }
+
+      // If player 2 has no cards in deck
+      if (isPlayerTwoDeckEmpty) {
+        game.stage = GameStage.End;
+        Rune.gameOver({
+          players: {
+            [game.players.one.playerId]: "WON",
+            [game.players.two.playerId]: "LOST",
+          }
+        })
+      }
+
+      if (game.stage !== GameStage.End) {
+        game.stage = GameStage.Select;
+      }
     },
 
     joker: (_, {game}) => {
@@ -261,22 +290,27 @@ Rune.initLogic({
       const playerTwoValue = getCardValueFromRank(playerTwoCard.rank);
 
       let winner: 'one' | 'two' | null = null;
-      if (playerOneValue > playerTwoValue) {
+      // if either player plays a joker, initiate joker phase
+      if (playerOneCard.suit === 'joker' || playerTwoCard.suit === 'joker') { 
+        game.stage = GameStage.Joker;
+      } else if (playerOneValue > playerTwoValue) {
         // player 1 wins, player 2 loses HP
         winner = 'one';
         game.players.one.wins++;
         game.players.two.hp -= playerOneValue - playerTwoValue;
 
-      // If player 2 is reduced to 0 HP
-      if (game.players.two.hp < 1) {
-        Rune.gameOver({
-          players: {
-            [game.players.one.playerId]: "WON",
-            [game.players.two.playerId]: "LOST"
-          },
-          delayPopUp: false
-        })
-      }
+        // GAME OVER: If player 2 is reduced to 0 HP
+        if (game.players.two.hp < 1) {
+          game.stage = GameStage.End;
+          Rune.gameOver({
+            players: {
+              [game.players.one.playerId]: "WON",
+              [game.players.two.playerId]: "LOST"
+            },
+            delayPopUp: false
+          })
+        }
+
         game.stage = GameStage.Discard;
       } else if (playerOneValue < playerTwoValue) {
         // player 2 wins, player 1 loses HP
@@ -284,8 +318,9 @@ Rune.initLogic({
         game.players.two.wins++;
         game.players.one.hp -= playerTwoValue - playerOneValue;
 
-        // If player 1 is reduced to 0 HP
+        // GAME OVER: If player 1 is reduced to 0 HP
         if (game.players.one.hp < 1) {
+          game.stage = GameStage.End;
           Rune.gameOver({
             players: {
               [game.players.two.playerId]: "WON",
@@ -295,12 +330,16 @@ Rune.initLogic({
           })
         }
         game.stage = GameStage.Discard;
-      } else if (playerOneValue === playerTwoValue) {
-        // begin war
-        // TODO: handle logic for this
-        game.stage = GameStage.WarSelect;
-      } else if (playerOneCard.suit === 'joker' || playerTwoCard.suit === 'joker') {  // if either player plays a joker, initiate joker phase
-        game.stage = GameStage.Joker
+      } else {
+        // move to a war if initial card selections are a tie
+        if (game.stage === GameStage.Score) {
+          game.stage = GameStage.WarSelect;
+        }
+
+        // If already in a war and tie, then move to discard stage to split cards
+        if (game.stage === GameStage.WarScore) {
+          game.stage = GameStage.Discard;
+        }
       }
 
       if (game.stage === GameStage.Discard && winner) {
@@ -329,6 +368,56 @@ Rune.initLogic({
         // reset selected cards to null
         game.players.one.selectedCard = null;
         game.players.two.selectedCard = null;
+        game.stage = GameStage.Draw;
+      }
+
+      // if there is no winner (tie) when playing a war hero card (i.e., in a war)
+      if (
+        game.players.one.war.hero && 
+        game.players.two.war.hero && 
+        game.players.one.selectedCard &&
+        game.players.two.selectedCard &&
+        !winner) {
+        // Player 1 gets their cards back
+        game.players.one.deck.push(
+          {...game.players.one.selectedCard, isHidden: true}
+        );
+
+          game.players.one.deck.push(
+            {...game.players.one.war.hero, isHidden: true},
+            ...game.players.one.war.sacrifices.map(card => ({...card, isHidden: true}))
+          );
+
+          game.players.one.war = {
+            hero: null,
+            sacrifices: [],
+          };
+        
+        // reset selected cards to null
+        game.players.one.selectedCard = null;
+
+
+        // Player 2 gets their cards back
+        game.players.two.deck.push(
+          {...game.players.two.selectedCard, isHidden: true}
+        );
+
+          game.players.two.deck.push(
+            {...game.players.two.war.hero, isHidden: true},
+            ...game.players.two.war.sacrifices.map(card => ({...card, isHidden: true}))
+          );
+
+          game.players.two.war = {
+            hero: null,
+            sacrifices: [],
+          };
+        
+        // reset selected cards to null
+        game.players.two.selectedCard = null;
+
+        console.dir(game.players.one.deck);
+        console.dir(game.players.two.deck)
+
         game.stage = GameStage.Draw;
       }
     },
