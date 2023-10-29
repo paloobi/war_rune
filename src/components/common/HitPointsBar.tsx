@@ -22,9 +22,6 @@ const HitPointsBar = ({ hp, label }: { hp: number; label: string }) => {
           {hp}/{MAX_HP}
         </div>
       </div>
-      {/* hide this from screen readers
-          since the progress element already
-          contains max + current hp */}
       <progress
         id={`hp_bar-${label}`}
         className={`hp_bar ${getClassName()}`}
