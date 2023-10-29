@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { GameContext } from "../../game/GameContext";
 import { getCardValueFromRank } from "../../game/utils";
 import { GameStage } from "../../game/types/game";
+import OutcomeText from "../common/OutcomeText";
 
 const TableScoreText = () => {
   const { game, player, opponent } = useContext(GameContext);
@@ -21,14 +22,22 @@ const TableScoreText = () => {
     const opponentScore = getCardValueFromRank(opponent.war.hero.rank);
     const playerScore = getCardValueFromRank(player.war.hero.rank);
     const score = Math.abs(opponentScore - playerScore);
-    return score > 0 ? <p>{score}</p> : <p>It's a draw!</p>;
+    return score > 0 ? (
+      <OutcomeText type="damage" contents={"-" + score.toString()} />
+    ) : (
+      <OutcomeText contents="It's a draw!" />
+    );
   }
 
   const opponentScore = getCardValueFromRank(opponent.selectedCard.rank);
   const playerScore = getCardValueFromRank(player.selectedCard.rank);
   const score = Math.abs(opponentScore - playerScore);
 
-  return score > 0 ? <p>{score}</p> : <p>WAR!</p>;
+  return score > 0 ? (
+    <OutcomeText contents={"-" + score.toString()} type="damage" />
+  ) : (
+    <OutcomeText contents="WAR!" type="special" />
+  );
 };
 
 export default TableScoreText;
