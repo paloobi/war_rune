@@ -46,18 +46,25 @@ const PlayerDebugInfo = () => {
       <h3>Class</h3>
       <div className="class_container">
         {game.stage === GameStage.ClassSelect ? (
-          playerClasses.map((playerClass) => (
-            <button
-              className="class_button"
-              disabled={isClassSelectDisabled(playerClass)}
-              key={playerClass}
-              onClick={() => {
-                Rune.actions.selectClass(playerClass);
-              }}
-            >
-              <ClassImage playerClass={playerClass} />
-            </button>
-          ))
+          playerClasses.map((playerClass) => {
+            // FOR NOW, ONLY ONLY MAGE AND KNIGHT BECAUSE OTHER CLASSES NOT STABLE
+            if (playerClass === "knight" || playerClass === "mage") {
+              return (
+                <button
+                  className="class_button"
+                  disabled={isClassSelectDisabled(playerClass)}
+                  key={playerClass}
+                  onClick={() => {
+                    Rune.actions.selectClass(playerClass);
+                  }}
+                >
+                  <ClassImage playerClass={playerClass} />
+                </button>
+              )
+            }
+          }
+            
+          )
         ) : (
           <p>{player.selectedClass}</p>
         )}
