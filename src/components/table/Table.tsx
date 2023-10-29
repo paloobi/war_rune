@@ -5,7 +5,6 @@ import TableCardStack from "./TableCardStack";
 
 import "./Table.css";
 import TablePlayerScore from "./TablePlayerScore";
-import PlayerScore from "../common/PlayerScore";
 
 const Table = () => {
   const { game, player, opponent } = useContext(GameContext);
