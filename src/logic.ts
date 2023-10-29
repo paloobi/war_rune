@@ -79,17 +79,20 @@ Rune.initLogic({
         throw Rune.invalidAction();
       }
 
-      if (game.players.one.playerId === playerId) {
-          game.players.one.selectedClass = playerClass;
-        } else if (game.players.two.playerId === playerId) {
-          game.players.two.selectedClass = playerClass
+      const playerOne = game.players.one;
+      const playerTwo = game .players.two;
+
+      if (playerOne.playerId === playerId) {
+          playerOne.selectedClass = playerClass;
+        } else if (playerTwo.playerId === playerId) {
+          playerTwo.selectedClass = playerClass
         } else {
           throw Rune.invalidAction()
         }
 
         //TODO: make mage always have property usingAbility set to true (passive ability)
 
-      if (game.players.one.selectedClass && game.players.two.selectedClass){
+      if (playerOne.selectedClass && playerTwo.selectedClass){
         game.stage = GameStage.Start;
       }
         
