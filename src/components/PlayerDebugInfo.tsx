@@ -5,7 +5,7 @@ import { ACTION_DELAY } from "../game/utils";
 import PlayerCardButton from "./PlayerCardButton";
 import { useContext } from "react";
 import { GameContext } from "../game/GameContext";
-import { playerClasses } from "../game/types/class";
+import { PlayerClass, playerClasses } from "../game/types/class";
 import ClassImage from "./ClassImage";
 
 const PlayerDebugInfo = () => {
@@ -15,10 +15,14 @@ const PlayerDebugInfo = () => {
     return null;
   }
 
-  const isClassSelectDisabled = (): boolean => {
-    // disable if class select and there is already a class
+  const isClassSelectDisabled = (playerClass: PlayerClass): boolean => {
+    // disable if class has already been selected
     if (game.stage === GameStage.ClassSelect) {
-      return !!player.selectedClass;
+      if (player.playerNum === 1) {
+        return game.players.two.selectedClass === playerClass;
+      } else {
+        return game.players.one.selectedClass === playerClass;
+      }
     } else {
       return true;
     }
@@ -41,11 +45,11 @@ const PlayerDebugInfo = () => {
 
       <h3>Class</h3>
       <div className="class_container">
-        {!player.selectedClass ? (
+        {game.stage === GameStage.ClassSelect ? (
           playerClasses.map((playerClass) => (
             <button
               className="class_button"
-              disabled={isClassSelectDisabled()}
+              disabled={isClassSelectDisabled(playerClass)}
               key={playerClass}
               onClick={() => {
                 Rune.actions.selectClass(playerClass);
