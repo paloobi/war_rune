@@ -44,3 +44,15 @@
 @keyframes move-down-most {
   100% {transform: translateY(120px)}
 }
+
+.table_cardStack.winner {
+  box-shadow: 0 0 8px 8px #FFCB3B;
+  animation: get-bigger 0.5s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes get-bigger {
+  100% {
+    transform: scale(1.1) translateY(12px);
+  }
+}
