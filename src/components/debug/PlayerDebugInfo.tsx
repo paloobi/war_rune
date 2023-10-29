@@ -42,18 +42,22 @@ const PlayerDebugInfo = () => {
       <h3>Class</h3>
       <div className="class_container">
         {!player.selectedClass ? (
-          playerClasses.map((playerClass) => (
-            <button
-              className="class_button"
-              disabled={isClassSelectDisabled()}
-              key={playerClass}
-              onClick={() => {
-                Rune.actions.selectClass(playerClass);
-              }}
-            >
-              <ClassImage playerClass={playerClass} />
-            </button>
-          ))
+          playerClasses.map((playerClass) => {
+            if (playerClass === "mage" || playerClass === "knight") {
+              return (
+                <button
+                  className="class_button"
+                  disabled={isClassSelectDisabled()}
+                  key={playerClass}
+                  onClick={() => {
+                    Rune.actions.selectClass(playerClass);
+                  }}
+                >
+                  <ClassImage playerClass={playerClass} />
+                </button>
+              )
+            }
+          })
         ) : (
           <p>{player.selectedClass}</p>
         )}
