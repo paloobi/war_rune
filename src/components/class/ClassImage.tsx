@@ -1,4 +1,4 @@
-import { PlayerClass, getSuitFromClass } from "../game/types/class";
+import { PlayerClass, getSuitFromClass } from "../../game/types/class";
 
 const ClassImage = ({ playerClass }: { playerClass: PlayerClass }) => {
   const classSuit = getSuitFromClass(playerClass);

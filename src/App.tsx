@@ -6,6 +6,7 @@ import PlayerPanel from "./components/player/PlayerPanel.tsx";
 import { GameContext } from "./game/GameContext.ts";
 import OpponentPanel from "./components/opponent/OpponentPanel.tsx";
 import Table from "./components/table/Table.tsx";
+import ClassSelect from "./components/class/ClassSelect.tsx";
 
 function App() {
   const [game, setGame] = useState<GameState>();
@@ -53,16 +54,22 @@ function App() {
     }, ACTION_DELAY);
   };
 
+  const hasGameStarted =
+    game.stage !== GameStage.Start && game.stage !== GameStage.ClassSelect;
+
   return (
     <GameContext.Provider value={gameContext}>
+      {game.stage === GameStage.ClassSelect && <ClassSelect />}
       {game.stage === GameStage.Start && (
         <button onClick={onDeal}>Deal Cards</button>
       )}
-      <div className="game-container">
-        {game.stage !== GameStage.Start && <OpponentPanel />}
-        {game.stage !== GameStage.Start && <Table />}
-        {game.stage !== GameStage.Start && <PlayerPanel />}
-      </div>
+      {hasGameStarted && (
+        <div className="game-container">
+          <OpponentPanel />
+          <Table />
+          <PlayerPanel />
+        </div>
+      )}
     </GameContext.Provider>
   );
 }
