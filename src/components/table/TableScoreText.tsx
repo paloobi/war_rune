@@ -33,11 +33,25 @@ const TableScoreText = () => {
   const playerScore = getCardValueFromRank(player.selectedCard.rank);
   const score = Math.abs(opponentScore - playerScore);
 
-  return score > 0 ? (
-    <OutcomeText contents={"-" + score.toString()} type="damage" />
-  ) : (
-    <OutcomeText contents="WAR!" type="special" />
-  );
+  if (player.selectedCard.suit === 'joker' || opponent.selectedCard.suit === 'joker') {
+    return(
+      <OutcomeText contents="Joker!" type="joker" />
+    )
+  } else if(score > 0) {
+    return(
+      <OutcomeText contents={"-" + score.toString()} type="damage" />
+    )
+  } else {
+    return(
+      <OutcomeText contents="WAR!" type="special" />
+    )
+  }
+
+//   return score > 0 ? (
+//     <OutcomeText contents={"-" + score.toString()} type="damage" />
+//   ) : (
+//     <OutcomeText contents="WAR!" type="special" />
+//   );
 };
 
 export default TableScoreText;
