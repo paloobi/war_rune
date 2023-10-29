@@ -4,6 +4,8 @@ import { getCardValueFromRank } from "../../game/utils";
 import { GameStage } from "../../game/types/game";
 import OutcomeText from "../common/OutcomeText";
 
+import "./TableScoreText.css";
+
 const TableScoreText = () => {
   const { game, player, opponent } = useContext(GameContext);
 
@@ -23,9 +25,15 @@ const TableScoreText = () => {
     const playerScore = getCardValueFromRank(player.war.hero.rank);
     const score = Math.abs(opponentScore - playerScore);
     return score > 0 ? (
-      <OutcomeText type="damage" contents={"-" + score.toString()} />
+      <div
+        className={`scoreAnimation--${
+          opponentScore > playerScore ? "opponentWin" : "playerWin"
+        }`}
+      >
+        <OutcomeText type="damage" contents={"-" + score.toString()} />
+      </div>
     ) : (
-      <OutcomeText contents="It's a draw!" />
+      <OutcomeText contents="Draw!" />
     );
   }
 
@@ -34,7 +42,13 @@ const TableScoreText = () => {
   const score = Math.abs(opponentScore - playerScore);
 
   return score > 0 ? (
-    <OutcomeText contents={"-" + score.toString()} type="damage" />
+    <div
+      className={`scoreAnimation--${
+        opponentScore > playerScore ? "opponentWin" : "playerWin"
+      }`}
+    >
+      <OutcomeText contents={"-" + score.toString()} type="damage" />
+    </div>
   ) : (
     <OutcomeText contents="WAR!" type="special" />
   );

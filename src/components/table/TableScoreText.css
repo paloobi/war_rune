@@ -1,0 +1,23 @@
+.scoreAnimation--opponentWin {
+  animation: towards-player 3s;
+  animation-fill-mode: forwards;
+}
+
+.scoreAnimation--playerWin {
+  animation: towards-opponent 3s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes towards-player {
+  100% {
+    transform: translate(-50%, 400px) scale(0.2);
+    opacity: 0;
+  }
+}
+
+@keyframes towards-opponent {
+  100% {
+    transform: translate(50%, -400px) scale(0.2);
+    opacity: 0;
+  }
+}

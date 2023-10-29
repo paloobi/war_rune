@@ -4,8 +4,11 @@
   animation-iteration-count: infinite;
 }
 
+.outcomeText.outcomeText-damage {
+  animation: none;
+}
 .outcomeText-damage {
-  color: #D01232;
+  color: #F52C4E;
 }
 
 .outcomeText-special {
