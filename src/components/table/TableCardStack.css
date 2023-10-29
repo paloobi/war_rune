@@ -7,6 +7,7 @@
   top: 20px;
 }
 
+
 .table_cardStack > :nth-child(3) {
   position: absolute;
   top: 40px;
@@ -15,4 +16,31 @@
 .table_cardStack > :nth-child(4) {
   position: absolute;
   top: 60px;
+}
+
+.showAll.table_cardStack > :nth-child(2) {
+  animation: move-down 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.showAll.table_cardStack > :nth-child(3) {
+  animation: move-down-more 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.showAll.table_cardStack > :nth-child(4) {
+  animation: move-down-most 0.5s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes move-down {
+  100% {transform: translateY(40px)}
+}
+
+@keyframes move-down-more {
+  100% {transform: translateY(80px)}
+}
+
+@keyframes move-down-most {
+  100% {transform: translateY(120px)}
 }
