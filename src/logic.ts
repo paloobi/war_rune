@@ -5,6 +5,8 @@ import { Card } from "./game/types/card";
 import { buildDeck, drawHand, getCardValueFromRank } from "./game/utils";
 import { Player } from "./game/types/player";
 
+export const MAX_HP = 50;
+
 type GameActions = {
   setStage: (params: { stage: GameStage }) => void
   dealCards: () => void,
@@ -32,7 +34,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           hero: null
         },
         selectedCard: null,
-        hp: 50,
+        hp: MAX_HP,
         wins: 0,
       },
       two: {
@@ -45,7 +47,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           sacrifices: [],
           hero: null
         },
-        hp: 50,
+        hp: MAX_HP,
         wins: 0,
       },
     },
