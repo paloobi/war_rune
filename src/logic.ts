@@ -6,6 +6,8 @@ import { Card } from "./game/types/card";
 import { buildDeck, drawHand, getCardValueFromRank, getTwoRandomCardsFromDeck } from "./game/utils";
 import { Player } from "./game/types/player";
 
+export const MAX_HP = 50;
+
 type GameActions = {
   setStage: (params: { stage: GameStage }) => void
   dealCards: () => void,
@@ -40,7 +42,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           hero: null
         },
         selectedCard: null,
-        hp: 50,
+        hp: MAX_HP,
         wins: 0,
       },
       two: {
@@ -56,7 +58,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           sacrifices: [],
           hero: null
         },
-        hp: 50,
+        hp: MAX_HP,
         wins: 0,
       },
     },
@@ -119,11 +121,33 @@ Rune.initLogic({
         console.log(`Skipping draw for now, it's ${game.stage} stage`);
         return;
       }
-      drawHand(game.players.one);
-      drawHand(game.players.two);
+      const isPlayerOneDeckEmpty = drawHand(game.players.one);
+      const isPlayerTwoDeckEmpty = drawHand(game.players.two);
+
+      // If player 1 has no cards in deck
+      if (isPlayerOneDeckEmpty) {
+        Rune.gameOver({
+          players: {
+            [game.players.two.playerId]: "WON",
+            [game.players.one.playerId]: "LOST",
+          }
+        })
+      }
+
+    // If player 2 has no cards in deck
+    if (isPlayerTwoDeckEmpty) {
+      Rune.gameOver({
+        players: {
+          [game.players.one.playerId]: "WON",
+          [game.players.two.playerId]: "LOST",
+        }
+      })
+    }
+
       game.stage = GameStage.Select;
     },
 
+    // TODO: Game over logic for if you run out of cards in the middle of a war
     selectCard: (
       {playerId, card, cardIndex},
       {game}
@@ -365,9 +389,15 @@ Rune.initLogic({
         game.stage = GameStage.Discard;
   
       } else {
-        // begin war
-        // TODO: handle logic for this
-        game.stage = GameStage.WarSelect;
+        // move to a war if initial card selections are a tie
+        if (game.stage === GameStage.Score) {
+          game.stage = GameStage.WarSelect;
+        }
+
+        // If already in a war and tie, then move to discard stage to split cards
+        if (game.stage === GameStage.WarScore) {
+          game.stage = GameStage.Discard;
+        }
       }
 
       if (game.stage === GameStage.Discard && winner) {
@@ -432,6 +462,56 @@ Rune.initLogic({
       // select two random cards from opponent's deck in reserve for a rogue steal ability
       playerOne.rogueStealCardOptions = getTwoRandomCardsFromDeck(playerTwo.deck);
       playerTwo.rogueStealCardOptions = getTwoRandomCardsFromDeck(playerOne.deck);
+      
+      // if there is no winner (tie) when playing a war hero card (i.e., in a war)
+      if (
+        game.players.one.war.hero && 
+        game.players.two.war.hero && 
+        game.players.one.selectedCard &&
+        game.players.two.selectedCard &&
+        !winner) {
+        // Player 1 gets their cards back
+        game.players.one.deck.push(
+          {...game.players.one.selectedCard, isHidden: true}
+        );
+
+          game.players.one.deck.push(
+            {...game.players.one.war.hero, isHidden: true},
+            ...game.players.one.war.sacrifices.map(card => ({...card, isHidden: true}))
+          );
+
+          game.players.one.war = {
+            hero: null,
+            sacrifices: [],
+          };
+        
+        // reset selected cards to null
+        game.players.one.selectedCard = null;
+
+
+        // Player 2 gets their cards back
+        game.players.two.deck.push(
+          {...game.players.two.selectedCard, isHidden: true}
+        );
+
+          game.players.two.deck.push(
+            {...game.players.two.war.hero, isHidden: true},
+            ...game.players.two.war.sacrifices.map(card => ({...card, isHidden: true}))
+          );
+
+          game.players.two.war = {
+            hero: null,
+            sacrifices: [],
+          };
+        
+        // reset selected cards to null
+        game.players.two.selectedCard = null;
+
+        console.dir(game.players.one.deck);
+        console.dir(game.players.two.deck)
+
+        game.stage = GameStage.Draw;
+      }
     },
 
     stealCard: ({playerId, index}, {game}) => {

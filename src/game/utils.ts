@@ -1,4 +1,5 @@
 import { cardRanks, type Card, type CardRank, cardSuits, CardSuit } from "./types/card";
+import { GameStage, GameState } from "./types/game";
 import { Player } from "./types/player";
 
 export const ACTION_DELAY = 1000;
@@ -70,10 +71,33 @@ export function drawHand(player: Player) {
       if (cardToDraw) {
         hand[i] = cardToDraw;
         cardToDraw.isHidden = false;
-      } else {
-        // TODO: figure out if this is a game over condition?
-        throw new Error("No cards left in deck");
       }
     }
   }
+  // Return boolean that is true if player's deck is empty
+  return player.deck.length === 0;
+}
+
+export function isCurrentWinner(player: Player, game: GameState) {
+  if (game.stage === GameStage.Score && game.players.one.selectedCard && game.players.two.selectedCard) {
+    const playerOneScore = getCardValueFromRank(game.players.one.selectedCard.rank);
+    const playerTwoScore = getCardValueFromRank(game.players.two.selectedCard.rank);
+    if (playerOneScore === playerTwoScore) {
+      return false;
+    }
+    const winner = playerOneScore > playerTwoScore ? game.players.one : game.players.two;
+    return player === winner;
+  }
+
+  if (game.stage === GameStage.WarScore && game.players.one.war.hero && game.players.two.war.hero) {
+    const playerOneScore = getCardValueFromRank(game.players.one.war.hero.rank);
+    const playerTwoScore = getCardValueFromRank(game.players.two.war.hero.rank);
+    if (playerOneScore === playerTwoScore) {
+      return false;
+    }
+    const winner = playerOneScore > playerTwoScore ? game.players.one : game.players.two;
+    return player === winner;
+  }
+
+  return false;
 }

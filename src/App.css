@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 #root {
   max-width: 1280px;
   text-align: center;
@@ -6,6 +10,7 @@
   align-items: center;
   justify-content: center;
   width: 100vw;
+  box-sizing: border-box;
 }
 
 body {
@@ -14,6 +19,14 @@ body {
 
 img {
   image-rendering: pixelated;
+}
+
+.game-container {
+  height: 100vh;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .player_debug_info {
@@ -35,18 +48,13 @@ img {
   height: 80px;
 }
 
-.card_button .card_image {
-  width: 60px;
-  height: 60px;
-}
-
-.card_empty_slot {
-  border: 1px solid darkgray;
+.card_empty_slot_debug {
+  border: 1px dashed darkgray;
   border-radius: 4%;
   /* match the content + padding width from .card_button that has an image */
-  width: 60 + 19 + 19;
+  width: calc(60px + 19px + 19px);
   /* match the content + padding height from .card_button that has an image */
-  height: 63 + 10 + 9;
+  height: calc(63px + 10px + 9px);
   margin-top: 8px;
   display: flex;
   align-content: center;

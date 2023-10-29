@@ -1,0 +1,13 @@
+.card_button {
+  padding: 0;
+  height:fit-content;
+  border: none;
+  border-radius: 30%;
+  background-color: transparent;
+  width: 80px;
+}
+
+.card_button:hover {
+  transform: translateY(-3px) scale(1.05,1.05);
+  box-shadow: 0 5px 10px -5px;
+}

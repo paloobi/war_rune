@@ -1,0 +1,28 @@
+.playerPanel {
+  margin-bottom: 12px;
+  display: grid; 
+  grid-template-columns: 2fr 1fr; 
+  grid-template-rows: 2fr 1fr; 
+  gap: 8px; 
+  grid-template-areas: 
+    "panelLeft panelLeft play"
+    "panelLeft panelLeft play"
+    "panelLeft panelLeft deck"; 
+}
+
+.playerPanel_left {
+  grid-area: panelLeft;
+  align-self: baseline;
+}
+
+.playerPanel_deck {
+  grid-area: deck;
+}
+
+.playerPanel .hp_bar-container {
+  margin-top: 8px;
+}
+
+.playerPanel_deck p {
+  margin: 0;
+}
