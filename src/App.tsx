@@ -53,15 +53,53 @@ function App() {
     }, ACTION_DELAY);
   };
 
+  const getColorClassName = ():
+    | "red"
+    | "orange"
+    | "yellow"
+    | "green"
+    | "purple"
+    | "gray"
+    | null => {
+    switch (game.stage) {
+      case GameStage.Start:
+      case GameStage.Shuffle:
+      case GameStage.Deal:
+      case GameStage.Draw:
+      case GameStage.Discard:
+      case GameStage.End:
+      case GameStage.Select:
+        return "yellow";
+      case GameStage.Reveal:
+      case GameStage.Score:
+        return game.players?.one?.selectedCard?.rank ===
+          game.players?.two?.selectedCard?.rank
+          ? "orange"
+          : "red";
+      case GameStage.WarSelect:
+        return "orange";
+      case GameStage.WarScore:
+      case GameStage.WarReveal:
+        return game.players?.one?.war?.hero?.rank ===
+          game.players?.two?.war?.hero?.rank
+          ? "gray"
+          : "red";
+      default:
+        return null;
+    }
+  };
+
   return (
     <GameContext.Provider value={gameContext}>
-      {game.stage === GameStage.Start && (
-        <button onClick={onDeal}>Deal Cards</button>
-      )}
-      <div className="game-container">
-        {game.stage !== GameStage.Start && <OpponentPanel />}
-        {game.stage !== GameStage.Start && <Table />}
-        {game.stage !== GameStage.Start && <PlayerPanel />}
+      <div className={`page-container ${getColorClassName()}`}>
+        {game.stage === GameStage.Start && (
+          <button onClick={onDeal}>Deal Cards</button>
+        )}
+        <div className="game-container">
+          {game.stage !== GameStage.Start && <OpponentPanel />}
+          {game.stage !== GameStage.Start && <Table />}
+          {game.stage !== GameStage.Start && <PlayerPanel />}
+        </div>
       </div>
     </GameContext.Provider>
   );

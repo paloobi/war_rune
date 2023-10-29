@@ -2,21 +2,12 @@
   font-size: 40px;
   animation: tilt-shaking 0.5s;
   animation-iteration-count: infinite;
+  color: #fff;
+  -webkit-text-stroke: 4px #4D5766;
 }
 
 .outcomeText.outcomeText-damage {
   animation: none;
-}
-.outcomeText-damage {
-  color: #F52C4E;
-}
-
-.outcomeText-special {
-  color: #FF7640;
-}
-
-.outcomeText-heal {
-  color: #15C662;
 }
 
 @keyframes tilt-shaking {
