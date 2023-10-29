@@ -54,7 +54,7 @@ const PlayerCardButton = ({
             Rune.actions.scoreCards();
             // draw cards after a delay
             setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
-          }, ACTION_DELAY);
+          }, ACTION_DELAY * 2);
         }, ACTION_DELAY);
       }}
     >
