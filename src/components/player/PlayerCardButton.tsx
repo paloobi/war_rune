@@ -1,9 +1,11 @@
 import { useContext } from "react";
-import { Card } from "../game/types/card";
-import { GameStage } from "../game/types/game";
-import { ACTION_DELAY } from "../game/utils";
-import CardImage from "./CardImage";
-import { GameContext } from "../game/GameContext";
+import { Card } from "../../game/types/card";
+import { GameStage } from "../../game/types/game";
+import { ACTION_DELAY } from "../../game/utils";
+import CardImage from "../common/CardImage";
+import { GameContext } from "../../game/GameContext";
+
+import "./PlayerCardButton.css";
 
 const PlayerCardButton = ({
   card,
@@ -33,7 +35,6 @@ const PlayerCardButton = ({
         return true;
     }
   };
-
   return (
     <button
       className="card_button"
@@ -45,20 +46,16 @@ const PlayerCardButton = ({
           card,
           cardIndex,
         });
-        if (game.stage !== GameStage.ClericAbility) {
+        setTimeout(() => {
+          // attempt to reveal the cards after a delay
+          Rune.actions.revealCards();
           setTimeout(() => {
-            // attempt to reveal the cards after a delay
-            Rune.actions.revealCards();
-            setTimeout(() => {
-              // attempt to score cards after a delay
-              Rune.actions.scoreCards();
-              // draw cards after a delay
-              setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
-            }, ACTION_DELAY);
-          }, ACTION_DELAY);
-        }
-
-        
+            // attempt to score cards after a delay
+            Rune.actions.scoreCards();
+            // draw cards after a delay
+            setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
+          }, ACTION_DELAY * 3);
+        }, ACTION_DELAY);
       }}
     >
       <CardImage card={card} />

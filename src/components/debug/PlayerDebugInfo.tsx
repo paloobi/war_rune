@@ -1,28 +1,24 @@
-import { Card } from "../game/types/card";
-import CardImage from "./CardImage";
-import { GameStage } from "../game/types/game";
-import { ACTION_DELAY } from "../game/utils";
-import PlayerCardButton from "./PlayerCardButton";
 import { useContext } from "react";
-import { GameContext } from "../game/GameContext";
-import { PlayerClass, playerClasses } from "../game/types/class";
-import ClassImage from "./ClassImage";
+import { Card } from "../../game/types/card";
+import { playerClasses } from "../../game/types/class";
+import { GameStage } from "../../game/types/game";
+import { ACTION_DELAY } from "../../game/utils";
+import ClassImage from "../ClassImage";
+import CardImage from "../common/CardImage";
+import PlayerCardButton from "../player/PlayerCardButton";
+import { GameContext } from "../../game/GameContext";
 
 const PlayerDebugInfo = () => {
   const { game, player } = useContext(GameContext);
 
   if (!game || !player) {
-    return null;
+    throw new Error("Cannot show debug info before game start");
   }
 
-  const isClassSelectDisabled = (playerClass: PlayerClass): boolean => {
-    // disable if class has already been selected
+  const isClassSelectDisabled = (): boolean => {
+    // disable if class select and there is already a class
     if (game.stage === GameStage.ClassSelect) {
-      if (player.playerNum === 1) {
-        return game.players.two.selectedClass === playerClass;
-      } else {
-        return game.players.one.selectedClass === playerClass;
-      }
+      return !!player.selectedClass;
     } else {
       return true;
     }
@@ -45,26 +41,19 @@ const PlayerDebugInfo = () => {
 
       <h3>Class</h3>
       <div className="class_container">
-        {game.stage === GameStage.ClassSelect ? (
-          playerClasses.map((playerClass) => {
-            // FOR NOW, ONLY ONLY MAGE AND KNIGHT BECAUSE OTHER CLASSES NOT STABLE
-            if (playerClass === "knight" || playerClass === "mage") {
-              return (
-                <button
-                  className="class_button"
-                  disabled={isClassSelectDisabled(playerClass)}
-                  key={playerClass}
-                  onClick={() => {
-                    Rune.actions.selectClass(playerClass);
-                  }}
-                >
-                  <ClassImage playerClass={playerClass} />
-                </button>
-              )
-            }
-          }
-            
-          )
+        {!player.selectedClass ? (
+          playerClasses.map((playerClass) => (
+            <button
+              className="class_button"
+              disabled={isClassSelectDisabled()}
+              key={playerClass}
+              onClick={() => {
+                Rune.actions.selectClass(playerClass);
+              }}
+            >
+              <ClassImage playerClass={playerClass} />
+            </button>
+          ))
         ) : (
           <p>{player.selectedClass}</p>
         )}
@@ -85,7 +74,7 @@ const PlayerDebugInfo = () => {
                   setTimeout(() => {
                     Rune.actions.revealCards();
                     setTimeout(() => {
-                      Rune.actions.scoreCards()
+                      Rune.actions.scoreCards();
                       setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
                     }, ACTION_DELAY);
                   }, ACTION_DELAY);
@@ -103,11 +92,10 @@ const PlayerDebugInfo = () => {
                   setTimeout(() => {
                     Rune.actions.revealCards();
                     setTimeout(() => {
-                      Rune.actions.scoreCards()
+                      Rune.actions.scoreCards();
                       setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
                     }, ACTION_DELAY);
                   }, ACTION_DELAY);
-
                 }}
               >
                 Deal Damage
@@ -129,10 +117,13 @@ const PlayerDebugInfo = () => {
                 setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
               }}
             >
-              <CardImage card={{
-                suit: player.rogueStealCardOptions[0].suit,
-                rank: player.rogueStealCardOptions[0].rank,
-                isHidden: false}} />
+              <CardImage
+                card={{
+                  suit: player.rogueStealCardOptions[0].suit,
+                  rank: player.rogueStealCardOptions[0].rank,
+                  isHidden: false,
+                }}
+              />
             </button>
             <button
               type="button"
@@ -145,10 +136,13 @@ const PlayerDebugInfo = () => {
                 setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
               }}
             >
-              <CardImage card={{
-                suit: player.rogueStealCardOptions[1].suit,
-                rank: player.rogueStealCardOptions[1].rank,
-                isHidden: false}} />
+              <CardImage
+                card={{
+                  suit: player.rogueStealCardOptions[1].suit,
+                  rank: player.rogueStealCardOptions[1].rank,
+                  isHidden: false,
+                }}
+              />
             </button>
           </>
         )}
@@ -200,7 +194,7 @@ const PlayerDebugInfo = () => {
           card ? (
             <PlayerCardButton cardIndex={index} card={card} />
           ) : (
-            <div key={index} className="card_empty_slot">
+            <div key={index} className="card_empty_slot_debug">
               <p>
                 Empty slot <br /> in hand
               </p>
@@ -211,8 +205,8 @@ const PlayerDebugInfo = () => {
 
       <h3>Deck</h3>
       <p>
-        {player.deck.map((card: Card) => ( //TODO: hide deck again when finished debugging
-          <CardImage key={`${card.rank}_${card.suit}`} card={{...card, isHidden:false}} />
+        {player.deck.map((card: Card) => (
+          <CardImage key={`${card.rank}_${card.suit}`} card={card} />
         ))}
       </p>
     </div>

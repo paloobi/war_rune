@@ -6,6 +6,8 @@ import { Card } from "./game/types/card";
 import { buildDeck, drawHand, getCardValueFromRank, getTwoRandomCardsFromDeck } from "./game/utils";
 import { Player } from "./game/types/player";
 
+export const MAX_HP = 50;
+
 type GameActions = {
   setStage: (params: { stage: GameStage }) => void
   dealCards: () => void,
@@ -40,7 +42,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           hero: null
         },
         selectedCard: null,
-        hp: 50,
+        hp: MAX_HP,
         wins: 0,
       },
       two: {
@@ -56,7 +58,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           sacrifices: [],
           hero: null
         },
-        hp: 50,
+        hp: MAX_HP,
         wins: 0,
       },
     },
@@ -479,10 +481,21 @@ Rune.initLogic({
         // reset selected cards to null
         playerOne.selectedCard = null;
         playerTwo.selectedCard = null;
-        game.stage = GameStage.Draw;
-        console.log("stage changed to: ", game.stage )
+
+        // Stop using cleric or knight ability
+        if (playerOne.selectedClass === "cleric") {
+          playerOne.usingAbility = false;
+        }
+
+        if (playerTwo.selectedClass === "cleric") {
+          playerTwo.usingAbility = false;
+        }
       }
 
+      // select two random cards from opponent's deck in reserve for a rogue steal ability
+      playerOne.rogueStealCardOptions = getTwoRandomCardsFromDeck(playerTwo.deck);
+      playerTwo.rogueStealCardOptions = getTwoRandomCardsFromDeck(playerOne.deck);
+      
       // if there is no winner (tie) when playing a war hero card (i.e., in a war)
       if (
         playerOne.war.hero && 
