@@ -16,11 +16,11 @@
   display: block;
 }
 
-.table_playerInfo .playerInfo-opponent {
+.table_playerInfo .playerInfo-opponent--score {
   left: 0;
 }
 
-.table_playerInfo .playerInfo-player {
+.table_playerInfo .playerInfo-player--score {
   right: 0;
 }
 

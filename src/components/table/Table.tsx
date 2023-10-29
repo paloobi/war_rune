@@ -17,14 +17,17 @@ const Table = () => {
       <div className="table">
         <div className="table_playerInfo">
           <TablePlayerScore
-            className={"playerInfo-opponent"}
+            className={"playerInfo-opponent--score"}
             player={opponent}
           />
           <TableCardStack player={opponent} />
         </div>
         <div className="table_playerInfo">
           <TableCardStack player={player} />
-          <TablePlayerScore className={"playerInfo-player"} player={player} />
+          <TablePlayerScore
+            className={"playerInfo-player--score"}
+            player={player}
+          />
         </div>
       </div>
       <div className="feedbackText">
