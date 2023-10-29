@@ -2,7 +2,6 @@ import { useContext } from "react";
 import { GameContext } from "../../game/GameContext";
 import TableFeedbackText from "./TableFeedbackText";
 import TableCardStack from "./TableCardStack";
-import PlayerScore from "../common/PlayerScore";
 
 import "./Table.css";
 import TablePlayerScore from "./TablePlayerScore";
