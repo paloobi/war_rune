@@ -3,7 +3,7 @@ import { Card } from "../../game/types/card";
 import { playerClasses } from "../../game/types/class";
 import { GameStage } from "../../game/types/game";
 import { ACTION_DELAY } from "../../game/utils";
-import ClassImage from "../ClassImage";
+import ClassImage from "../class/ClassImage";
 import CardImage from "../common/CardImage";
 import PlayerCardButton from "../player/PlayerCardButton";
 import { GameContext } from "../../game/GameContext";
@@ -55,7 +55,7 @@ const PlayerDebugInfo = () => {
                 >
                   <ClassImage playerClass={playerClass} />
                 </button>
-              )
+              );
             }
           })
         ) : (
