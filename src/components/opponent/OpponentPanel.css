@@ -16,3 +16,7 @@
 .opponentPanel_deck {
   grid-area: deck;
 }
+
+.opponentPanel_deck p {
+  margin: 0;
+}

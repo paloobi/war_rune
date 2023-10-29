@@ -1,8 +1,7 @@
 import { useContext } from "react";
 import { GameContext } from "../../game/GameContext";
 import HitPointsBar from "../common/HitPointsBar";
-import CardBackImage from "../common/CardBackImage";
-import EmptyCardSlot from "../common/EmptyCardSlot";
+import Deck from "../common/Deck";
 
 import "./OpponentPanel.css";
 
@@ -15,7 +14,8 @@ const OpponentPanel = () => {
   return (
     <div className="opponentPanel">
       <div className="opponentPanel_deck">
-        {opponent.deck.length ? <CardBackImage /> : <EmptyCardSlot />}
+        <Deck count={opponent.deck.length} />
+        <p>{opponent.deck.length}</p>
       </div>
       <HitPointsBar hp={opponent.hp} label="opponent" />
     </div>
