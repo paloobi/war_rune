@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   margin-top: 8px;
-  border: 2px solid #4D5766;
+  border: 4px solid #4D5766;
   border-radius: 4px;
   padding: 0 4px;
 }
@@ -29,7 +29,7 @@
 
 .hp_bar[value]::-webkit-progress-bar {
   background-color: #ffffff;
-  border: 2px solid #4D5766;
+  border: 4px solid #4D5766;
 }
 
 .hp_bar-normal[value]::-webkit-progress-value {
