@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Card } from "../../game/types/card";
-import { playerClasses } from "../../game/types/class";
+import { playerClasses, PlayerClass } from "../../game/types/class";
 import { GameStage } from "../../game/types/game";
 import { ACTION_DELAY } from "../../game/utils";
 import ClassImage from "../ClassImage";
@@ -15,10 +15,12 @@ const PlayerDebugInfo = () => {
     throw new Error("Cannot show debug info before game start");
   }
 
-  const isClassSelectDisabled = (): boolean => {
+  const opposingPlayer = player === game.players.one ? game.players.two : game.players.one;
+
+  const isClassSelectDisabled = (playerClass: PlayerClass): boolean => {
     // disable if class select and there is already a class
     if (game.stage === GameStage.ClassSelect) {
-      return !!player.selectedClass;
+      return opposingPlayer.selectedClass === playerClass
     } else {
       return true;
     }
@@ -47,7 +49,7 @@ const PlayerDebugInfo = () => {
               return (
                 <button
                   className="class_button"
-                  disabled={isClassSelectDisabled()}
+                  disabled={isClassSelectDisabled(playerClass)}
                   key={playerClass}
                   onClick={() => {
                     Rune.actions.selectClass(playerClass);
