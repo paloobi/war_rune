@@ -13,7 +13,6 @@
 
 .table_playerInfo .playerScore {
   position: absolute;
-  display: block;
 }
 
 .table_playerInfo .playerInfo-opponent--score {
