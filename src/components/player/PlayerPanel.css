@@ -1,5 +1,4 @@
 .playerPanel {
-  margin: 0 12px;
   margin-bottom: 12px;
   display: grid; 
   grid-template-columns: 2fr 1fr; 
