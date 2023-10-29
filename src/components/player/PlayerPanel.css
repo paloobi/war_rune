@@ -22,3 +22,7 @@
 .playerPanel .hp_bar-container {
   margin-top: 8px;
 }
+
+.playerPanel_deck p {
+  font-weight: bold;
+}
