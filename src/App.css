@@ -8,6 +8,10 @@
   width: 100vw;
 }
 
+body {
+  overflow-y:scroll;
+}
+
 img {
   image-rendering: pixelated;
 }
