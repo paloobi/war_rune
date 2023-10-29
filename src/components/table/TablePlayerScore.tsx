@@ -3,8 +3,15 @@ import { GameContext } from "../../game/GameContext";
 import { GameStage } from "../../game/types/game";
 import { Player } from "../../game/types/player";
 import { getCardValueFromRank } from "../../game/utils";
+import PlayerScore from "../common/PlayerScore";
 
-const TablePlayerScore = ({ player }: { player: Player }) => {
+const TablePlayerScore = ({
+  player,
+  className,
+}: {
+  player: Player;
+  className: string;
+}) => {
   const { game } = useContext(GameContext);
 
   if (!game) {
@@ -15,14 +22,24 @@ const TablePlayerScore = ({ player }: { player: Player }) => {
     if (!player.selectedCard) {
       throw new Error("Cannot score before card is selected");
     }
-    return <p>{getCardValueFromRank(player.selectedCard.rank)}</p>;
+    return (
+      <PlayerScore
+        className={className}
+        score={getCardValueFromRank(player.selectedCard.rank)}
+      />
+    );
   }
 
   if (game.stage === GameStage.WarScore) {
     if (!player?.war?.hero) {
       throw new Error("Cannot score before card is selected");
     }
-    return <p>{getCardValueFromRank(player.war.hero.rank)}</p>;
+    return (
+      <PlayerScore
+        className={className}
+        score={getCardValueFromRank(player.war.hero.rank)}
+      />
+    );
   }
   return <div />;
 };
