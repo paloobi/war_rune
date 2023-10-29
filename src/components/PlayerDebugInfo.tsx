@@ -109,6 +109,7 @@ const PlayerDebugInfo = ({
 
       <h3>Deck</h3>
       <div>
+        <div>{player.deck.length}</div>
         {player.deck.map((card: Card) => (
           <CardImage key={`${card.rank}_${card.suit}`} card={card} />
         ))}

@@ -50,9 +50,17 @@ export function buildDeck() {
       deck.push({ rank, suit });
     });
   });
+  deck.push({suit: 'joker', rank: 'red'}, {suit: 'joker', rank: 'black'})
   
   shuffle(deck);
-  deck.push({suit: 'joker', rank: 'red'}, {suit: 'joker', rank: 'black'})
+  // remove jokers from first 8 spaces of deck
+  for (let i = 0; i < 8; i++) {
+    if (deck[i].suit === 'joker') {
+      const joker = deck.splice(i, 1)[0];
+      const randomNumber = Math.floor(Math.random() * (deck.length - 9) + 9);
+      deck.splice(randomNumber, 0, joker);
+    }
+  }
   
   return deck;
 }

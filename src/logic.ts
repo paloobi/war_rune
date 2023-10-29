@@ -159,9 +159,25 @@ Rune.initLogic({
           playerTwo.hand[i] = null;
         }
       }
-      // shuffle each players deck
+      // shuffle each players deck and remove jokers from first 4 spaces
       shuffle(playerOne.deck)
+      for (let i = 0; i < 4; i++) {
+        if (playerOne.deck[i].suit === 'joker') {
+          const joker = playerOne.deck.splice(i, 1)[0];
+          const randomNumber = Math.floor(Math.random() * (playerOne.deck.length - 9) + 9);
+          playerOne.deck.splice(randomNumber, 0, joker);
+        }
+      }
+
       shuffle(playerTwo.deck)
+      for (let i = 0; i < 4; i++) {
+        if (playerTwo.deck[i].suit === 'joker') {
+          const joker = playerTwo.deck.splice(i, 1)[0];
+          const randomNumber = Math.floor(Math.random() * (playerTwo.deck.length - 9) + 9);
+          playerTwo.deck.splice(randomNumber, 0, joker);
+        }
+      }
+      
       // move to draw phase
       game.stage = GameStage.Draw;
       // call draw action
