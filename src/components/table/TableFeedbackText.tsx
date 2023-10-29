@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 import { useContext } from "react";
 import { GameContext } from "../../game/GameContext";
 import { GameStage } from "../../game/types/game";
