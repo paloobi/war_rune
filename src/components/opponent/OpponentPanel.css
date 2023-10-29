@@ -1,0 +1,22 @@
+.opponentPanel {
+  margin-bottom: 12px;
+  display: grid; 
+  grid-template-columns: 1fr 2fr; 
+  grid-template-rows: 1fr; 
+  gap: 8px; 
+  grid-template-areas: 
+    "deck panelLeft panelLeft"
+}
+
+.opponentPanel .hp_bar-container {
+  grid-area: panelLeft;
+  align-self: baseline;
+}
+
+.opponentPanel_deck {
+  grid-area: deck;
+}
+
+.opponentPanel_deck p {
+  margin: 0;
+}

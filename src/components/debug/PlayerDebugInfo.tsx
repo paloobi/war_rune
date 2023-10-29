@@ -1,18 +1,18 @@
-import { Card } from "../game/types/card";
-import CardImage from "./CardImage";
-import { GameStage } from "../game/types/game";
-import { ACTION_DELAY } from "../game/utils";
-import PlayerCardButton from "./PlayerCardButton";
 import { useContext } from "react";
-import { GameContext } from "../game/GameContext";
-import { playerClasses } from "../game/types/class";
-import ClassImage from "./ClassImage";
+import { Card } from "../../game/types/card";
+import { playerClasses } from "../../game/types/class";
+import { GameStage } from "../../game/types/game";
+import { ACTION_DELAY } from "../../game/utils";
+import ClassImage from "../ClassImage";
+import CardImage from "../common/CardImage";
+import PlayerCardButton from "../player/PlayerCardButton";
+import { GameContext } from "../../game/GameContext";
 
 const PlayerDebugInfo = () => {
   const { game, player } = useContext(GameContext);
 
   if (!game || !player) {
-    return null;
+    throw new Error("Cannot show debug info before game start");
   }
 
   const isClassSelectDisabled = (): boolean => {
@@ -74,7 +74,7 @@ const PlayerDebugInfo = () => {
                   setTimeout(() => {
                     Rune.actions.revealCards();
                     setTimeout(() => {
-                      Rune.actions.scoreCards()
+                      Rune.actions.scoreCards();
                       setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
                     }, ACTION_DELAY);
                   }, ACTION_DELAY);
@@ -92,11 +92,10 @@ const PlayerDebugInfo = () => {
                   setTimeout(() => {
                     Rune.actions.revealCards();
                     setTimeout(() => {
-                      Rune.actions.scoreCards()
+                      Rune.actions.scoreCards();
                       setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
                     }, ACTION_DELAY);
                   }, ACTION_DELAY);
-
                 }}
               >
                 Deal Damage
@@ -118,10 +117,13 @@ const PlayerDebugInfo = () => {
                 setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
               }}
             >
-              <CardImage card={{
-                suit: player.rogueStealCardOptions[0].suit,
-                rank: player.rogueStealCardOptions[0].rank,
-                isHidden: false}} />
+              <CardImage
+                card={{
+                  suit: player.rogueStealCardOptions[0].suit,
+                  rank: player.rogueStealCardOptions[0].rank,
+                  isHidden: false,
+                }}
+              />
             </button>
             <button
               type="button"
@@ -134,10 +136,13 @@ const PlayerDebugInfo = () => {
                 setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
               }}
             >
-              <CardImage card={{
-                suit: player.rogueStealCardOptions[1].suit,
-                rank: player.rogueStealCardOptions[1].rank,
-                isHidden: false}} />
+              <CardImage
+                card={{
+                  suit: player.rogueStealCardOptions[1].suit,
+                  rank: player.rogueStealCardOptions[1].rank,
+                  isHidden: false,
+                }}
+              />
             </button>
           </>
         )}
@@ -189,7 +194,7 @@ const PlayerDebugInfo = () => {
           card ? (
             <PlayerCardButton cardIndex={index} card={card} />
           ) : (
-            <div key={index} className="card_empty_slot">
+            <div key={index} className="card_empty_slot_debug">
               <p>
                 Empty slot <br /> in hand
               </p>
