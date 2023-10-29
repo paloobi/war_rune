@@ -4,6 +4,8 @@ import { GameStage } from "../../game/types/game";
 import { playerClasses } from "../../game/types/class";
 import ClassImage from "./ClassImage";
 
+import "./ClassSelect.css";
+
 const ClassSelect = () => {
   const { game, player } = useContext(GameContext);
   if (!game || !player) {
@@ -40,6 +42,11 @@ const ClassSelect = () => {
                   </button>
                   <p style={{ marginBottom: 24, marginTop: 0 }}>
                     {playerClass}
+                    <br />
+                    <small>
+                      {playerClass === "mage" && <>extra damage</>}
+                      {playerClass === "knight" && <>extra wars</>}
+                    </small>
                   </p>
                 </div>
               );
