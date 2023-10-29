@@ -154,6 +154,8 @@ Rune.initLogic({
       {game}
     ) => {
       const player = game.players[playerId];
+      const opposingPlayer = playerId === "one" ? game.players.two : game.players.one;
+
       if (game.stage !== GameStage.Select && game.stage !== GameStage.WarSelect) {
         console.log("skipping SelectCard for now because stage was not Select or WarSelect")
         console.log("game stage: ", game.stage)
@@ -174,46 +176,62 @@ Rune.initLogic({
           //TODO: Fix bug that does only does cleric ability during war
           // TODO: There is a bug in here that doesn't move from WarSelect to WarScore
           if (
-            game.players.one.selectedCard &&
-            (game.players.one.selectedClass === "knight" && 
-            game.players.one.selectedCard.suit === "spades") ||
-            game.players.two.selectedCard &&
-            (game.players.two.selectedClass === "knight" && 
-            game.players.two.selectedCard.suit === "spades")
+            (player.selectedClass === "knight" && player.selectedCard.suit === "spades") ||
+            (
+              opposingPlayer.selectedClass === "knight" && 
+              opposingPlayer.selectedCard &&
+              opposingPlayer.selectedCard.suit === "spades")
           ) {
+            player.usingAbility = player.selectedClass === "knight";
+            opposingPlayer.usingAbility = opposingPlayer.selectedClass === "knight";
             game.stage = GameStage.WarSelect;
+            console.log("stage changed to: ", game.stage )
             console.log("KNIGHT ABILITY ACTIVE: WARRRR!!")
-          } else if (game.players.one.selectedCard && game.players.two.selectedCard) {
-            // If at least one player is a cleric and selected hearts, change to cleric ability stage
+          } 
+            // If  player is a cleric and selected hearts, change to cleric ability stage
             if (
-              (game.players.one.selectedClass === "cleric" && game.players.one.selectedCard.suit === "hearts") || 
-              (game.players.two.selectedClass === "cleric" && game.players.two.selectedCard.suit === "hearts")
+              (player.selectedClass === "cleric" && player.selectedCard.suit === "hearts") ||
+              (
+                opposingPlayer.selectedCard && 
+                opposingPlayer.selectedClass === "cleric" && 
+                opposingPlayer.selectedCard.suit === "hearts"
+              )
             ) {
               game.stage = GameStage.ClericAbility;
+              console.log("stage changed to: ", game.stage )
+              console.log("you are a cleric who selected hearts")
+            } else if (
+              (opposingPlayer.selectedClass === "knight" && opposingPlayer.usingAbility) ||
+              (player.selectedClass === "knight" && player.usingAbility)
+            ) {
+              game.stage = GameStage.WarSelect;
+              console.log("stage changed to: ", game.stage )
             } else {
               // Otherwise go to reveal stage
               game.stage = GameStage.Reveal;
+              console.log("stage changed to: ", game.stage )
             } 
           }
-        }
-      } else {
-        if (player.war.sacrifices.length < 2) {
-          player.war.sacrifices.push({...card, isHidden: true});
-        } else if (!player.war.hero) {
-          player.war.hero = {...card, isHidden: true};
         } else {
-          throw new Error('The tie-breaker already ended');
+          if (player.war.sacrifices.length < 2) {
+            player.war.sacrifices.push({...card, isHidden: true});
+          } else if (!player.war.hero) {
+            player.war.hero = {...card, isHidden: true};
+          } else {
+            throw new Error('The tie-breaker already ended');
+          }
+          // remove card from hand
+          player.hand[cardIndex] = null;
         }
-        // remove card from hand
-        player.hand[cardIndex] = null;
-        
-        if (game.players.one.war.hero && game.players.two.war.hero) {
-          game.stage = GameStage.WarReveal;
-          if (game.players.one.selectedClass === "cleric" || game.players.two.selectedClass === "cleric") {
-            game.stage = GameStage.ClericAbility;
-          } 
-        }
-      }
+          if (game.players.one.war.hero && game.players.two.war.hero) {
+            game.stage = GameStage.WarReveal;
+            console.log("stage changed to: ", game.stage )
+            if (game.players.one.selectedClass === "cleric" || game.players.two.selectedClass === "cleric") {
+              game.stage = GameStage.ClericAbility;
+              console.log("stage changed to: ", game.stage )
+
+            } 
+          }
     },
 
     // TODO: change to work only when selecting card of certain suit
@@ -235,9 +253,11 @@ Rune.initLogic({
         }
 
         if (playerOne.war.hero && playerTwo.war.hero) {
-          game.stage = GameStage.WarReveal
+          game.stage = GameStage.WarReveal;
+          console.log("stage changed to: ", game.stage )
         } else {
-          game.stage = GameStage.Reveal
+          game.stage = GameStage.Reveal;
+          console.log("stage changed to: ", game.stage )
         }
     },
 
@@ -247,8 +267,10 @@ Rune.initLogic({
 
       if (playerOne.war.hero && playerTwo.war.hero) {
         game.stage = GameStage.WarReveal
+        console.log("stage changed to: ", game.stage )
       } else {
-        game.stage = GameStage.Reveal
+        game.stage = GameStage.Reveal;          
+        console.log("stage changed to: ", game.stage )
       }
     },
 
@@ -279,9 +301,11 @@ Rune.initLogic({
 
       if (game.stage === GameStage.Reveal) {
         game.stage = GameStage.Score;
+        console.log("stage changed to: ", game.stage )
       }
       if (game.stage === GameStage.WarReveal) {
         game.stage = GameStage.WarScore;
+        console.log("stage changed to: ", game.stage )
       }
     },
 
@@ -357,6 +381,7 @@ Rune.initLogic({
         }
 
         game.stage = GameStage.Discard;
+        console.log("stage changed to: ", game.stage )
         
       } else if (playerOneValue < playerTwoValue) {
         // player 2 wins... 
@@ -388,16 +413,19 @@ Rune.initLogic({
         }
         
         game.stage = GameStage.Discard;
+        console.log("stage changed to: ", game.stage )
   
       } else {
         // move to a war if initial card selections are a tie
         if (game.stage === GameStage.Score) {
           game.stage = GameStage.WarSelect;
+          console.log("stage changed to: ", game.stage )
         }
 
         // If already in a war and tie, then move to discard stage to split cards
         if (game.stage === GameStage.WarScore) {
           game.stage = GameStage.Discard;
+          console.log("stage changed to: ", game.stage )
         }
       }
 
@@ -414,8 +442,10 @@ Rune.initLogic({
             game.players[winner].war.hero?.suit === "clubs"
           ) {
             game.stage = GameStage.Steal;
+            console.log("stage changed to: ", game.stage )
           } else {
             game.stage = GameStage.Draw;
+            console.log("stage changed to: ", game.stage )
           }
           // in a tie, all the cards go to the winner
           game.players[winner].deck.push(
@@ -439,8 +469,10 @@ Rune.initLogic({
             game.players[winner].selectedCard?.suit === "clubs"
           ) {
             game.stage = GameStage.Steal;
+            console.log("stage changed to: ", game.stage )
           } else {
             game.stage = GameStage.Draw;
+            console.log("stage changed to: ", game.stage )
           }
         }
 
@@ -448,6 +480,7 @@ Rune.initLogic({
         playerOne.selectedCard = null;
         playerTwo.selectedCard = null;
         game.stage = GameStage.Draw;
+        console.log("stage changed to: ", game.stage )
       }
 
       // if there is no winner (tie) when playing a war hero card (i.e., in a war)
@@ -498,14 +531,15 @@ Rune.initLogic({
         console.dir(playerTwo.deck)
 
         game.stage = GameStage.Draw;
+        console.log("stage changed to: ", game.stage )
       }
 
        // Stop using cleric or knight ability
-      if (playerOne.selectedClass === "cleric") {
+      if (playerOne.selectedClass === "cleric" || playerOne.selectedClass === "knight") {
         playerOne.usingAbility = false;
       }
 
-      if (playerTwo.selectedClass === "cleric") {
+      if (playerTwo.selectedClass === "cleric" || playerTwo.selectedClass === "knight") {
         playerTwo.usingAbility = false;
       }
 

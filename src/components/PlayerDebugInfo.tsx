@@ -204,8 +204,8 @@ const PlayerDebugInfo = () => {
 
       <h3>Deck</h3>
       <p>
-        {player.deck.map((card: Card) => (
-          <CardImage key={`${card.rank}_${card.suit}`} card={card} />
+        {player.deck.map((card: Card) => ( //TODO: hide deck again when finished debugging
+          <CardImage key={`${card.rank}_${card.suit}`} card={{...card, isHidden:false}} />
         ))}
       </p>
     </div>
