@@ -1,12 +1,19 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { GameContext } from "../../game/GameContext";
 import { getCardValueFromRank } from "../../game/utils";
 import { GameStage } from "../../game/types/game";
 import OutcomeText from "../common/OutcomeText";
+import confetti from 'canvas-confetti';
 
 const TableScoreText = () => {
-  const { game, player, opponent } = useContext(GameContext);
 
+  // useEffect(() => {
+  //   confetti({
+
+  //   })
+  // }, [])
+  confetti();
+  const { game, player, opponent } = useContext(GameContext);
   if (!game || !opponent?.selectedCard || !player?.selectedCard) {
     throw new Error(
       "Entered Score stage without game started and both cards selected"
@@ -35,7 +42,10 @@ const TableScoreText = () => {
 
   if (player.selectedCard.suit === 'joker' || opponent.selectedCard.suit === 'joker') {
     return(
-      <OutcomeText contents="Joker!" type="joker" />
+      <>
+        {/* {confetti()} */}
+        <OutcomeText contents="Joker!" type="joker" />
+      </>
     )
   } else if(score > 0) {
     return(
