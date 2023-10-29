@@ -1,4 +1,5 @@
 .opponentPanel {
+  margin: 0 8px;
   display: grid;
   width: 100vw;
 }
