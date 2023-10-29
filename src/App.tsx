@@ -5,6 +5,7 @@ import { ACTION_DELAY } from "./game/utils.ts";
 import PlayerPanel from "./components/player/PlayerPanel.tsx";
 import { GameContext } from "./game/GameContext.ts";
 import OpponentPanel from "./components/opponent/OpponentPanel.tsx";
+import Table from "./components/table/Table.tsx";
 
 function App() {
   const [game, setGame] = useState<GameState>();
@@ -59,6 +60,7 @@ function App() {
       )}
       <div className="game-container">
         {game.stage !== GameStage.Start && <OpponentPanel />}
+        {game.stage !== GameStage.Start && <Table />}
         {game.stage !== GameStage.Start && <PlayerPanel />}
       </div>
     </GameContext.Provider>
