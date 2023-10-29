@@ -1,0 +1,8 @@
+.opponentPanel {
+  display: grid;
+  width: 100vw;
+}
+
+.opponentPanel .hp_bar-container {
+  justify-self: flex-end;
+}

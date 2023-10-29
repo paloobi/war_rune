@@ -17,6 +17,13 @@ img {
   image-rendering: pixelated;
 }
 
+.game-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .player_debug_info {
   display: flex;
   flex-direction: column;
