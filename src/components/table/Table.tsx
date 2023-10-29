@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { GameContext } from "../../game/GameContext";
-import TableContents from "./TableContents";
+import TableContents from "./TableFeedbackText";
 
 import "./Table.css";
 
