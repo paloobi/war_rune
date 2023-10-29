@@ -119,11 +119,33 @@ Rune.initLogic({
         console.log(`Skipping draw for now, it's ${game.stage} stage`);
         return;
       }
-      drawHand(game.players.one);
-      drawHand(game.players.two);
+      const isPlayerOneDeckEmpty = drawHand(game.players.one);
+      const isPlayerTwoDeckEmpty = drawHand(game.players.two);
+
+      // If player 1 has no cards in deck
+      if (isPlayerOneDeckEmpty) {
+        Rune.gameOver({
+          players: {
+            [game.players.two.playerId]: "WON",
+            [game.players.one.playerId]: "LOST",
+          }
+        })
+      }
+
+    // If player 2 has no cards in deck
+    if (isPlayerTwoDeckEmpty) {
+      Rune.gameOver({
+        players: {
+          [game.players.one.playerId]: "WON",
+          [game.players.two.playerId]: "LOST",
+        }
+      })
+    }
+
       game.stage = GameStage.Select;
     },
 
+    // TODO: Game over logic for if you run out of cards in the middle of a war
     selectCard: (
       {playerId, card, cardIndex},
       {game}
@@ -365,9 +387,15 @@ Rune.initLogic({
         game.stage = GameStage.Discard;
   
       } else {
-        // begin war
-        // TODO: handle logic for this
-        game.stage = GameStage.WarSelect;
+        // move to a war if initial card selections are a tie
+        if (game.stage === GameStage.Score) {
+          game.stage = GameStage.WarSelect;
+        }
+
+        // If already in a war and tie, then move to discard stage to split cards
+        if (game.stage === GameStage.WarScore) {
+          game.stage = GameStage.Discard;
+        }
       }
 
       if (game.stage === GameStage.Discard && winner) {
@@ -378,7 +406,6 @@ Rune.initLogic({
 
         if (playerOne.war.hero && playerTwo.war.hero) {
           // if War winner was a rogue who played a club
-          // TODO: fix this null-suppressing operator for TS
           if (
             game.players[winner].selectedClass === "rogue" &&
             game.players[winner].war.hero?.suit === "clubs"
@@ -404,7 +431,6 @@ Rune.initLogic({
           }
         } else {
           // if winner was a rogue who played a club
-          // TODO: fix this null-suppressing operator for TS
           if (
             game.players[winner].selectedClass === "rogue" &&
             game.players[winner].selectedCard?.suit === "clubs"
@@ -418,52 +444,105 @@ Rune.initLogic({
         // reset selected cards to null
         playerOne.selectedCard = null;
         playerTwo.selectedCard = null;
+        game.stage = GameStage.Draw;
+      }
 
-        // Stop using cleric or knight ability
-        if (playerOne.selectedClass === "cleric") {
-          playerOne.usingAbility = false;
-        }
+      // if there is no winner (tie) when playing a war hero card (i.e., in a war)
+      if (
+        playerOne.war.hero && 
+        playerTwo.war.hero && 
+        playerOne.selectedCard &&
+        playerTwo.selectedCard &&
+        !winner) {
+        // Player 1 gets their cards back
+        playerOne.deck.push(
+          {...playerOne.selectedCard, isHidden: true}
+        );
 
-        if (playerTwo.selectedClass === "cleric") {
-          playerTwo.usingAbility = false;
-        }
+          playerOne.deck.push(
+            {...playerOne.war.hero, isHidden: true},
+            ...playerOne.war.sacrifices.map(card => ({...card, isHidden: true}))
+          );
+
+          playerOne.war = {
+            hero: null,
+            sacrifices: [],
+          };
+        
+        // reset selected cards to null
+        playerOne.selectedCard = null;
+
+
+        // Player 2 gets their cards back
+        playerTwo.deck.push(
+          {...playerTwo.selectedCard, isHidden: true}
+        );
+
+          playerTwo.deck.push(
+            {...playerTwo.war.hero, isHidden: true},
+            ...playerTwo.war.sacrifices.map(card => ({...card, isHidden: true}))
+          );
+
+          playerTwo.war = {
+            hero: null,
+            sacrifices: [],
+          };
+        
+        // reset selected cards to null
+        playerTwo.selectedCard = null;
+
+        console.dir(playerOne.deck);
+        console.dir(playerTwo.deck)
+
+        game.stage = GameStage.Draw;
+      }
+
+       // Stop using cleric or knight ability
+      if (playerOne.selectedClass === "cleric") {
+        playerOne.usingAbility = false;
+      }
+
+      if (playerTwo.selectedClass === "cleric") {
+        playerTwo.usingAbility = false;
       }
 
       // select two random cards from opponent's deck in reserve for a rogue steal ability
       playerOne.rogueStealCardOptions = getTwoRandomCardsFromDeck(playerTwo.deck);
       playerTwo.rogueStealCardOptions = getTwoRandomCardsFromDeck(playerOne.deck);
+
     },
 
-    stealCard: ({playerId, index}, {game}) => {
-      if (game.stage !== GameStage.Steal) {
-        console.log("skipping steal for now, the stage isn't Steal")
-        console.log("STAGE: ", game.stage);
-        return;
-      }
+stealCard: ({playerId, index}, {game}) => {
+  if (game.stage !== GameStage.Steal) {
+    console.log("skipping steal for now, the stage isn't Steal")
+    console.log("STAGE: ", game.stage);
+    return;
+  }
 
-      const player = game.players[playerId];
-      const opposingPlayer = playerId === "one" ? game.players.two : game.players.one;
+  const player = game.players[playerId];
+  const opposingPlayer = playerId === "one" ? game.players.two : game.players.one;
 
-      //steal card
-      player.deck.push(player.rogueStealCardOptions[index]);
+  //steal card
+  player.deck.push(player.rogueStealCardOptions[index]);
 
-      // give opponent new deck without stolen card
-      const newOpponentDeck = opposingPlayer.deck.filter(card => {
-        const cardValues = Object.values(card);
-        console.log(cardValues)
-        const stolenCardValues = Object.values(player.rogueStealCardOptions[index])
-        console.log(stolenCardValues)
+  // give opponent new deck without stolen card
+  const newOpponentDeck = opposingPlayer.deck.filter(card => {
+    const cardValues = Object.values(card);
+    console.log(cardValues)
+    const stolenCardValues = Object.values(player.rogueStealCardOptions[index])
+    console.log(stolenCardValues)
 
-        console.log(!cardValues.includes(stolenCardValues[0]), !cardValues.includes(stolenCardValues[1]))
-        if (!cardValues.includes(stolenCardValues[0]) && !cardValues.includes(stolenCardValues[1])) {
-          return true;
-        }
-      });
-
-      
-      opposingPlayer.deck = newOpponentDeck;
-
-      game.stage = GameStage.Draw
+    console.log(!cardValues.includes(stolenCardValues[0]), !cardValues.includes(stolenCardValues[1]))
+    if (!cardValues.includes(stolenCardValues[0]) && !cardValues.includes(stolenCardValues[1])) {
+      return true;
     }
+  });
+
+  
+  opposingPlayer.deck = newOpponentDeck;
+
+  game.stage = GameStage.Draw
+}
+
   },
 })
