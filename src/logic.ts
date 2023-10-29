@@ -219,9 +219,15 @@ Rune.initLogic({
         }
         game.stage = GameStage.Discard;
       } else {
-        // begin war
-        // TODO: handle logic for this
-        game.stage = GameStage.WarSelect;
+        // move to a war if initial card selections are a tie
+        if (game.stage === GameStage.Score) {
+          game.stage = GameStage.WarSelect;
+        }
+
+        // If already in a war and tie, then move to discard stage to split cards
+        if (game.stage === GameStage.WarScore) {
+          game.stage = GameStage.Discard;
+        }
       }
 
       if (game.stage === GameStage.Discard && winner) {
@@ -250,6 +256,56 @@ Rune.initLogic({
         // reset selected cards to null
         game.players.one.selectedCard = null;
         game.players.two.selectedCard = null;
+        game.stage = GameStage.Draw;
+      }
+
+      // if there is no winner (tie) when playing a war hero card (i.e., in a war)
+      if (
+        game.players.one.war.hero && 
+        game.players.two.war.hero && 
+        game.players.one.selectedCard &&
+        game.players.two.selectedCard &&
+        !winner) {
+        // Player 1 gets their cards back
+        game.players.one.deck.push(
+          {...game.players.one.selectedCard, isHidden: true}
+        );
+
+          game.players.one.deck.push(
+            {...game.players.one.war.hero, isHidden: true},
+            ...game.players.one.war.sacrifices.map(card => ({...card, isHidden: true}))
+          );
+
+          game.players.one.war = {
+            hero: null,
+            sacrifices: [],
+          };
+        
+        // reset selected cards to null
+        game.players.one.selectedCard = null;
+
+
+        // Player 2 gets their cards back
+        game.players.two.deck.push(
+          {...game.players.two.selectedCard, isHidden: true}
+        );
+
+          game.players.two.deck.push(
+            {...game.players.two.war.hero, isHidden: true},
+            ...game.players.two.war.sacrifices.map(card => ({...card, isHidden: true}))
+          );
+
+          game.players.two.war = {
+            hero: null,
+            sacrifices: [],
+          };
+        
+        // reset selected cards to null
+        game.players.two.selectedCard = null;
+
+        console.dir(game.players.one.deck);
+        console.dir(game.players.two.deck)
+
         game.stage = GameStage.Draw;
       }
     },
