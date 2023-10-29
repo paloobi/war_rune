@@ -21,7 +21,7 @@ const TableFeedbackText = () => {
     case GameStage.Score:
       return <TableScoreText />;
     default:
-      return null;
+      return <div />;
   }
 };
 

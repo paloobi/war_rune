@@ -1,5 +1,8 @@
 .table {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  display: grid; 
+  grid-template-columns: 1fr 2fr 2fr 2fr 1fr;
+  grid-template-rows: 2fr; 
+  gap: 8px; 
+  grid-template-areas: 
+    "opponentScore opponentCard centerText playerCard playerScore"
 }

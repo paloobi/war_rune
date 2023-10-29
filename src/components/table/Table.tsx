@@ -1,8 +1,10 @@
 import { useContext } from "react";
 import { GameContext } from "../../game/GameContext";
-import TableContents from "./TableFeedbackText";
+import TableFeedbackText from "./TableFeedbackText";
 
 import "./Table.css";
+import TableCardStack from "./TableCardStack";
+import TablePlayerScore from "./TablePlayerScore";
 
 const Table = () => {
   const { game, player, opponent } = useContext(GameContext);
@@ -12,7 +14,11 @@ const Table = () => {
 
   return (
     <div className="table">
-      <TableContents />
+      <TablePlayerScore player={opponent} />
+      <TableCardStack player={opponent} />
+      <TableFeedbackText />
+      <TableCardStack player={player} />
+      <TablePlayerScore player={player} />
     </div>
   );
 };
