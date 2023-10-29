@@ -1,7 +1,7 @@
 import type { RuneClient } from "rune-games-sdk/multiplayer"
 import type { GameState } from "./game/types/game";
 import { GameStage } from "./game/types/game";
-import { Card, CardRank, CardSuit, cardRanks, cardSuits } from "./game/types/card";
+import { Card } from "./game/types/card";
 import { buildDeck, getCardValueFromRank, shuffle } from "./game/utils";
 import { Player } from "./game/types/player";
 
@@ -11,6 +11,7 @@ type GameActions = {
   joker: () => void,
   drawCards: () => void,
   selectCard: (params: { playerId: "one" | "two", card: Card, cardIndex: number }) => void,
+  revealCards: () => void,
   scoreCards: () => void
 }
 
@@ -32,7 +33,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           hero: null
         },
         selectedCard: null,
-        hp: 10,
+        hp: 50,
         wins: 0,
       },
       two: {
@@ -45,7 +46,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
           sacrifices: [],
           hero: null
         },
-        hp: 10,
+        hp: 50,
         wins: 0,
       },
     },
@@ -90,21 +91,21 @@ Rune.initLogic({
       const playerOne = game.players.one;
       const playerOneHand = playerOne.hand;
       for (let i = 0; i < playerOneHand.length; i++) {
-        if (!playerOneHand[i]) {
-          const cardToDraw = playerOne.deck.shift();
-          if (cardToDraw?.suit === 'joker') {
-            console.log(cardToDraw, "It's a joker!")
-            game.stage = GameStage.Joker;
-          }
-          if (cardToDraw) {
-            // TODO: draw a card randomly
-            playerOneHand[i] = cardToDraw;
-          } else {
-            // TODO: figure out if this is a game over condition?
-            throw new Error("No cards left in deck");
+          if (!playerOneHand[i]) {
+            const cardToDraw = playerOne.deck.shift();
+            if (cardToDraw?.suit === 'joker') {
+              console.log(cardToDraw, "It's a joker!")
+              game.stage = GameStage.Joker;
+            }
+            if (cardToDraw) {
+              playerOneHand[i] = cardToDraw;
+              cardToDraw.isHidden = false;
+            } else {
+              // TODO: figure out if this is a game over condition?
+              throw new Error("No cards left in deck");
+            }
           }
         }
-      }
 
       const playerTwo = game.players.two;
       const playerTwoHand = playerTwo.hand;
@@ -116,14 +117,15 @@ Rune.initLogic({
             game.stage = GameStage.Joker;
           }
           if (cardToDraw) {
-            // TODO: draw a card randomly
             playerTwoHand[i] = cardToDraw;
+            cardToDraw.isHidden = false;
           } else {
             // TODO: figure out if this is a game over condition?
             throw new Error("No cards left in deck");
           }
         }
       }
+
       if (game.stage !== GameStage.Joker) {
         game.stage = GameStage.Select;
       }
@@ -191,8 +193,7 @@ Rune.initLogic({
       
       if (game.stage !== GameStage.WarSelect) {
         if (!player.selectedCard) {
-          player.selectedCard = card;
-          console.log(player.hand, cardIndex);
+          player.selectedCard = {...card, isHidden: true};
           player.hand[cardIndex] = null;
         }
         // if both players have selected cards
@@ -201,13 +202,13 @@ Rune.initLogic({
             (player: Player) => !!player.selectedCard
           )
         ) {
-          game.stage = GameStage.Score;
+          game.stage = GameStage.Reveal;
         }
       } else {
         if (player.war.sacrifices.length < 2) {
-          player.war.sacrifices.push(card);
+          player.war.sacrifices.push({...card, isHidden: true});
         } else if (!player.war.hero) {
-          player.war.hero = card;
+          player.war.hero = {...card, isHidden: true};
         } else {
           throw new Error('The tie-breaker already ended');
         }
@@ -215,8 +216,41 @@ Rune.initLogic({
         player.hand[cardIndex] = null;
         
         if (game.players.one.war.hero && game.players.two.war.hero) {
-          game.stage = GameStage.WarScore;
+          game.stage = GameStage.WarReveal;
         }
+      }
+    },
+
+    revealCards: (_, {game}) => {
+      if (game.stage !== GameStage.WarReveal && game.stage !== GameStage.Reveal) {
+        console.log("skipping scoring for now, the stage isn't Score or WarScore yet")
+        console.log("STAGE: ", game.stage);
+        return;
+      }
+      const playerOne = game.players.one;
+      const playerTwo = game.players.two;
+      if (!playerOne.selectedCard || !playerTwo.selectedCard) {
+        throw Rune.invalidAction();
+      }
+      // reveal all selected cards
+      playerOne.selectedCard = {...playerOne.selectedCard, isHidden: false};
+      playerTwo.selectedCard = {...playerTwo.selectedCard, isHidden: false};
+
+      if (game.stage === GameStage.WarReveal && playerOne.war.hero && playerTwo.war.hero) {
+        // reveal player one's war cards
+        playerOne.war.hero = {...playerOne.war.hero, isHidden: false};
+        playerOne.war.sacrifices = playerOne.war.sacrifices.map(card => ({...card, isHidden: false}))
+
+        // reveal player two's war cards
+        playerTwo.war.hero = {...playerTwo.war.hero, isHidden: false};
+        playerTwo.war.sacrifices = playerTwo.war.sacrifices.map(card => ({...card, isHidden: false}))
+      }
+
+      if (game.stage === GameStage.Reveal) {
+        game.stage = GameStage.Score;
+      }
+      if (game.stage === GameStage.WarReveal) {
+        game.stage = GameStage.WarScore;
       }
     },
 
@@ -246,12 +280,34 @@ Rune.initLogic({
         winner = 'one';
         game.players.one.wins++;
         game.players.two.hp -= playerOneValue - playerTwoValue;
+
+      // If player 2 is reduced to 0 HP
+      if (game.players.two.hp < 1) {
+        Rune.gameOver({
+          players: {
+            [game.players.one.playerId]: "WON",
+            [game.players.two.playerId]: "LOST"
+          },
+          delayPopUp: false
+        })
+      }
         game.stage = GameStage.Discard;
       } else if (playerOneValue < playerTwoValue) {
         // player 2 wins, player 1 loses HP
         winner = 'two';
         game.players.two.wins++;
         game.players.one.hp -= playerTwoValue - playerOneValue;
+
+        // If player 1 is reduced to 0 HP
+        if (game.players.one.hp < 1) {
+          Rune.gameOver({
+            players: {
+              [game.players.two.playerId]: "WON",
+              [game.players.one.playerId]: "LOST"
+            },
+            delayPopUp: false
+          })
+        }
         game.stage = GameStage.Discard;
       } else {
         // begin war
@@ -260,7 +316,10 @@ Rune.initLogic({
       }
 
       if (game.stage === GameStage.Discard && winner) {
-        game.players[winner].deck.push(playerOneCard, playerTwoCard);
+        game.players[winner].deck.push(
+          playerOneCard,
+          playerTwoCard
+        );
 
         if (game.players.one.war.hero && game.players.two.war.hero) {
           // in a tie, all the cards go to the winner

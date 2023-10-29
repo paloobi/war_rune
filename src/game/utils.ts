@@ -47,11 +47,15 @@ export function buildDeck() {
       if (suit === 'joker' || rank === 'red' || rank === 'black') {
         return;
       }
-      deck.push({ rank, suit });
+      deck.push({ rank, suit, isHidden: false });
     });
   });
-  deck.push({suit: 'joker', rank: 'red'}, {suit: 'joker', rank: 'black'})
   
+  deck.push(
+    {suit: 'joker', rank: 'red', isHidden: false},
+    {suit: 'joker', rank: 'black', isHidden: false}
+  );
+
   shuffle(deck);
   // remove jokers from first 8 spaces of deck
   for (let i = 0; i < 8; i++) {
@@ -64,5 +68,7 @@ export function buildDeck() {
   
   return deck;
 }
+
 // TODO: Jokers successfully added to deck but not getting shuffled? 
 // Haven't looked into this too deeply
+

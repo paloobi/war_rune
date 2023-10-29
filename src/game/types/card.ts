@@ -16,5 +16,6 @@ export type CardRank = typeof cardRanks[number];
 export interface Card {
     suit: CardSuit,
     rank: CardRank,
+    isHidden: boolean,
 }
 
