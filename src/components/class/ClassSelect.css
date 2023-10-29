@@ -1,9 +1,25 @@
 .class_container {
   display:flex;
   flex-direction: row;
+  justify-content: space-around;
+  width: 100vw;
 }
 
 .class_container small {
   color: #64748D;
   font-size: 0.6em;
+}
+
+.class_button {
+  padding: 0;
+  height:fit-content;
+  border: none;
+  border-radius: 30%;
+  background-color: transparent;
+  width: 80px;
+}
+
+.class_button:hover {
+  transform: translateY(-3px) scale(1.05,1.05);
+  box-shadow: 0 5px 10px -5px;
 }

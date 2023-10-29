@@ -44,8 +44,8 @@ const ClassSelect = () => {
                     {playerClass}
                     <br />
                     <small>
-                      {playerClass === "mage" && <>extra damage</>}
-                      {playerClass === "knight" && <>extra wars</>}
+                      {playerClass === "mage" && <>+2 damage</>}
+                      {playerClass === "knight" && <>trigger wars</>}
                     </small>
                   </p>
                 </div>
