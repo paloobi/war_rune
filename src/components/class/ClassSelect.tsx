@@ -21,22 +21,27 @@ const ClassSelect = () => {
 
   return (
     <>
-      <h3>Select a Class</h3>
+      <h3>Select Class</h3>
       <div className="class_container">
         {!player.selectedClass ? (
           playerClasses.map((playerClass) => {
             if (playerClass === "mage" || playerClass === "knight") {
               return (
-                <button
-                  className="class_button"
-                  disabled={isClassSelectDisabled()}
-                  key={playerClass}
-                  onClick={() => {
-                    Rune.actions.selectClass(playerClass);
-                  }}
-                >
-                  <ClassImage playerClass={playerClass} />
-                </button>
+                <div>
+                  <button
+                    className="class_button"
+                    disabled={isClassSelectDisabled()}
+                    key={playerClass}
+                    onClick={() => {
+                      Rune.actions.selectClass(playerClass);
+                    }}
+                  >
+                    <ClassImage playerClass={playerClass} />
+                  </button>
+                  <p style={{ marginBottom: 24, marginTop: 0 }}>
+                    {playerClass}
+                  </p>
+                </div>
               );
             }
           })
