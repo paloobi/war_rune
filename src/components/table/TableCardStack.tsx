@@ -25,8 +25,11 @@ const TableCardStack = ({ player }: { player: Player }) => {
     game.stage === GameStage.WarScore ||
     game.stage === GameStage.WarReveal;
 
+  const showAll =
+    game.stage === GameStage.WarScore || game.stage === GameStage.Score;
+
   return (
-    <div className="table_cardStack">
+    <div className={`table_cardStack ${showAll ? "showAll" : ""}`}>
       {showSelectCard && <CardMaybeSelected card={player.selectedCard} />}
       {showWarCards && <CardMaybeSelected card={player.war.sacrifices[0]} />}
       {showWarCards && player.war.sacrifices[0] && (
