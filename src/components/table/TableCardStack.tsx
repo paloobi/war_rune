@@ -4,6 +4,8 @@ import CardMaybeSelected from "../common/CardMaybeSelected";
 import { GameContext } from "../../game/GameContext";
 import { GameStage } from "../../game/types/game";
 
+import "./TableCardStack.css";
+
 const TableCardStack = ({ player }: { player: Player }) => {
   const { game } = useContext(GameContext);
   if (!game) {
@@ -24,15 +26,14 @@ const TableCardStack = ({ player }: { player: Player }) => {
     game.stage === GameStage.WarReveal;
 
   return (
-    <div>
+    <div className="table_cardStack">
       {showSelectCard && <CardMaybeSelected card={player.selectedCard} />}
-      {showWarCards && (
-        <>
-          {player.war.sacrifices.map((card) => (
-            <CardMaybeSelected card={card} />
-          ))}
-          {<CardMaybeSelected card={player.war.hero} />}
-        </>
+      {showWarCards && <CardMaybeSelected card={player.war.sacrifices[0]} />}
+      {showWarCards && player.war.sacrifices[0] && (
+        <CardMaybeSelected card={player.war.sacrifices[1]} />
+      )}
+      {showWarCards && player.war.sacrifices[1] && (
+        <CardMaybeSelected card={player.war.hero} />
       )}
     </div>
   );

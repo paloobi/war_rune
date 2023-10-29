@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { GameContext } from "../../game/GameContext";
 import TableFeedbackText from "./TableFeedbackText";
-
-import "./Table.css";
 import TableCardStack from "./TableCardStack";
 import TablePlayerScore from "./TablePlayerScore";
+
+import "./Table.css";
 
 const Table = () => {
   const { game, player, opponent } = useContext(GameContext);
