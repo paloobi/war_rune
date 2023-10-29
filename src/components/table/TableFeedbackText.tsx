@@ -11,12 +11,12 @@ const TableFeedbackText = () => {
   }
   switch (game.stage) {
     case GameStage.Shuffle:
-      return <>Shuffling...</>;
+      return <p>Shuffling...</p>;
     case GameStage.Deal:
     case GameStage.Draw:
-      return <>Dealing...</>;
+      return <p>Dealing...</p>;
     case GameStage.Discard:
-      return <>Cards to the winner...</>;
+      return <p>Cards to the winner...</p>;
     case GameStage.WarScore:
     case GameStage.Score:
       return <TableScoreText />;
