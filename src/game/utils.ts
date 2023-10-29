@@ -62,10 +62,10 @@ export function drawHand(player: Player) {
       if (cardToDraw) {
         hand[i] = cardToDraw;
         cardToDraw.isHidden = false;
-      } else {
-        // TODO: figure out if this is a game over condition?
-        throw new Error("No cards left in deck");
       }
     }
   }
+
+  // Return boolean that is true if player's deck is empty
+    return player.deck.length === 0;
 }

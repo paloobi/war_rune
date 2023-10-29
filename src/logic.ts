@@ -87,11 +87,33 @@ Rune.initLogic({
         console.log(`Skipping draw for now, it's ${game.stage} stage`);
         return;
       }
-      drawHand(game.players.one);
-      drawHand(game.players.two);
+      const isPlayerOneDeckEmpty = drawHand(game.players.one);
+      const isPlayerTwoDeckEmpty = drawHand(game.players.two);
+
+      // If player 1 has no cards in deck
+      if (isPlayerOneDeckEmpty) {
+        Rune.gameOver({
+          players: {
+            [game.players.two.playerId]: "WON",
+            [game.players.one.playerId]: "LOST",
+          }
+        })
+      }
+
+    // If player 2 has no cards in deck
+    if (isPlayerTwoDeckEmpty) {
+      Rune.gameOver({
+        players: {
+          [game.players.one.playerId]: "WON",
+          [game.players.two.playerId]: "LOST",
+        }
+      })
+    }
+
       game.stage = GameStage.Select;
     },
 
+    // TODO: Game over logic for if you run out of cards in the middle of a war
     selectCard: (
       {playerId, card, cardIndex},
       {game}
