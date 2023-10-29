@@ -45,14 +45,27 @@
   100% {transform: translateY(120px)}
 }
 
-.table_cardStack.winner {
-  box-shadow: 0 0 8px 8px #FFCB3B;
-  animation: get-bigger 0.5s;
-  animation-fill-mode: forwards;
+.table_cardStack.winner.opponent {
+  animation: attack-right 0.5s;
+  animation-timing-function: ease-out;
+  z-index: 50;
 }
 
-@keyframes get-bigger {
+
+.table_cardStack.winner.player {
+  animation: attack-left 0.5s;
+  animation-timing-function: ease-out;
+  z-index: 50;
+}
+
+@keyframes attack-left {
   100% {
-    transform: scale(1.1) translateY(12px);
+    transform: scale(1.1) translateX(-60px) rotate(-20deg);
+  }
+}
+
+@keyframes attack-right {
+  100% {
+    transform: scale(1.1) translateX(60px) rotate(20deg);
   }
 }

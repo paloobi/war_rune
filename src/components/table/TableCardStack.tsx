@@ -7,7 +7,13 @@ import { GameStage } from "../../game/types/game";
 import "./TableCardStack.css";
 import { isCurrentWinner } from "../../game/utils";
 
-const TableCardStack = ({ player }: { player: Player }) => {
+const TableCardStack = ({
+  player,
+  isOpponent,
+}: {
+  player: Player;
+  isOpponent: boolean;
+}) => {
   const { game } = useContext(GameContext);
   if (!game) {
     throw new Error("Cannot show cards before game start");
@@ -41,7 +47,7 @@ const TableCardStack = ({ player }: { player: Player }) => {
     <div
       className={`table_cardStack ${showAll ? "showAll" : ""} ${
         isWinner ? "winner" : ""
-      }`}
+      } ${isOpponent ? "opponent" : "player"}`}
     >
       {showSelectCard && <CardMaybeSelected card={player.selectedCard} />}
       {showWarCards && <CardMaybeSelected card={player.war.sacrifices[0]} />}
