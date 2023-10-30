@@ -29,16 +29,51 @@ img {
   justify-content: space-between;
 }
 
+.page-container {
+  height: 100vh;
+  width: 100vw;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-container.orange {
+  background-color: #FF7640;
+}
+
+.page-container.yellow {
+  background-color: #FFCB3B;
+}
+
+.page-container.green {
+  background-color: #15C662;
+}
+
+.page-container.purple {
+  background-color: #BA44F5;
+}
+
+.page-container.red {
+  background-color: #F52C4E;
+}
+
+.page-container.gray {
+  background-color: #C7D7EC;
+}
+
+
 footer {
   position: fixed;
   bottom: 0;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1;
 }
 
 footer p {
   margin: 8px;
+  color: #000;
 }
 
 .player_debug_info {
