@@ -1,21 +1,13 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { GameContext } from "../../game/GameContext";
 import { getCardValueFromRank } from "../../game/utils";
 import { GameStage } from "../../game/types/game";
 import OutcomeText from "../common/OutcomeText";
-import confetti from 'canvas-confetti';
+import Confetti from "./Confetti";
 
 const TableScoreText = () => {
 
-  const renderConfetti = () => {
-    confetti({
-      particleCount: 70,
-      spread: 70,
-      shapes: ['square'],
-      colors: ['f52c4e', 'd01232', 'ff7640', 'ffcb3b', '15c662', 'ba44f5']
-      // colors: ['#BA44F5']
-    })
-  }
+  
   
   const { game, player, opponent } = useContext(GameContext);
   if (!game || !opponent?.selectedCard || !player?.selectedCard) {
@@ -45,9 +37,10 @@ const TableScoreText = () => {
   const score = Math.abs(opponentScore - playerScore);
 
   if (player.selectedCard.suit === 'joker' || opponent.selectedCard.suit === 'joker') {
-    renderConfetti()
+    
     return(
       <>
+        <Confetti />
         <OutcomeText contents="Joker!" type="joker" />
       </>
     )
