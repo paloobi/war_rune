@@ -1,0 +1,12 @@
+.extraDamage {
+  color: red;
+  position: absolute;
+}
+
+.extraDamage.player {
+  right: 80px
+}
+
+.extraDamage.opponent {
+  left: 80px;
+}
