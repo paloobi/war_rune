@@ -4,19 +4,31 @@ import { Player } from "./types/player";
 
 export const ACTION_DELAY = 1000;
 
-export const getCardValueFromRank = (rank: CardRank): number => {
-  switch (rank) {
+export const getCardValueFromRank = (card: Card, isMage: boolean): number => {
+  let value = null;
+  
+  switch (card.rank) {
       case 'J':
-          return 11;
+          value = 11;
+          break;
       case 'Q':
-          return 12;
+          value = 12;
+          break;
       case 'K':
-          return 13;
+          value = 13;
+          break;
       case 'A':
-          return 14;
+          value = 14;
+          break;
       default:
-          return Number(rank);
+          value = Number(card.rank);
   }
+
+  if (isMage && card.suit === "diamonds") {
+    value += 5;
+  }
+
+  return value;
 }
 
 // This uses the Fisher–Yates Shuffle algorithm to shuffle in place
@@ -63,6 +75,14 @@ export function buildDeck() {
   return deck;
 }
 
+export const getTwoRandomCardsFromDeck = (deck: Card[]) => {
+  const cardOne = deck[Math.floor(Math.random() * deck.length)];
+  const deckWithoutCardOne = deck.filter(card => card !== cardOne)
+  const cardTwo = deckWithoutCardOne[Math.floor(Math.random() * deckWithoutCardOne.length)];
+
+  return [cardOne, cardTwo];
+}
+
 export function drawHand(player: Player) {
   const {hand} = player;
   for (let i = 0; i < hand.length; i++) {
@@ -83,8 +103,16 @@ export function isCurrentWinner(player: Player, game: GameState) {
     if (game.players.one.selectedCard.suit === 'joker' || game.players.two.selectedCard.suit === 'joker') {
       return false
     }
-    const playerOneScore = getCardValueFromRank(game.players.one.selectedCard.rank);
-    const playerTwoScore = getCardValueFromRank(game.players.two.selectedCard.rank);
+
+    if (
+      (game.players.one.selectedClass === "knight" && game.players.one.selectedCard.suit === "spades") ||
+      (game.players.two.selectedClass === "knight" && game.players.two.selectedCard.suit === "spades")
+    ) {
+      return false;
+    }
+    
+    const playerOneScore = getCardValueFromRank(game.players.one.selectedCard, game.players.one.selectedClass === "mage");
+    const playerTwoScore = getCardValueFromRank(game.players.two.selectedCard, game.players.two.selectedClass === "mage");
     if (playerOneScore === playerTwoScore) {
       return false;
     }
@@ -96,8 +124,8 @@ export function isCurrentWinner(player: Player, game: GameState) {
     if (game.players.one.war.hero.suit === 'joker' || game.players.two.war.hero.suit === 'joker') {
       return false
     }
-    const playerOneScore = getCardValueFromRank(game.players.one.war.hero.rank);
-    const playerTwoScore = getCardValueFromRank(game.players.two.war.hero.rank);
+    const playerOneScore = getCardValueFromRank(game.players.one.war.hero, game.players.one.selectedClass === "mage");
+    const playerTwoScore = getCardValueFromRank(game.players.two.war.hero, game.players.two.selectedClass === "mage");
     if (playerOneScore === playerTwoScore) {
       return false;
     }

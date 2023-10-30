@@ -1,14 +1,17 @@
 import type { Player } from "./player";
 
 export enum GameStage {
+  ClassSelect = "CLASS_SELECT",
   Start = "START",
   Shuffle = "SHUFFLE",
   Deal = "DEAL",
   Draw = "DRAW",
   Joker = "JOKER",
   Select = "SELECT",
+  ClericAbility = "CLERIC_ABILITY",
   Reveal = "REVEAL",
   Score = "SCORE",
+  Steal = "STEAL",
   WarSelect = "WAR_SELECT",
   WarReveal = "WAR_REVEAL",
   WarScore = "WAR_SCORE",
