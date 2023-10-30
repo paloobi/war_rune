@@ -11,7 +11,9 @@ const TableScoreText = () => {
     confetti({
       particleCount: 70,
       spread: 70,
+      shapes: ['square'],
       colors: ['f52c4e', 'd01232', 'ff7640', 'ffcb3b', '15c662', 'ba44f5']
+      // colors: ['#BA44F5']
     })
   }
   
