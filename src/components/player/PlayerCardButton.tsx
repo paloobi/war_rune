@@ -58,10 +58,10 @@ const PlayerCardButton = ({
               // draw cards after a delay
               setTimeout(() => {
                 Rune.actions.drawCards();
-              }, ACTION_DELAY * 3);
-            }, ACTION_DELAY);
-          }, ACTION_DELAY);
-        }, ACTION_DELAY);
+              }, ACTION_DELAY); // delay between joker and draw
+            }, ACTION_DELAY * 2); // delay between score and joker
+          }, ACTION_DELAY); // delay between reveal and score
+        }, ACTION_DELAY); // delay between select and reveal
       }}
     >
       <CardImage card={card} />
