@@ -20,7 +20,17 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
+}
+
+.hp_bar-labelContainer--left {
+  display: flex;
+  flex-direction: row;
+}
+
+.hp_bar-labelContainer--left .class_icon {
+  margin: 0 4px;
+  margin-top: 3px;
 }
 
 .hp_bar-number {

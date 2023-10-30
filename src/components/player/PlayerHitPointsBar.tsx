@@ -7,7 +7,14 @@ const PlayerHitPointsBar = () => {
   if (!player) {
     throw new Error("cannot render hit bar before game start");
   }
-  return <HitPointsBar hp={player.hp} label={"player"} />;
+  const playerClass = player.selectedClass;
+  return (
+    <HitPointsBar
+      hp={player.hp}
+      label={"player"}
+      playerClass={playerClass ?? undefined}
+    />
+  );
 };
 
 export default PlayerHitPointsBar;
