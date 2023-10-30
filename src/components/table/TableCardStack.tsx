@@ -44,18 +44,28 @@ const TableCardStack = ({
   const isWinner = showWinner && isCurrentWinner(player, game);
 
   return (
-    <div
-      className={`table_cardStack ${showAll ? "showAll" : ""} ${
-        isWinner ? "winner" : ""
-      } ${isOpponent ? "opponent" : "player"}`}
-    >
-      {showSelectCard && <CardMaybeSelected card={player.selectedCard} />}
+    <div className={`table_cardStack ${showAll ? "showAll" : ""}`}>
+      {showSelectCard && (
+        <div
+          className={`table_cardStack--card ${
+            isWinner && game.stage === GameStage.Score ? "winner" : ""
+          } ${isOpponent ? "opponent" : "player"}`}
+        >
+          <CardMaybeSelected card={player.selectedCard} />
+        </div>
+      )}
       {showWarCards && <CardMaybeSelected card={player.war.sacrifices[0]} />}
       {showWarCards && player.war.sacrifices[0] && (
         <CardMaybeSelected card={player.war.sacrifices[1]} />
       )}
       {showWarCards && player.war.sacrifices[1] && (
-        <CardMaybeSelected card={player.war.hero} />
+        <div
+          className={`table_cardStack--warHero ${
+            isWinner && game.stage === GameStage.WarScore ? "winner" : ""
+          } ${isOpponent ? "opponent" : "player"}`}
+        >
+          <CardMaybeSelected card={player.war.hero} />
+        </div>
       )}
     </div>
   );
