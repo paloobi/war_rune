@@ -80,6 +80,9 @@ export function drawHand(player: Player) {
 
 export function isCurrentWinner(player: Player, game: GameState) {
   if (game.stage === GameStage.Score && game.players.one.selectedCard && game.players.two.selectedCard) {
+    if (game.players.one.selectedCard.suit === 'joker' || game.players.two.selectedCard.suit === 'joker') {
+      return false
+    }
     const playerOneScore = getCardValueFromRank(game.players.one.selectedCard.rank);
     const playerTwoScore = getCardValueFromRank(game.players.two.selectedCard.rank);
     if (playerOneScore === playerTwoScore) {
@@ -90,6 +93,9 @@ export function isCurrentWinner(player: Player, game: GameState) {
   }
 
   if (game.stage === GameStage.WarScore && game.players.one.war.hero && game.players.two.war.hero) {
+    if (game.players.one.war.hero.suit === 'joker' || game.players.two.war.hero.suit === 'joker') {
+      return false
+    }
     const playerOneScore = getCardValueFromRank(game.players.one.war.hero.rank);
     const playerTwoScore = getCardValueFromRank(game.players.two.war.hero.rank);
     if (playerOneScore === playerTwoScore) {
