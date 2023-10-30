@@ -21,6 +21,8 @@ export enum GameStage {
 
 export interface GameState {
   stage: GameStage;
+  currentWinner: 'one' | 'two' | null,
+  lastCardPlayed: 'regular' | 'war' | null,
   players: {
     one: Player;
     two: Player;

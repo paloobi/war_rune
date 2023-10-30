@@ -9,17 +9,18 @@ import { Player } from "./game/types/player";
 export const MAX_HP = 50;
 
 type GameActions = {
-  setStage: (params: { stage: GameStage }) => void
+  setStage: (params: { stage: GameStage }) => void,
   selectClass: (playerClass: PlayerClass) => void,
   dealCards: () => void,
   joker: () => void,
   drawCards: () => void,
   selectCard: (params: { playerId: "one" | "two", card: Card, cardIndex: number }) => void,
   revealCards: () => void,
-  scoreCards: () => void
-  useClericAbility: () => void
-  stealCard: (params: { playerId: "one" | "two", index: number }) => void 
-  doNotUseClericAbility: () => void
+  scoreCards: () => void,
+  discard: () => void,
+  useClericAbility: () => void,
+  stealCard: (params: { playerId: "one" | "two", index: number }) => void,
+  doNotUseClericAbility: () => void,
 }
 
 declare global {
@@ -29,6 +30,8 @@ declare global {
 const getInitialState = (allPlayerIds: string[]): GameState => {
   return {
     stage: GameStage.ClassSelect,
+    currentWinner: null,
+    lastCardPlayed: null,
     players: {
       one: {
         playerId: allPlayerIds[0],
@@ -223,7 +226,6 @@ Rune.initLogic({
       {game}
     ) => {
       const player = game.players[playerId];
-      const opposingPlayer = playerId === "one" ? game.players.two : game.players.one;
 
       if (game.stage !== GameStage.Select && game.stage !== GameStage.WarSelect) {
         console.log("skipping SelectCard for now because stage was not Select or WarSelect")
@@ -351,14 +353,17 @@ Rune.initLogic({
         return;
       }
 
+      // SAVE THIS FOR USE IN DISCARD FUNCTION
+      game.lastCardPlayed = game.stage === GameStage.WarScore ? 'war' : 'regular';
+
       const playerOne = game.players.one;
       const playerTwo = game.players.two;
 
       const playerOneCard = game.stage === GameStage.WarScore
         ? playerOne.war.hero
         : playerOne.selectedCard;
-      
-      const playerTwoCard = game.stage === GameStage.WarScore
+        
+        const playerTwoCard = game.stage === GameStage.WarScore
         ? playerTwo.war.hero
         : playerTwo.selectedCard;
 
@@ -378,7 +383,6 @@ Rune.initLogic({
         playerTwo.selectedCard &&
         playerTwo.selectedCard.suit === "spades");
 
-      let winner: 'one' | 'two' | null = null;
       // if either player plays a joker, initiate joker phase
       if (playerOneCard.suit === 'joker' || playerTwoCard.suit === 'joker') { 
         game.stage = GameStage.Joker;
@@ -392,7 +396,7 @@ Rune.initLogic({
         }
       } else if (playerOneValue > playerTwoValue) {
         // player 1 wins...
-        winner = 'one';
+        game.currentWinner = 'one';
         playerOne.wins++;
         // if winner is cleric using ability
         if (
@@ -424,7 +428,7 @@ Rune.initLogic({
       // player 2 wins, player 1 loses HP
       } else if (playerOneValue < playerTwoValue) {
         // player 2 wins... 
-        winner = 'two';
+        game.currentWinner = 'two';
         playerTwo.wins++;
 
         // if winner is cleric using ability
@@ -467,75 +471,91 @@ Rune.initLogic({
           console.log("stage changed to: ", game.stage )
         }
       }
+    },
 
-      // after resolving scoring, discard the cards
-      // TODO: move this into a separate action so we can allow
-      // more time to view score before discard occurs
-      if (game.stage === GameStage.Discard && winner) {
-        game.players[winner].deck.push(
-          playerOneCard,
-          playerTwoCard
-        );
+    discard: (_, {game}) => {
+      if (game.stage !== GameStage.Discard || !game.currentWinner) {
+        throw Rune.invalidAction();
+      }
 
-        if (playerOne.war.hero && playerTwo.war.hero) {
-          // if War winner was a rogue who played a club
-          if (
-            game.players[winner].selectedClass === "rogue" &&
-            game.players[winner].war.hero?.suit === "clubs"
-          ) {
-            game.stage = GameStage.Steal;
-            console.log("stage changed to: ", game.stage )
-          } else {
-            game.stage = GameStage.Draw;
-            console.log("stage changed to: ", game.stage )
-          }
-          // in a tie, all the cards go to the winner
-          game.players[winner].deck.push(
-            playerOne.war.hero,
-            playerTwo.war.hero,
-            ...playerOne.war.sacrifices,
-            ...playerTwo.war.sacrifices
-          );
-          playerOne.war = {
-            hero: null,
-            sacrifices: [],
-          };
-          playerTwo.war = {
-            hero: null,
-            sacrifices: [],
-          }
+      const winner = game.currentWinner;
+      const playerOne = game.players.one;
+      const playerTwo = game.players.two;
+
+      const playerOneCard = game.lastCardPlayed === 'war' ? playerOne.war.hero : playerOne.selectedCard;
+      const playerTwoCard = game.lastCardPlayed === 'war' ? playerTwo.war.hero : playerTwo.selectedCard;
+
+      if (!playerOneCard || !playerTwoCard) {
+        throw Rune.invalidAction();
+      }
+
+      game.players[winner].deck.push(
+        playerOneCard,
+        playerTwoCard
+      );
+
+      if (playerOne.war.hero && playerTwo.war.hero) {
+        // if War winner was a rogue who played a club
+        if (
+          game.players[winner].selectedClass === "rogue" &&
+          game.players[winner].war.hero?.suit === "clubs"
+        ) {
+          game.stage = GameStage.Steal;
+          console.log("stage changed to: ", game.stage )
         } else {
-          // if winner was a rogue who played a club
-          if (
-            game.players[winner].selectedClass === "rogue" &&
-            game.players[winner].selectedCard?.suit === "clubs"
-          ) {
-            game.stage = GameStage.Steal;
-            console.log("stage changed to: ", game.stage )
-          } else {
-            game.stage = GameStage.Draw;
-            console.log("stage changed to: ", game.stage )
-          }
+          game.stage = GameStage.Draw;
+          console.log("stage changed to: ", game.stage )
         }
-
+        // in a tie, all the cards go to the winner
+        game.players[winner].deck.push(
+          playerOne.war.hero,
+          playerTwo.war.hero,
+          ...playerOne.war.sacrifices,
+          ...playerTwo.war.sacrifices
+        );
+        playerOne.war = {
+          hero: null,
+          sacrifices: [],
+        };
+        playerTwo.war = {
+          hero: null,
+          sacrifices: [],
+        }
+      } else {
         // reset selected cards to null
         playerOne.selectedCard = null;
         playerTwo.selectedCard = null;
 
-        // Stop using cleric or knight ability
-        if (playerOne.selectedClass === "cleric") {
-          playerOne.usingAbility = false;
-        }
+        // reset last player card and winner
+        game.currentWinner = null;
+        game.lastCardPlayed = null;
 
-        if (playerTwo.selectedClass === "cleric") {
-          playerTwo.usingAbility = false;
+        // if winner was a rogue who played a club
+        if (
+          game.players[winner].selectedClass === "rogue" &&
+          game.players[winner].selectedCard?.suit === "clubs"
+        ) {
+          game.stage = GameStage.Steal;
+          console.log("stage changed to: ", game.stage )
+        } else {
+          game.stage = GameStage.Draw;
+          console.log("stage changed to: ", game.stage )
         }
+      }
+
+      // Stop using cleric or knight ability
+      if (playerOne.selectedClass === "cleric") {
+        playerOne.usingAbility = false;
+      }
+
+      if (playerTwo.selectedClass === "cleric") {
+        playerTwo.usingAbility = false;
       }
 
       // select two random cards from opponent's deck in reserve for a rogue steal ability
       playerOne.rogueStealCardOptions = getTwoRandomCardsFromDeck(playerTwo.deck);
       playerTwo.rogueStealCardOptions = getTwoRandomCardsFromDeck(playerOne.deck);
-      
+    
       // if there is no winner (tie) when playing a war hero card (i.e., in a war)
       if (
         playerOne.war.hero && 
@@ -544,39 +564,39 @@ Rune.initLogic({
         playerTwo.selectedCard &&
         !winner) {
         // Player 1 gets their cards back
+        // playerOne.deck.push(
+        //   {...playerOne.selectedCard, isHidden: true}
+        // );
+
         playerOne.deck.push(
-          {...playerOne.selectedCard, isHidden: true}
+          {...playerOne.war.hero, isHidden: true},
+          ...playerOne.war.sacrifices.map(card => ({...card, isHidden: true}))
         );
 
-          playerOne.deck.push(
-            {...playerOne.war.hero, isHidden: true},
-            ...playerOne.war.sacrifices.map(card => ({...card, isHidden: true}))
-          );
-
-          playerOne.war = {
-            hero: null,
-            sacrifices: [],
-          };
-        
+        playerOne.war = {
+          hero: null,
+          sacrifices: [],
+        };
+      
         // reset selected cards to null
         playerOne.selectedCard = null;
 
 
         // Player 2 gets their cards back
+        // playerTwo.deck.push(
+        //   {...playerTwo.selectedCard, isHidden: true}
+        // );
+
         playerTwo.deck.push(
-          {...playerTwo.selectedCard, isHidden: true}
+          {...playerTwo.war.hero, isHidden: true},
+          ...playerTwo.war.sacrifices.map(card => ({...card, isHidden: true}))
         );
 
-          playerTwo.deck.push(
-            {...playerTwo.war.hero, isHidden: true},
-            ...playerTwo.war.sacrifices.map(card => ({...card, isHidden: true}))
-          );
-
-          playerTwo.war = {
-            hero: null,
-            sacrifices: [],
-          };
-        
+        playerTwo.war = {
+          hero: null,
+          sacrifices: [],
+        };
+      
         // reset selected cards to null
         playerTwo.selectedCard = null;
 
@@ -587,7 +607,7 @@ Rune.initLogic({
         console.log("stage changed to: ", game.stage )
       }
 
-       // Stop using cleric or knight ability
+        // Stop using cleric or knight ability
       if (playerOne.selectedClass === "cleric" || playerOne.selectedClass === "knight") {
         playerOne.usingAbility = false;
       }
