@@ -62,13 +62,14 @@ const PlayerCardButton = ({
             // attempt to discard cards after a LONG delay
             setTimeout(() => {
               // check for joker phase after a delay
+              Rune.actions.discard();
               setTimeout(() => {
                 Rune.actions.joker();
                 // draw cards after a delay
                 setTimeout(() => {
                   Rune.actions.drawCards();
                 }, ACTION_DELAY); // delay between joker and draw
-              }, ACTION_DELAY * 10); // delay between score and discard
+              }, ACTION_DELAY * 3); // delay between score and discard
             }, ACTION_DELAY); // delay between discard and joker
           }, ACTION_DELAY); // delay between reveal and score
         }, ACTION_DELAY); // delay between select and reveal
