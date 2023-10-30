@@ -63,22 +63,25 @@ function App() {
         {game.stage !== GameStage.Start && <Table />}
         {game.stage !== GameStage.Start && <PlayerPanel />}
       </div>
-      <footer>
-        <p>
-          <small>
-            Made by <a href="https://github.com/dyazdani">@dyazdani</a>{" "}
-            <a href="https://github.com/jvaneyken">@jvaneyken</a>{" "}
-            <a href="https://github.com/paloobi/">@paloobi</a> for React Jam
-            Fall 2023
-          </small>
-        </p>
-        <p>
-          <small>
-            logo by <a href="https://github.com/AnthonyPinto">@anthonypinto</a>{" "}
-            - art from <a href="https://kenney.nl/">Kenney.nl</a>
-          </small>
-        </p>
-      </footer>
+      {game.stage === GameStage.Start && (
+        <footer>
+          <p>
+            <small>
+              Made by <a href="https://github.com/dyazdani">@dyazdani</a>{" "}
+              <a href="https://github.com/jvaneyken">@jvaneyken</a>{" "}
+              <a href="https://github.com/paloobi/">@paloobi</a> for React Jam
+              Fall 2023
+            </small>
+          </p>
+          <p>
+            <small>
+              logo by{" "}
+              <a href="https://github.com/AnthonyPinto">@anthonypinto</a> - art
+              from <a href="https://kenney.nl/">Kenney.nl</a>
+            </small>
+          </p>
+        </footer>
+      )}
     </GameContext.Provider>
   );
 }
