@@ -100,7 +100,9 @@ const Game = () => {
     <div className={`page-container ${getColorClassName()}`}>
       {game.stage === GameStage.ClassSelect && <ClassSelect />}
       {game.stage === GameStage.Start && (
-        <button onClick={onDeal}>Deal Cards</button>
+        <button className="dealCardsButton" onClick={onDeal}>
+          Deal Cards
+        </button>
       )}
       {hasGameStarted && (
         <div className="game-container">
