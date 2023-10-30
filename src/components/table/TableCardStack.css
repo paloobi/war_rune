@@ -28,9 +28,71 @@
   animation-fill-mode: forwards;
 }
 
-.showAll.table_cardStack > :nth-child(4) {
+.showAll.table_cardStack > :nth-child(4):not(.winner) {
   animation: move-down-most 0.5s;
   animation-fill-mode: forwards;
+}
+
+.table_cardStack--card.winner.opponent {
+  animation: attack-right 0.5s;
+  animation-timing-function: ease-out;
+  z-index: 50;
+}
+
+.table_cardStack--card.winner.player {
+  animation: attack-left 0.5s;
+  animation-timing-function: ease-out;
+  z-index: 50;
+}
+
+/* war heroes need to go both down and make the attack motion */
+.table_cardStack--warHero.winner.opponent {
+  animation-name: move-down-most, war-attack-right;
+  animation-duration: 0.5s;
+  animation-delay: 0s, 0.5s;
+  animation-timing-function: ease, ease-out;
+  animation-fill-mode: forwards none;
+  z-index: 50;
+}
+
+.table_cardStack--warHero.winner.player {
+  animation-name: move-down-most, war-attack-left;
+  animation-duration: 0.5s;
+  animation-delay: 0s, 0.5s;
+  animation-timing-function: ease, ease-out;
+  animation-fill-mode: forwards none;
+  z-index: 50;
+}
+
+@keyframes attack-left {
+  100% {
+    transform: scale(1.1) translateX(-60px) rotate(-20deg);
+  }
+}
+
+@keyframes attack-right {
+  100% {
+    transform: scale(1.1) translateX(60px) rotate(20deg);
+  }
+}
+
+
+@keyframes war-attack-left {
+  0% {
+    transform: translateY(120px)
+  }
+  100% {
+    transform: scale(1.1) translateX(-60px) translateY(120px) rotate(-20deg);
+  }
+}
+
+@keyframes war-attack-right {
+  0% {
+    transform: translateY(120px)
+  }
+  100% {
+    transform: scale(1.1) translateX(60px) translateY(120px) rotate(20deg);
+  }
 }
 
 @keyframes move-down {
@@ -43,16 +105,4 @@
 
 @keyframes move-down-most {
   100% {transform: translateY(120px)}
-}
-
-.table_cardStack.winner {
-  box-shadow: 0 0 8px 8px #FFCB3B;
-  animation: get-bigger 0.5s;
-  animation-fill-mode: forwards;
-}
-
-@keyframes get-bigger {
-  100% {
-    transform: scale(1.1) translateY(12px);
-  }
 }

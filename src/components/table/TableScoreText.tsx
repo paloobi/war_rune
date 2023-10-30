@@ -5,10 +5,9 @@ import { GameStage } from "../../game/types/game";
 import OutcomeText from "../common/OutcomeText";
 import Confetti from "./Confetti";
 
-const TableScoreText = () => {
+import "./TableScoreText.css";
 
-  
-  
+const TableScoreText = () => {
   const { game, player, opponent } = useContext(GameContext);
   if (!game || !opponent?.selectedCard || !player?.selectedCard) {
     throw new Error(
@@ -26,9 +25,15 @@ const TableScoreText = () => {
     const playerScore = getCardValueFromRank(player.war.hero.rank);
     const score = Math.abs(opponentScore - playerScore);
     return score > 0 ? (
-      <OutcomeText type="damage" contents={"-" + score.toString()} />
+      <div
+        className={`scoreAnimation--${
+          opponentScore > playerScore ? "opponentWin" : "playerWin"
+        }`}
+      >
+        <OutcomeText type="damage" contents={"-" + score.toString()} />
+      </div>
     ) : (
-      <OutcomeText contents="It's a draw!" />
+      <OutcomeText contents="Draw!" />
     );
   }
 
@@ -36,23 +41,29 @@ const TableScoreText = () => {
   const playerScore = getCardValueFromRank(player.selectedCard.rank);
   const score = Math.abs(opponentScore - playerScore);
 
-  if (player.selectedCard.suit === 'joker' || opponent.selectedCard.suit === 'joker') {
-    
-    return(
+  if (
+    player.selectedCard.suit === "joker" ||
+    opponent.selectedCard.suit === "joker"
+  ) {
+    return (
       <>
         <Confetti />
         <OutcomeText contents="Joker!" type="joker" />
       </>
-    )
-  } else if(score > 0) {
-    return(
-      <OutcomeText contents={"-" + score.toString()} type="damage" />
-    )
-  } else {
-    return(
-      <OutcomeText contents="WAR!" type="special" />
-    )
+    );
   }
+
+  return score > 0 ? (
+    <div
+      className={`scoreAnimation--${
+        opponentScore > playerScore ? "opponentWin" : "playerWin"
+      }`}
+    >
+      <OutcomeText contents={"-" + score.toString()} type="damage" />
+    </div>
+  ) : (
+    <OutcomeText contents="WAR!" type="special" />
+  );
 };
 
 export default TableScoreText;

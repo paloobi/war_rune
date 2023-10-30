@@ -9,7 +9,7 @@
     "build": "npm run lint && tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives",
     "preview": "vite preview",
-    "deploy": "rune upload dist"
+    "deploy": "npm run build && rune upload dist"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.0",
