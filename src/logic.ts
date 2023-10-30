@@ -5,6 +5,7 @@ import { Card } from "./game/types/card";
 import { buildDeck, getCardValueFromRank, shuffle } from "./game/utils";
 import { Player } from "./game/types/player";
 
+export const ACTION_DELAY = 1000;
 export const MAX_HP = 50;
 
 type GameActions = {
@@ -58,6 +59,7 @@ const getInitialState = (allPlayerIds: string[]): GameState => {
 Rune.initLogic({
   minPlayers: 2,
   maxPlayers: 2,
+  inputDelay: ACTION_DELAY,
   setup: (allPlayerIds): GameState => {
     return getInitialState(allPlayerIds);
   },
