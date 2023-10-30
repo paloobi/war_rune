@@ -1,6 +1,7 @@
 .playerScore {
-  background-color: #F52C4E;
-  color: #FFFFFF;
+  background-color: #FFF;
+  color: #F52C4E;
+  border: 4px solid #4D5766;
   border-radius: 100%;
   padding: 4px;
   text-align: center;

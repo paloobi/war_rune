@@ -37,14 +37,14 @@ const PlayerCardButton = ({
     }
   };
 
-  const highlight =
+  const showHighlight =
     (player.selectedClass === "knight" &&
       card.suit === getSuitFromClass("knight")) ||
     (player.selectedClass === "mage" && card.suit === getSuitFromClass("mage"));
 
   return (
     <button
-      className={`card_button ${highlight ? "highlight" : ""}`}
+      className={`card_button ${showHighlight ? "highlight" : ""}`}
       disabled={isSelectDisabled()}
       key={`${card.rank}_${card.suit}`}
       onClick={() => {
