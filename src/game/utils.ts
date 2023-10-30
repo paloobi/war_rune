@@ -103,6 +103,14 @@ export function isCurrentWinner(player: Player, game: GameState) {
     if (game.players.one.selectedCard.suit === 'joker' || game.players.two.selectedCard.suit === 'joker') {
       return false
     }
+
+    if (
+      (game.players.one.selectedClass === "knight" && game.players.one.selectedCard.suit === "spades") ||
+      (game.players.two.selectedClass === "knight" && game.players.two.selectedCard.suit === "spades")
+    ) {
+      return false;
+    }
+    
     const playerOneScore = getCardValueFromRank(game.players.one.selectedCard, game.players.one.selectedClass === "mage");
     const playerTwoScore = getCardValueFromRank(game.players.two.selectedCard, game.players.two.selectedClass === "mage");
     if (playerOneScore === playerTwoScore) {

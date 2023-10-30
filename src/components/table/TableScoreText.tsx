@@ -64,7 +64,17 @@ const TableScoreText = () => {
     );
   }
 
-  return score > 0 ? (
+  const didKnightCauseWar = 
+    (player.selectedClass === "knight" && player.selectedCard.suit === "spades") || 
+    (opponent.selectedClass === "knight" && opponent.selectedCard.suit === "spades"); 
+
+    console.log("Current player knight check: ", player.selectedClass, player.selectedCard.suit)
+    console.log("Opponent knight check: ", opponent.selectedClass, opponent.selectedCard.suit)
+
+
+  return score === 0 || didKnightCauseWar ? (
+    <OutcomeText contents="WAR!" type="special" />
+  ) : (
     <div
       className={`scoreAnimation--${
         opponentScore > playerScore ? "opponentWin" : "playerWin"
@@ -72,8 +82,6 @@ const TableScoreText = () => {
     >
       <OutcomeText contents={"-" + score.toString()} type="damage" />
     </div>
-  ) : (
-    <OutcomeText contents="WAR!" type="special" />
   );
 };
 

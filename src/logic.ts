@@ -242,44 +242,9 @@ Rune.initLogic({
           )
         ) {
   
-          //TODO: Fix bug that does only does cleric ability during war
-          // TODO: There is a bug in here that doesn't move from WarSelect to WarScore
-          if (
-            (player.selectedClass === "knight" && player.selectedCard.suit === "spades") ||
-            (
-              opposingPlayer.selectedClass === "knight" && 
-              opposingPlayer.selectedCard &&
-              opposingPlayer.selectedCard.suit === "spades")
-          ) {
-            player.usingAbility = player.selectedClass === "knight";
-            opposingPlayer.usingAbility = opposingPlayer.selectedClass === "knight";
-            game.stage = GameStage.WarSelect;
-            console.log("stage changed to: ", game.stage )
-            console.log("KNIGHT ABILITY ACTIVE: WARRRR!!")
-          } 
-            // If  player is a cleric and selected hearts, change to cleric ability stage
-            if (
-              (player.selectedClass === "cleric" && player.selectedCard.suit === "hearts") ||
-              (
-                opposingPlayer.selectedCard && 
-                opposingPlayer.selectedClass === "cleric" && 
-                opposingPlayer.selectedCard.suit === "hearts"
-              )
-            ) {
-              game.stage = GameStage.ClericAbility;
-              console.log("stage changed to: ", game.stage )
-              console.log("you are a cleric who selected hearts")
-            } else if (
-              (opposingPlayer.selectedClass === "knight" && opposingPlayer.usingAbility) ||
-              (player.selectedClass === "knight" && player.usingAbility)
-            ) {
-              game.stage = GameStage.WarSelect;
-              console.log("stage changed to: ", game.stage )
-            } else {
-              // Otherwise go to reveal stage
-              game.stage = GameStage.Reveal;
-              console.log("stage changed to: ", game.stage )
-            } 
+          game.stage = GameStage.Reveal;
+          console.log("stage changed to: ", game.stage )
+
           }
         } else {
           if (player.war.sacrifices.length < 2) {
@@ -404,12 +369,27 @@ Rune.initLogic({
       const playerOneValue = getCardValueFromRank(playerOneCard, playerOne.selectedClass === "mage");
       const playerTwoValue = getCardValueFromRank(playerTwoCard, playerTwo.selectedClass === "mage");
 
+      const didKnightPlaySpade = (
+        playerOne.selectedClass === "knight" && 
+        playerOne.selectedCard &&
+        playerOne.selectedCard.suit === "spades") ||
+      (
+       playerTwo.selectedClass === "knight" && 
+        playerTwo.selectedCard &&
+        playerTwo.selectedCard.suit === "spades");
+
       let winner: 'one' | 'two' | null = null;
       // if either player plays a joker, initiate joker phase
       if (playerOneCard.suit === 'joker' || playerTwoCard.suit === 'joker') { 
         game.stage = GameStage.Joker;
       
       // player 1 wins, player 2 loses HP
+      } else if (didKnightPlaySpade && game.stage === GameStage.Score) {
+        // move to a war if initial card selections are a tie
+        if (game.stage === GameStage.Score) {
+          game.stage = GameStage.WarSelect;
+          console.log("stage changed to: ", game.stage )
+        }
       } else if (playerOneValue > playerTwoValue) {
         // player 1 wins...
         winner = 'one';
