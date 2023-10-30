@@ -6,6 +6,7 @@ import CardImage from "../common/CardImage";
 import { GameContext } from "../../game/GameContext";
 
 import "./PlayerCardButton.css";
+import { getSuitFromClass } from "../../game/types/class";
 
 const PlayerCardButton = ({
   card,
@@ -35,9 +36,14 @@ const PlayerCardButton = ({
         return true;
     }
   };
+
+  const showKnightIndicator =
+    player.selectedClass === "knight" &&
+    card.suit === getSuitFromClass("knight");
+
   return (
     <button
-      className="card_button"
+      className={`card_button ${showKnightIndicator ? "knightHighlight" : ""}`}
       disabled={isSelectDisabled()}
       key={`${card.rank}_${card.suit}`}
       onClick={() => {
@@ -59,7 +65,7 @@ const PlayerCardButton = ({
               setTimeout(() => {
                 Rune.actions.drawCards();
               }, ACTION_DELAY); // delay between joker and draw
-            }, ACTION_DELAY * 2); // delay between score and joker
+            }, ACTION_DELAY * 3); // delay between score and joker
           }, ACTION_DELAY); // delay between reveal and score
         }, ACTION_DELAY); // delay between select and reveal
       }}

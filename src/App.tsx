@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
-import { type GameState } from "./game/types/game.ts";
-import { GameContext } from "./game/GameContext.ts";
-import Game from "./Game.tsx";
+import Game from "./Game";
+import { GameState } from "./game/types/game";
+import { GameContext } from "./game/GameContext";
 
 function App() {
   const [game, setGame] = useState<GameState>();

@@ -4,6 +4,9 @@ import { GameStage } from "../../game/types/game";
 import { Player } from "../../game/types/player";
 import { getCardValueFromRank } from "../../game/utils";
 import PlayerScore from "../common/PlayerScore";
+import { getSuitFromClass } from "../../game/types/class";
+
+import "./TablePlayerScore.css";
 
 const TablePlayerScore = ({
   player,
@@ -12,21 +15,36 @@ const TablePlayerScore = ({
   player: Player;
   className: string;
 }) => {
-  const { game } = useContext(GameContext);
+  const { game, opponent } = useContext(GameContext);
 
-  if (!game) {
+  if (!game || !opponent) {
     throw new Error("Cannot render score before game is started");
   }
-  
+
   if (game.stage === GameStage.Score) {
     if (!player.selectedCard) {
       throw new Error("Cannot score before card is selected");
     }
     return (
-      <PlayerScore
-        className={className}
-        score={getCardValueFromRank(player.selectedCard.rank)}
-      />
+      <>
+        <PlayerScore
+          className={className}
+          score={getCardValueFromRank(
+            player.selectedCard,
+            player.selectedClass === "mage"
+          )}
+        />
+        {player.selectedClass === "mage" &&
+          player.selectedCard.suit === getSuitFromClass("mage") && (
+            <div
+              className={`extraDamage ${
+                player === opponent ? "opponent" : "player"
+              }`}
+            >
+              +2
+            </div>
+          )}
+      </>
     );
   }
 
@@ -35,10 +53,25 @@ const TablePlayerScore = ({
       throw new Error("Cannot score before card is selected");
     }
     return (
-      <PlayerScore
-        className={className}
-        score={getCardValueFromRank(player.war.hero.rank)}
-      />
+      <>
+        <PlayerScore
+          className={className}
+          score={getCardValueFromRank(
+            player.war.hero,
+            player.selectedClass === "mage"
+          )}
+        />
+        {player.selectedClass === "mage" &&
+          player.war.hero.suit === getSuitFromClass("mage") && (
+            <div
+              className={`extraDamage ${
+                player === opponent ? "opponent" : "player"
+              }`}
+            >
+              +2
+            </div>
+          )}
+      </>
     );
   }
   return <div />;

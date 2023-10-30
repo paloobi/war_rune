@@ -5,6 +5,7 @@ import OpponentPanel from "./components/opponent/OpponentPanel";
 import PlayerPanel from "./components/player/PlayerPanel";
 import Table from "./components/table/Table";
 import { ACTION_DELAY, isCurrentWinner } from "./game/utils";
+import ClassSelect from "./components/class/ClassSelect";
 
 const Game = () => {
   const { game, player } = useContext(GameContext);
@@ -92,36 +93,42 @@ const Game = () => {
     }
   };
 
+  const hasGameStarted =
+    game.stage !== GameStage.Start && game.stage !== GameStage.ClassSelect;
+
   return (
     <div className={`page-container ${getColorClassName()}`}>
+      {game.stage === GameStage.ClassSelect && <ClassSelect />}
       {game.stage === GameStage.Start && (
         <button onClick={onDeal}>Deal Cards</button>
       )}
-      <div className="game-container">
-        {game.stage !== GameStage.Start && <OpponentPanel />}
-        {game.stage !== GameStage.Start && <Table />}
-        {game.stage !== GameStage.Start && <PlayerPanel />}
-      </div>
-      {game.stage === GameStage.Start && (
-        <footer>
-          <p>
-            <small>
-              Made by <a href="https://github.com/dyazdani">@dyazdani</a>{" "}
-              <a href="https://github.com/jvaneyken">@jvaneyken</a>{" "}
-              <a href="https://github.com/paloobi/">@paloobi</a> for React Jam
-              Fall 2023
-            </small>
-          </p>
-          <p>
-            <small>
-              logo by{" "}
-              <a href="https://github.com/AnthonyPinto">@anthonypinto</a>
-              <br />
-              art from <a href="https://kenney.nl/">Kenney.nl</a>
-            </small>
-          </p>
-        </footer>
+      {hasGameStarted && (
+        <div className="game-container">
+          <OpponentPanel />
+          <Table />
+          <PlayerPanel />
+        </div>
       )}
+      {game.stage === GameStage.Start ||
+        (game.stage === GameStage.ClassSelect && (
+          <footer>
+            <p>
+              <small>
+                Made by <a href="https://github.com/dyazdani">@dyazdani</a>{" "}
+                <a href="https://github.com/jvaneyken">@jvaneyken</a>{" "}
+                <a href="https://github.com/paloobi/">@paloobi</a> for React Jam
+                Fall 2023
+              </small>
+            </p>
+            <p>
+              <small>
+                logo by{" "}
+                <a href="https://github.com/AnthonyPinto">@anthonypinto</a> -
+                art from <a href="https://kenney.nl/">Kenney.nl</a>
+              </small>
+            </p>
+          </footer>
+        ))}
     </div>
   );
 };

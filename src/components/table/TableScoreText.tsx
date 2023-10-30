@@ -32,8 +32,8 @@ const TableScoreText = () => {
         </>
       );
     }
-    const opponentScore = getCardValueFromRank(opponent.war.hero.rank);
-    const playerScore = getCardValueFromRank(player.war.hero.rank);
+    const opponentScore = getCardValueFromRank(opponent.war.hero, opponent.selectedClass === "mage");
+    const playerScore = getCardValueFromRank(player.war.hero, player.selectedClass === "mage");
     const score = Math.abs(opponentScore - playerScore);
     return score > 0 ? (
       <div
@@ -48,8 +48,8 @@ const TableScoreText = () => {
     );
   }
 
-  const opponentScore = getCardValueFromRank(opponent.selectedCard.rank);
-  const playerScore = getCardValueFromRank(player.selectedCard.rank);
+  const opponentScore = getCardValueFromRank(opponent.selectedCard, opponent.selectedClass === "mage");
+  const playerScore = getCardValueFromRank(player.selectedCard, player.selectedClass === "mage");
   const score = Math.abs(opponentScore - playerScore);
 
   if (
@@ -64,7 +64,17 @@ const TableScoreText = () => {
     );
   }
 
-  return score > 0 ? (
+  const didKnightCauseWar = 
+    (player.selectedClass === "knight" && player.selectedCard.suit === "spades") || 
+    (opponent.selectedClass === "knight" && opponent.selectedCard.suit === "spades"); 
+
+    console.log("Current player knight check: ", player.selectedClass, player.selectedCard.suit)
+    console.log("Opponent knight check: ", opponent.selectedClass, opponent.selectedCard.suit)
+
+
+  return score === 0 || didKnightCauseWar ? (
+    <OutcomeText contents="WAR!" type="special" />
+  ) : (
     <div
       className={`scoreAnimation--${
         opponentScore > playerScore ? "opponentWin" : "playerWin"
@@ -72,8 +82,6 @@ const TableScoreText = () => {
     >
       <OutcomeText contents={"-" + score.toString()} type="damage" />
     </div>
-  ) : (
-    <OutcomeText contents="WAR!" type="special" />
   );
 };
 
