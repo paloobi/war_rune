@@ -13,5 +13,19 @@
 }
 
 .card_button.knightHighlight {
-  filter: sepia(60%);
+  filter: sepia(0);
+  animation: pulse-sepia 2s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes pulse-sepia {
+  0% {
+    filter: sepia(100%);
+  }
+  50% {
+    filter: sepia(20%);
+  }
+  100% {
+    filter: sepia(100%);
+  }
 }
