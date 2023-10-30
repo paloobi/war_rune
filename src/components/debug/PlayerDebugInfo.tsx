@@ -6,7 +6,6 @@ import { GameContext } from "../../game/GameContext";
 import { PlayerClass, playerClasses } from "../../game/types/class";
 import { GameStage } from "../../game/types/game";
 import ClassImage from "../class/ClassImage";
-import { ACTION_DELAY } from "../../game/utils";
 
 const PlayerDebugInfo = () => {
   const { game, player } = useContext(GameContext);
@@ -78,13 +77,6 @@ const PlayerDebugInfo = () => {
                 disabled={isClericAbilityDisabled()}
                 onClick={() => {
                   Rune.actions.useClericAbility();
-                  setTimeout(() => {
-                    Rune.actions.revealCards();
-                    setTimeout(() => {
-                      Rune.actions.scoreCards();
-                      setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
-                    }, ACTION_DELAY);
-                  }, ACTION_DELAY);
                 }}
               >
                 Heal HP
@@ -96,13 +88,6 @@ const PlayerDebugInfo = () => {
                 disabled={isClericAbilityDisabled()}
                 onClick={() => {
                   Rune.actions.doNotUseClericAbility();
-                  setTimeout(() => {
-                    Rune.actions.revealCards();
-                    setTimeout(() => {
-                      Rune.actions.scoreCards();
-                      setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
-                    }, ACTION_DELAY);
-                  }, ACTION_DELAY);
                 }}
               >
                 Deal Damage
@@ -121,7 +106,6 @@ const PlayerDebugInfo = () => {
                   playerId: player.playerNum === 1 ? "one" : "two",
                   index: 0,
                 });
-                setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
               }}
             >
               <CardImage
@@ -140,7 +124,6 @@ const PlayerDebugInfo = () => {
                   playerId: player.playerNum === 1 ? "one" : "two",
                   index: 1,
                 });
-                setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
               }}
             >
               <CardImage

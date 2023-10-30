@@ -2,8 +2,6 @@ import { cardRanks, type Card, type CardRank, cardSuits, CardSuit } from "./type
 import { GameStage, GameState } from "./types/game";
 import { Player } from "./types/player";
 
-export const ACTION_DELAY = 1000;
-
 export const getCardValueFromRank = (rank: CardRank): number => {
   switch (rank) {
       case 'J':

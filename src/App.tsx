@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { GameStage, type GameState } from "./game/types/game.ts";
-import { ACTION_DELAY } from "./game/utils.ts";
 import PlayerPanel from "./components/player/PlayerPanel.tsx";
 import { GameContext } from "./game/GameContext.ts";
 import OpponentPanel from "./components/opponent/OpponentPanel.tsx";
@@ -46,13 +45,6 @@ function App() {
 
   const onDeal = () => {
     Rune.actions.setStage({ stage: GameStage.Deal });
-
-    setTimeout(() => {
-      Rune.actions.dealCards();
-      setTimeout(() => {
-        Rune.actions.drawCards();
-      }, ACTION_DELAY);
-    }, ACTION_DELAY);
   };
 
   const hasGameStarted =

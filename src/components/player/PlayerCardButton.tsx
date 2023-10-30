@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import { Card } from "../../game/types/card";
 import { GameStage } from "../../game/types/game";
-import { ACTION_DELAY } from "../../game/utils";
 import CardImage from "../common/CardImage";
 import { GameContext } from "../../game/GameContext";
 
@@ -46,22 +45,6 @@ const PlayerCardButton = ({
           card,
           cardIndex,
         });
-        setTimeout(() => {
-          // attempt to reveal the cards after a delay
-          Rune.actions.revealCards();
-          // attempt to score cards after a delay
-          setTimeout(() => {
-            Rune.actions.scoreCards();
-            // check for joker phase after a delay
-            setTimeout(() => {
-              Rune.actions.joker();
-              // draw cards after a delay
-              setTimeout(() => {
-                Rune.actions.drawCards();
-              }, ACTION_DELAY); // delay between joker and draw
-            }, ACTION_DELAY * 2); // delay between score and joker
-          }, ACTION_DELAY); // delay between reveal and score
-        }, ACTION_DELAY); // delay between select and reveal
       }}
     >
       <CardImage card={card} />
