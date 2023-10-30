@@ -2,7 +2,6 @@ import { MAX_HP } from "../../logic";
 import "./HitPointsBar.css";
 
 const HitPointsBar = ({ hp, label }: { hp: number; label: string }) => {
-  console.log(hp);
   const getClassName = (): string => {
     if (hp < MAX_HP * 0.2) {
       return "hp_bar-low";
@@ -15,9 +14,14 @@ const HitPointsBar = ({ hp, label }: { hp: number; label: string }) => {
 
   return (
     <div className="hp_bar-container">
-      <label className="hp_bar-label" htmlFor={`hp_bar-${label}`}>
-        hp
-      </label>
+      <div className="hp_bar-labelContainer">
+        <label className="hp_bar-label" htmlFor={`hp_bar-${label}`}>
+          hp{" "}
+        </label>
+        <div className="hp_bar-number">
+          {hp > 0 ? hp : 0}/{MAX_HP}
+        </div>
+      </div>
       <progress
         id={`hp_bar-${label}`}
         className={`hp_bar ${getClassName()}`}

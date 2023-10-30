@@ -1,12 +1,12 @@
 import { useContext } from "react";
 import { Card } from "../../game/types/card";
-import { playerClasses, PlayerClass } from "../../game/types/class";
-import { GameStage } from "../../game/types/game";
-import { ACTION_DELAY } from "../../game/utils";
-import ClassImage from "../class/ClassImage";
 import CardImage from "../common/CardImage";
 import PlayerCardButton from "../player/PlayerCardButton";
 import { GameContext } from "../../game/GameContext";
+import { PlayerClass, playerClasses } from "../../game/types/class";
+import { GameStage } from "../../game/types/game";
+import ClassImage from "../class/ClassImage";
+import { ACTION_DELAY } from "../../game/utils";
 
 const PlayerDebugInfo = () => {
   const { game, player } = useContext(GameContext);
@@ -15,12 +15,13 @@ const PlayerDebugInfo = () => {
     throw new Error("Cannot show debug info before game start");
   }
 
-  const opposingPlayer = player === game.players.one ? game.players.two : game.players.one;
+  const opposingPlayer =
+    player === game.players.one ? game.players.two : game.players.one;
 
   const isClassSelectDisabled = (playerClass: PlayerClass): boolean => {
     // disable if class select and there is already a class
     if (game.stage === GameStage.ClassSelect) {
-      return opposingPlayer.selectedClass === playerClass
+      return opposingPlayer.selectedClass === playerClass;
     } else {
       return true;
     }
@@ -166,16 +167,16 @@ const PlayerDebugInfo = () => {
       <p>{player.hp >= 0 ? player.hp : 0}</p>
 
       <h3>Current Selected Card</h3>
-      <p>
+      <div>
         {player.selectedCard ? (
           <CardImage card={player.selectedCard} />
         ) : (
           <p>No card selected</p>
         )}
-      </p>
+      </div>
 
       <h3>War Sacrifices</h3>
-      <p>
+      <div>
         {player.war.sacrifices.length ? (
           player.war.sacrifices.map((card: Card) => (
             <CardImage key={`${card.rank}_${card.suit}`} card={card} />
@@ -183,16 +184,16 @@ const PlayerDebugInfo = () => {
         ) : (
           <p>No tie yet, no sacrifice cards selected</p>
         )}
-      </p>
+      </div>
 
       <h3>War Hero</h3>
-      <p>
+      <div>
         {player.war.hero ? (
           <CardImage card={player.war.hero} />
         ) : (
           <p>No war hero selected</p>
         )}
-      </p>
+      </div>
 
       <h3>Current Hand</h3>
       <div className="hand_container">
@@ -210,11 +211,14 @@ const PlayerDebugInfo = () => {
       </div>
 
       <h3>Deck</h3>
-      <p>
+
+      <div>{player.deck.length}</div>
+
+      <div>
         {player.deck.map((card: Card) => (
           <CardImage key={`${card.rank}_${card.suit}`} card={card} />
         ))}
-      </p>
+      </div>
     </div>
   );
 };

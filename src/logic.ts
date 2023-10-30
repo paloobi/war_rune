@@ -3,15 +3,16 @@ import type { GameState } from "./game/types/game";
 import { PlayerClass } from "./game/types/class";
 import { GameStage } from "./game/types/game";
 import { Card } from "./game/types/card";
-import { buildDeck, drawHand, getCardValueFromRank, getTwoRandomCardsFromDeck } from "./game/utils";
+import { buildDeck, getCardValueFromRank, getTwoRandomCardsFromDeck, shuffle } from "./game/utils";
 import { Player } from "./game/types/player";
 
 export const MAX_HP = 50;
 
 type GameActions = {
   setStage: (params: { stage: GameStage }) => void
-  dealCards: () => void,
   selectClass: (playerClass: PlayerClass) => void,
+  dealCards: () => void,
+  joker: () => void,
   drawCards: () => void,
   selectCard: (params: { playerId: "one" | "two", card: Card, cardIndex: number }) => void,
   revealCards: () => void,
@@ -124,33 +125,99 @@ Rune.initLogic({
         console.log(`Skipping draw for now, it's ${game.stage} stage`);
         return;
       }
-      const isPlayerOneDeckEmpty = drawHand(game.players.one);
-      const isPlayerTwoDeckEmpty = drawHand(game.players.two);
 
-      // If player 1 has no cards in deck
-      if (isPlayerOneDeckEmpty) {
-        Rune.gameOver({
-          players: {
-            [game.players.two.playerId]: "WON",
-            [game.players.one.playerId]: "LOST",
+      const playerOne = game.players.one;
+      const playerOneHand = playerOne.hand;
+      for (let i = 0; i < playerOneHand.length; i++) {
+          if (!playerOneHand[i]) {
+            const cardToDraw = playerOne.deck.shift();
+            if (cardToDraw) {
+              playerOneHand[i] = cardToDraw;
+              cardToDraw.isHidden = false;
+            } else {
+              game.stage = GameStage.End;
+              Rune.gameOver({
+                players: {
+                  [game.players.two.playerId]: "WON",
+                  [game.players.one.playerId]: "LOST",
+                }
+              })
+            }
           }
-        })
+        }
+
+      const playerTwo = game.players.two;
+      const playerTwoHand = playerTwo.hand;
+      for (let i = 0; i < playerTwoHand.length; i++) {
+        if (!playerTwoHand[i]) {
+          const cardToDraw = playerTwo.deck.shift();
+          if (cardToDraw) {
+            playerTwoHand[i] = cardToDraw;
+            cardToDraw.isHidden = false;
+          } else {
+            game.stage = GameStage.End;
+            Rune.gameOver({
+              players: {
+                [game.players.one.playerId]: "WON",
+                [game.players.two.playerId]: "LOST",
+              }
+            })
+          }
+        }
       }
 
-    // If player 2 has no cards in deck
-    if (isPlayerTwoDeckEmpty) {
-      Rune.gameOver({
-        players: {
-          [game.players.one.playerId]: "WON",
-          [game.players.two.playerId]: "LOST",
-        }
-      })
-    }
-
-      game.stage = GameStage.Select;
+      if (game.stage !== GameStage.End) {
+        game.stage = GameStage.Select;
+      }
     },
 
-    // TODO: Game over logic for if you run out of cards in the middle of a war
+    joker: (_, {game}) => {
+      if (game.stage !== GameStage.Joker) {
+        console.log("Not the joker stage, skipping joker action");
+        return;
+      }
+      console.log("performing joker action");
+
+      // put each players hand and selected card into their deck
+      const playerOne = game.players.one;
+      const playerTwo = game.players.two;
+
+      for (let i = 0; i < playerOne.hand.length; i++) {
+        const card = playerOne.hand[i];
+        if (card) {
+          // push card into other players deck
+          playerTwo.deck.push(card)
+        
+          // remove card from players hand
+          playerOne.hand[i] = null;
+        }
+      }
+      const playerOneCard = playerOne.selectedCard ? playerOne.selectedCard : null;
+      if (playerOneCard) playerTwo.deck.push(playerOneCard)
+      playerOne.selectedCard = null;
+
+      for (let i = 0; i < playerTwo.hand.length; i++) {
+        const card = playerTwo.hand[i];
+        if (card) {
+          // push card into other players deck
+          playerOne.deck.push(card)
+          // remove card from players hand
+          playerTwo.hand[i] = null;
+        }
+      }
+      const playerTwoCard = playerTwo.selectedCard ? playerTwo.selectedCard : null;
+      if (playerTwoCard) playerOne.deck.push(playerTwoCard)
+      playerTwo.selectedCard = null;
+
+      // shuffle each players deck
+      console.log("shuffling the deck");
+      shuffle(playerOne.deck)
+      shuffle(playerTwo.deck)
+      // move to draw phase
+      game.stage = GameStage.Draw;
+      // call draw action
+    },
+
     selectCard: (
       {playerId, card, cardIndex},
       {game}
@@ -312,6 +379,7 @@ Rune.initLogic({
     },
 
     scoreCards: (_, {game}) => {
+
       if (game.stage !== GameStage.Score && game.stage !== GameStage.WarScore) {
         console.log("skipping scoring for now, the stage isn't Score or WarScore yet")
         console.log("STAGE: ", game.stage);
@@ -353,8 +421,12 @@ Rune.initLogic({
       }
 
       let winner: 'one' | 'two' | null = null;
-
-      if (playerOneValue > playerTwoValue) {
+      // if either player plays a joker, initiate joker phase
+      if (playerOneCard.suit === 'joker' || playerTwoCard.suit === 'joker') { 
+        game.stage = GameStage.Joker;
+      
+      // player 1 wins, player 2 loses HP
+      } else if (playerOneValue > playerTwoValue) {
         // player 1 wins...
         winner = 'one';
         playerOne.wins++;
@@ -371,8 +443,9 @@ Rune.initLogic({
           playerTwo.hp -= playerOneValue - playerTwoValue;
         }
 
-        // If player 2 is reduced to 0 HP
+        // GAME OVER: If player 2 is reduced to 0 HP
         if (game.players.two.hp < 1) {
+          game.stage = GameStage.End;
           Rune.gameOver({
             players: {
               [game.players.one.playerId]: "WON",
@@ -383,8 +456,8 @@ Rune.initLogic({
         }
 
         game.stage = GameStage.Discard;
-        console.log("stage changed to: ", game.stage )
-        
+
+      // player 2 wins, player 1 loses HP
       } else if (playerOneValue < playerTwoValue) {
         // player 2 wins... 
         winner = 'two';
@@ -403,8 +476,9 @@ Rune.initLogic({
           playerOne.hp -= playerTwoValue - playerOneValue;
         }
 
-        // If player 1 is reduced to 0 HP
+        // GAME OVER: If player 1 is reduced to 0 HP
         if (game.players.one.hp < 1) {
+          game.stage = GameStage.End;
           Rune.gameOver({
             players: {
               [game.players.two.playerId]: "WON",
@@ -415,8 +489,7 @@ Rune.initLogic({
         }
         
         game.stage = GameStage.Discard;
-        console.log("stage changed to: ", game.stage )
-  
+
       } else {
         // move to a war if initial card selections are a tie
         if (game.stage === GameStage.Score) {
@@ -431,10 +504,13 @@ Rune.initLogic({
         }
       }
 
+      // after resolving scoring, discard the cards
+      // TODO: move this into a separate action so we can allow
+      // more time to view score before discard occurs
       if (game.stage === GameStage.Discard && winner) {
         game.players[winner].deck.push(
-          {...playerOneCard, isHidden: true},
-          {...playerTwoCard, isHidden: true}
+          playerOneCard,
+          playerTwoCard
         );
 
         if (playerOne.war.hero && playerTwo.war.hero) {
@@ -451,10 +527,10 @@ Rune.initLogic({
           }
           // in a tie, all the cards go to the winner
           game.players[winner].deck.push(
-            {...playerOne.war.hero, isHidden: true},
-            {...playerTwo.war.hero, isHidden: true},
-            ...playerOne.war.sacrifices.map(card => ({...card, isHidden: true})),
-            ...playerTwo.war.sacrifices.map(card => ({...card, isHidden: true}))
+            playerOne.war.hero,
+            playerTwo.war.hero,
+            ...playerOne.war.sacrifices,
+            ...playerTwo.war.sacrifices
           );
           playerOne.war = {
             hero: null,
@@ -562,37 +638,37 @@ Rune.initLogic({
 
     },
 
-stealCard: ({playerId, index}, {game}) => {
-  if (game.stage !== GameStage.Steal) {
-    console.log("skipping steal for now, the stage isn't Steal")
-    console.log("STAGE: ", game.stage);
-    return;
-  }
+    stealCard: ({playerId, index}, {game}) => {
+      if (game.stage !== GameStage.Steal) {
+        console.log("skipping steal for now, the stage isn't Steal")
+        console.log("STAGE: ", game.stage);
+        return;
+      }
 
-  const player = game.players[playerId];
-  const opposingPlayer = playerId === "one" ? game.players.two : game.players.one;
+      const player = game.players[playerId];
+      const opposingPlayer = playerId === "one" ? game.players.two : game.players.one;
 
-  //steal card
-  player.deck.push(player.rogueStealCardOptions[index]);
+      //steal card
+      player.deck.push(player.rogueStealCardOptions[index]);
 
-  // give opponent new deck without stolen card
-  const newOpponentDeck = opposingPlayer.deck.filter(card => {
-    const cardValues = Object.values(card);
-    console.log(cardValues)
-    const stolenCardValues = Object.values(player.rogueStealCardOptions[index])
-    console.log(stolenCardValues)
+      // give opponent new deck without stolen card
+      const newOpponentDeck = opposingPlayer.deck.filter(card => {
+        const cardValues = Object.values(card);
+        console.log(cardValues)
+        const stolenCardValues = Object.values(player.rogueStealCardOptions[index])
+        console.log(stolenCardValues)
 
-    console.log(!cardValues.includes(stolenCardValues[0]), !cardValues.includes(stolenCardValues[1]))
-    if (!cardValues.includes(stolenCardValues[0]) && !cardValues.includes(stolenCardValues[1])) {
-      return true;
+        console.log(!cardValues.includes(stolenCardValues[0]), !cardValues.includes(stolenCardValues[1]))
+        if (!cardValues.includes(stolenCardValues[0]) && !cardValues.includes(stolenCardValues[1])) {
+          return true;
+        }
+      });
+
+      
+      opposingPlayer.deck = newOpponentDeck;
+
+      game.stage = GameStage.Draw
     }
-  });
-
-  
-  opposingPlayer.deck = newOpponentDeck;
-
-  game.stage = GameStage.Draw
-}
 
   },
 })

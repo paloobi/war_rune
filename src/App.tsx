@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import "./App.css";
 import { GameStage, type GameState } from "./game/types/game.ts";
 import { ACTION_DELAY } from "./game/utils.ts";
 import PlayerPanel from "./components/player/PlayerPanel.tsx";
@@ -7,6 +6,8 @@ import { GameContext } from "./game/GameContext.ts";
 import OpponentPanel from "./components/opponent/OpponentPanel.tsx";
 import Table from "./components/table/Table.tsx";
 import ClassSelect from "./components/class/ClassSelect.tsx";
+
+import "./App.css";
 
 function App() {
   const [game, setGame] = useState<GameState>();
@@ -70,6 +71,26 @@ function App() {
           <PlayerPanel />
         </div>
       )}
+      {game.stage === GameStage.Start ||
+        (game.stage === GameStage.ClassSelect && (
+          <footer>
+            <p>
+              <small>
+                Made by <a href="https://github.com/dyazdani">@dyazdani</a>{" "}
+                <a href="https://github.com/jvaneyken">@jvaneyken</a>{" "}
+                <a href="https://github.com/paloobi/">@paloobi</a> for React Jam
+                Fall 2023
+              </small>
+            </p>
+            <p>
+              <small>
+                logo by{" "}
+                <a href="https://github.com/AnthonyPinto">@anthonypinto</a> -
+                art from <a href="https://kenney.nl/">Kenney.nl</a>
+              </small>
+            </p>
+          </footer>
+        ))}
     </GameContext.Provider>
   );
 }

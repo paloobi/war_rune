@@ -4,8 +4,11 @@
   animation-iteration-count: infinite;
 }
 
+.outcomeText.outcomeText-damage {
+  animation: none;
+}
 .outcomeText-damage {
-  color: #D01232;
+  color: #F52C4E;
 }
 
 .outcomeText-special {
@@ -14,6 +17,10 @@
 
 .outcomeText-heal {
   color: #15C662;
+}
+
+.outcomeText-joker {
+  color: #BA44F5;
 }
 
 @keyframes tilt-shaking {
