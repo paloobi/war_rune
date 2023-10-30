@@ -7,11 +7,15 @@ const PlayerScore = ({
   score: number;
   className?: string;
 }) => {
-  return (
-    <div className={`playerScore ${className}`}>
-      <p>{score}</p>
-    </div>
-  );
-};
+  if (isNaN(score)) {
+    return null;
+  } else {
+    return (
+      <div className={`playerScore ${className}`}>
+        <p>{score}</p>
+      </div>
+    );
+  }
+}
 
 export default PlayerScore;
