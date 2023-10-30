@@ -58,12 +58,6 @@ const TableScoreText = () => {
       <OutcomeText contents="WAR!" type="special" />
     )
   }
-
-//   return score > 0 ? (
-//     <OutcomeText contents={"-" + score.toString()} type="damage" />
-//   ) : (
-//     <OutcomeText contents="WAR!" type="special" />
-//   );
 };
 
 export default TableScoreText;
