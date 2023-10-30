@@ -63,6 +63,25 @@ function App() {
         {game.stage !== GameStage.Start && <Table />}
         {game.stage !== GameStage.Start && <PlayerPanel />}
       </div>
+      <footer>
+        <p>
+          <small>
+            Made by <a href="https://github.com/dyazdani">@dyazdani</a>{" "}
+            <a href="https://github.com/jvaneyken">@jvaneyken</a>{" "}
+            <a href="https://github.com/paloobi/">@paloobi</a>
+          </small>
+        </p>
+        <p>
+          <small>
+            logo by <a href="https://github.com/AnthonyPinto">@anthonypinto</a>
+          </small>
+        </p>
+        <p>
+          <small>
+            card art from <a href="https://kenney.nl/">Kenney.nl</a>
+          </small>
+        </p>
+      </footer>
     </GameContext.Provider>
   );
 }
