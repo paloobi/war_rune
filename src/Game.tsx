@@ -32,6 +32,28 @@ const Game = () => {
     | "purple"
     | "gray"
     | null => {
+    // jokers revealed
+    if (
+      (game.players?.one?.selectedCard?.suit === "joker" ||
+        game.players?.two?.selectedCard?.suit === "joker") &&
+      (game.stage === GameStage.Reveal ||
+        game.stage === GameStage.Score ||
+        game.stage === GameStage.Joker)
+    ) {
+      return "purple";
+    }
+
+    // jokers revealed during a war
+    if (
+      (game.players?.one?.war?.hero?.suit === "joker" ||
+        game.players?.two?.war?.hero?.suit === "joker") &&
+      (game.stage === GameStage.WarReveal ||
+        game.stage === GameStage.WarScore ||
+        game.stage === GameStage.Joker)
+    ) {
+      return "purple";
+    }
+
     switch (game.stage) {
       case GameStage.Start:
       case GameStage.Shuffle:
@@ -46,7 +68,7 @@ const Game = () => {
       case GameStage.WarReveal:
         return "orange";
       case GameStage.Score:
-        // return green for current player
+        // return green for current player winning
         // otherwise return orange on War, red on damage
         return isCurrentWinner(player, game)
           ? "green"
@@ -55,7 +77,7 @@ const Game = () => {
           ? "orange"
           : "red";
       case GameStage.WarScore:
-        // return green for current player
+        // return green for current player winning
         // otherwise return gray on draw, red on damage
         return isCurrentWinner(player, game)
           ? "green"
@@ -63,6 +85,8 @@ const Game = () => {
             game.players?.two?.war?.hero?.rank
           ? "gray"
           : "red";
+      case GameStage.Joker:
+        return "purple";
       default:
         return null;
     }
@@ -91,8 +115,9 @@ const Game = () => {
           <p>
             <small>
               logo by{" "}
-              <a href="https://github.com/AnthonyPinto">@anthonypinto</a> - art
-              from <a href="https://kenney.nl/">Kenney.nl</a>
+              <a href="https://github.com/AnthonyPinto">@anthonypinto</a>
+              <br />
+              art from <a href="https://kenney.nl/">Kenney.nl</a>
             </small>
           </p>
         </footer>
