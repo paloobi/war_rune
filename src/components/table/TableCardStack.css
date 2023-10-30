@@ -28,33 +28,39 @@
   animation-fill-mode: forwards;
 }
 
-.showAll.table_cardStack > :nth-child(4) {
+.showAll.table_cardStack > :nth-child(4):not(.winner) {
   animation: move-down-most 0.5s;
   animation-fill-mode: forwards;
 }
 
-@keyframes move-down {
-  100% {transform: translateY(40px)}
-}
-
-@keyframes move-down-more {
-  100% {transform: translateY(80px)}
-}
-
-@keyframes move-down-most {
-  100% {transform: translateY(120px)}
-}
-
-.table_cardStack.winner.opponent {
+.table_cardStack--card.winner.opponent {
   animation: attack-right 0.5s;
   animation-timing-function: ease-out;
   z-index: 50;
 }
 
-
-.table_cardStack.winner.player {
+.table_cardStack--card.winner.player {
   animation: attack-left 0.5s;
   animation-timing-function: ease-out;
+  z-index: 50;
+}
+
+/* war heroes need to go both down and make the attack motion */
+.table_cardStack--warHero.winner.opponent {
+  animation-name: move-down-most, attack-right;
+  animation-duration: 0.5s;
+  animation-delay: 0, 1s;
+  animation-timing-function: ease, ease-out;
+  animation-fill-mode: forwards none;
+  z-index: 50;
+}
+
+.table_cardStack--warHero.winner.player {
+  animation-name: move-down-most, attack-left;
+  animation-duration: 0.5s;
+  animation-delay: 0, 1s;
+  animation-timing-function: ease, ease-out;
+  animation-fill-mode: forwards none;
   z-index: 50;
 }
 
@@ -68,4 +74,16 @@
   100% {
     transform: scale(1.1) translateX(60px) rotate(20deg);
   }
+}
+
+@keyframes move-down {
+  100% {transform: translateY(60px)}
+}
+
+@keyframes move-down-more {
+  100% {transform: translateY(120px)}
+}
+
+@keyframes move-down-most {
+  100% {transform: translateY(180px)}
 }
