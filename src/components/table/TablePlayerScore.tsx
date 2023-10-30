@@ -41,7 +41,7 @@ const TablePlayerScore = ({
                 player === opponent ? "opponent" : "player"
               }`}
             >
-              +2
+              +5
             </div>
           )}
       </>
@@ -68,7 +68,7 @@ const TablePlayerScore = ({
                 player === opponent ? "opponent" : "player"
               }`}
             >
-              +2
+              +5
             </div>
           )}
       </>
