@@ -21,6 +21,17 @@ const TableScoreText = () => {
         "Cannot score in War without both players selecting Hero"
       );
     }
+    if (
+      player.war.hero.suit === "joker" ||
+      opponent.war.hero.suit === "joker"
+    ) {
+      return (
+        <>
+          <Confetti />
+          <OutcomeText contents="Joker!" type="joker" />
+        </>
+      );
+    }
     const opponentScore = getCardValueFromRank(opponent.war.hero.rank);
     const playerScore = getCardValueFromRank(player.war.hero.rank);
     const score = Math.abs(opponentScore - playerScore);
