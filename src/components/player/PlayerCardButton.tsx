@@ -5,7 +5,6 @@ import CardImage from "../common/CardImage";
 import { GameContext } from "../../game/GameContext";
 
 import "./PlayerCardButton.css";
-import { ACTION_DELAY } from "../../logic";
 
 const PlayerCardButton = ({
   card,
@@ -46,13 +45,6 @@ const PlayerCardButton = ({
           card,
           cardIndex,
         });
-        Rune.actions.revealCards();
-        Rune.actions.scoreCards();
-        // wait extra long for score stage before proceeding
-        setTimeout(() => {
-          Rune.actions.joker();
-          Rune.actions.drawCards();
-        }, ACTION_DELAY * 4);
       }}
     >
       <CardImage card={card} />

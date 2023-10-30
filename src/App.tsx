@@ -43,8 +43,6 @@ function App() {
 
   const onDeal = () => {
     Rune.actions.setStage({ stage: GameStage.Deal });
-    Rune.actions.dealCards();
-    Rune.actions.drawCards();
   };
 
   return (
