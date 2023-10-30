@@ -11,3 +11,7 @@
   transform: translateY(-3px) scale(1.05,1.05);
   box-shadow: 0 5px 10px -5px;
 }
+
+.card_button.knightHighlight {
+  filter: sepia(60%);
+}
