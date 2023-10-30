@@ -7,12 +7,14 @@ import confetti from 'canvas-confetti';
 
 const TableScoreText = () => {
 
-  // useEffect(() => {
-  //   confetti({
-
-  //   })
-  // }, [])
-  confetti();
+  const renderConfetti = () => {
+    confetti({
+      particleCount: 70,
+      spread: 70,
+      colors: ['f52c4e', 'd01232', 'ff7640', 'ffcb3b', '15c662', 'ba44f5']
+    })
+  }
+  
   const { game, player, opponent } = useContext(GameContext);
   if (!game || !opponent?.selectedCard || !player?.selectedCard) {
     throw new Error(
@@ -41,9 +43,9 @@ const TableScoreText = () => {
   const score = Math.abs(opponentScore - playerScore);
 
   if (player.selectedCard.suit === 'joker' || opponent.selectedCard.suit === 'joker') {
+    renderConfetti()
     return(
       <>
-        {/* {confetti()} */}
         <OutcomeText contents="Joker!" type="joker" />
       </>
     )
