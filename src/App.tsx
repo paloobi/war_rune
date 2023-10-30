@@ -68,17 +68,14 @@ function App() {
           <small>
             Made by <a href="https://github.com/dyazdani">@dyazdani</a>{" "}
             <a href="https://github.com/jvaneyken">@jvaneyken</a>{" "}
-            <a href="https://github.com/paloobi/">@paloobi</a>
+            <a href="https://github.com/paloobi/">@paloobi</a> for React Jam
+            Fall 2023
           </small>
         </p>
         <p>
           <small>
-            logo by <a href="https://github.com/AnthonyPinto">@anthonypinto</a>
-          </small>
-        </p>
-        <p>
-          <small>
-            card art from <a href="https://kenney.nl/">Kenney.nl</a>
+            logo by <a href="https://github.com/AnthonyPinto">@anthonypinto</a>{" "}
+            - art from <a href="https://kenney.nl/">Kenney.nl</a>
           </small>
         </p>
       </footer>
