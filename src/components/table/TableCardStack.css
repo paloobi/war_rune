@@ -47,18 +47,18 @@
 
 /* war heroes need to go both down and make the attack motion */
 .table_cardStack--warHero.winner.opponent {
-  animation-name: move-down-most, attack-right;
+  animation-name: move-down-most, war-attack-right;
   animation-duration: 0.5s;
-  animation-delay: 0, 1s;
+  animation-delay: 0s, 0.5s;
   animation-timing-function: ease, ease-out;
   animation-fill-mode: forwards none;
   z-index: 50;
 }
 
 .table_cardStack--warHero.winner.player {
-  animation-name: move-down-most, attack-left;
+  animation-name: move-down-most, war-attack-left;
   animation-duration: 0.5s;
-  animation-delay: 0, 1s;
+  animation-delay: 0s, 0.5s;
   animation-timing-function: ease, ease-out;
   animation-fill-mode: forwards none;
   z-index: 50;
@@ -76,14 +76,33 @@
   }
 }
 
+
+@keyframes war-attack-left {
+  0% {
+    transform: translateY(120px)
+  }
+  100% {
+    transform: scale(1.1) translateX(-60px) translateY(120px) rotate(-20deg);
+  }
+}
+
+@keyframes war-attack-right {
+  0% {
+    transform: translateY(120px)
+  }
+  100% {
+    transform: scale(1.1) translateX(60px) translateY(120px) rotate(20deg);
+  }
+}
+
 @keyframes move-down {
-  100% {transform: translateY(60px)}
+  100% {transform: translateY(40px)}
 }
 
 @keyframes move-down-more {
-  100% {transform: translateY(120px)}
+  100% {transform: translateY(80px)}
 }
 
 @keyframes move-down-most {
-  100% {transform: translateY(180px)}
+  100% {transform: translateY(120px)}
 }
