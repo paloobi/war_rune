@@ -25,7 +25,7 @@ export const getCardValueFromRank = (card: Card, isMage: boolean): number => {
   }
 
   if (isMage && card.suit === "diamonds") {
-    value += 2;
+    value += 5;
   }
 
   return value;
