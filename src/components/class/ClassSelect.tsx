@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { GameContext } from "../../game/GameContext";
 import { GameStage } from "../../game/types/game";
-import { playerClasses } from "../../game/types/class";
+import { playerClasses, PlayerClass } from "../../game/types/class";
 import ClassImage from "./ClassImage";
 
 import "./ClassSelect.css";
@@ -12,10 +12,13 @@ const ClassSelect = () => {
     throw new Error("Cannot select class before Rune Game started");
   }
 
-  const isClassSelectDisabled = (): boolean => {
+  const opposingPlayer =
+    player === game.players.one ? game.players.two : game.players.one;
+
+  const isClassSelectDisabled = (playerClass: PlayerClass): boolean => {
     // disable if class select and there is already a class
     if (game.stage === GameStage.ClassSelect) {
-      return !!player.selectedClass;
+      return opposingPlayer.selectedClass === playerClass;
     } else {
       return true;
     }
@@ -32,7 +35,7 @@ const ClassSelect = () => {
                 <div>
                   <button
                     className="class_button"
-                    disabled={isClassSelectDisabled()}
+                    disabled={isClassSelectDisabled(playerClass)}
                     key={playerClass}
                     onClick={() => {
                       Rune.actions.selectClass(playerClass);
