@@ -30,7 +30,7 @@ const ClassSelect = () => {
       <div className="class_container">
         {!player.selectedClass ? (
           playerClasses.map((playerClass) => {
-            if (playerClass === "mage" || playerClass === "knight") {
+            if ((playerClass === "mage" || playerClass === "knight") && playerClass !== opposingPlayer.selectedClass) {
               return (
                 <div>
                   <button
