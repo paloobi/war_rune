@@ -25,7 +25,7 @@ const TablePlayerScore = ({
     return (
       <PlayerScore
         className={className}
-        score={getCardValueFromRank(player.selectedCard.rank)}
+        score={getCardValueFromRank(player.selectedCard, player.selectedClass === "mage")}
       />
     );
   }
@@ -37,7 +37,7 @@ const TablePlayerScore = ({
     return (
       <PlayerScore
         className={className}
-        score={getCardValueFromRank(player.war.hero.rank)}
+        score={getCardValueFromRank(player.war.hero, player.selectedClass === "mage")}
       />
     );
   }

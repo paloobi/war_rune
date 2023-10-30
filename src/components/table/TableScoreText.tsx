@@ -21,8 +21,8 @@ const TableScoreText = () => {
         "Cannot score in War without both players selecting Hero"
       );
     }
-    const opponentScore = getCardValueFromRank(opponent.war.hero.rank);
-    const playerScore = getCardValueFromRank(player.war.hero.rank);
+    const opponentScore = getCardValueFromRank(opponent.war.hero, opponent.selectedClass === "mage");
+    const playerScore = getCardValueFromRank(player.war.hero, player.selectedClass === "mage");
     const score = Math.abs(opponentScore - playerScore);
     return score > 0 ? (
       <div
@@ -37,8 +37,8 @@ const TableScoreText = () => {
     );
   }
 
-  const opponentScore = getCardValueFromRank(opponent.selectedCard.rank);
-  const playerScore = getCardValueFromRank(player.selectedCard.rank);
+  const opponentScore = getCardValueFromRank(opponent.selectedCard, opponent.selectedClass === "mage");
+  const playerScore = getCardValueFromRank(player.selectedCard, player.selectedClass === "mage");
   const score = Math.abs(opponentScore - playerScore);
 
   if (

@@ -401,24 +401,8 @@ Rune.initLogic({
         throw new Error("Both players must have a selected card");
       }
      
-      let playerOneValue = getCardValueFromRank(playerOneCard.rank);
-      let playerTwoValue = getCardValueFromRank(playerTwoCard.rank);
-
-      // if player 1 is a mage and card is diamond, add 2 to value
-      if (
-        playerOne.selectedClass === "mage" && 
-        playerOneCard.suit === 'diamonds' 
-      ) {
-        playerOneValue = playerOneValue + 2;
-      }
-
-      // if player 2 is a mage and card is diamond, add 2 to value
-      if (
-        playerTwo.selectedClass === "mage" && 
-        playerTwoCard.suit === 'diamonds' 
-      ) {
-        playerTwoValue = playerTwoValue + 2;
-      }
+      const playerOneValue = getCardValueFromRank(playerOneCard, playerOne.selectedClass === "mage");
+      const playerTwoValue = getCardValueFromRank(playerTwoCard, playerTwo.selectedClass === "mage");
 
       let winner: 'one' | 'two' | null = null;
       // if either player plays a joker, initiate joker phase
