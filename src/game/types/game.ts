@@ -5,6 +5,7 @@ export enum GameStage {
   Shuffle = "SHUFFLE",
   Deal = "DEAL",
   Draw = "DRAW",
+  Joker = "JOKER",
   Select = "SELECT",
   Reveal = "REVEAL",
   Score = "SCORE",
