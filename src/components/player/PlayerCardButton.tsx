@@ -49,13 +49,19 @@ const PlayerCardButton = ({
         setTimeout(() => {
           // attempt to reveal the cards after a delay
           Rune.actions.revealCards();
+          // attempt to score cards after a delay
           setTimeout(() => {
-            // attempt to score cards after a delay
             Rune.actions.scoreCards();
-            // draw cards after a delay
-            setTimeout(() => Rune.actions.drawCards(), ACTION_DELAY);
-          }, ACTION_DELAY * 3);
-        }, ACTION_DELAY);
+            // check for joker phase after a delay
+            setTimeout(() => {
+              Rune.actions.joker();
+              // draw cards after a delay
+              setTimeout(() => {
+                Rune.actions.drawCards();
+              }, ACTION_DELAY); // delay between joker and draw
+            }, ACTION_DELAY * 2); // delay between score and joker
+          }, ACTION_DELAY); // delay between reveal and score
+        }, ACTION_DELAY); // delay between select and reveal
       }}
     >
       <CardImage card={card} />

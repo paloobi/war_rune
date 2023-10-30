@@ -5,7 +5,7 @@ const OutcomeText = ({
   type = "normal",
 }: {
   contents: string;
-  type?: "normal" | "damage" | "special" | "heal";
+  type?: "normal" | "damage" | "special" | "heal" | "joker";
 }) => {
   return <p className={`outcomeText outcomeText-${type}`}>{contents}</p>;
 };

@@ -3,12 +3,12 @@ import { GameContext } from "../../game/GameContext";
 import { getCardValueFromRank } from "../../game/utils";
 import { GameStage } from "../../game/types/game";
 import OutcomeText from "../common/OutcomeText";
+import Confetti from "./Confetti";
 
 import "./TableScoreText.css";
 
 const TableScoreText = () => {
   const { game, player, opponent } = useContext(GameContext);
-
   if (!game || !opponent?.selectedCard || !player?.selectedCard) {
     throw new Error(
       "Entered Score stage without game started and both cards selected"
@@ -40,6 +40,18 @@ const TableScoreText = () => {
   const opponentScore = getCardValueFromRank(opponent.selectedCard.rank);
   const playerScore = getCardValueFromRank(player.selectedCard.rank);
   const score = Math.abs(opponentScore - playerScore);
+
+  if (
+    player.selectedCard.suit === "joker" ||
+    opponent.selectedCard.suit === "joker"
+  ) {
+    return (
+      <>
+        <Confetti />
+        <OutcomeText contents="Joker!" type="joker" />
+      </>
+    );
+  }
 
   return score > 0 ? (
     <div

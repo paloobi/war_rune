@@ -20,10 +20,10 @@ const Table = () => {
             className={"playerInfo-opponent--score"}
             player={opponent}
           />
-          <TableCardStack player={opponent} />
+          <TableCardStack player={opponent} isOpponent={true} />
         </div>
         <div className="table_playerInfo">
-          <TableCardStack player={player} />
+          <TableCardStack player={player} isOpponent={false} />
           <TablePlayerScore
             className={"playerInfo-player--score"}
             player={player}

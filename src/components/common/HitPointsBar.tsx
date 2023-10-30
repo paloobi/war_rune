@@ -19,7 +19,7 @@ const HitPointsBar = ({ hp, label }: { hp: number; label: string }) => {
           hp{" "}
         </label>
         <div className="hp_bar-number">
-          {hp}/{MAX_HP}
+          {hp > 0 ? hp : 0}/{MAX_HP}
         </div>
       </div>
       <progress
