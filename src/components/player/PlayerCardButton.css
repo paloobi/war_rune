@@ -12,7 +12,7 @@
   box-shadow: 0 5px 10px -5px;
 }
 
-.card_button.knightHighlight {
+.card_button.highlight {
   filter: sepia(0);
   animation: pulse-sepia 2s;
   animation-iteration-count: infinite;
