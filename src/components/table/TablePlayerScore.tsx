@@ -17,7 +17,7 @@ const TablePlayerScore = ({
   if (!game) {
     throw new Error("Cannot render score before game is started");
   }
-
+  
   if (game.stage === GameStage.Score) {
     if (!player.selectedCard) {
       throw new Error("Cannot score before card is selected");
