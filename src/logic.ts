@@ -100,8 +100,13 @@ Rune.initLogic({
               playerOneHand[i] = cardToDraw;
               cardToDraw.isHidden = false;
             } else {
-              // TODO: figure out if this is a game over condition?
-              throw new Error("No cards left in deck");
+              game.stage = GameStage.End;
+              Rune.gameOver({
+                players: {
+                  [game.players.two.playerId]: "WON",
+                  [game.players.one.playerId]: "LOST",
+                }
+              })
             }
           }
         }
@@ -115,35 +120,15 @@ Rune.initLogic({
             playerTwoHand[i] = cardToDraw;
             cardToDraw.isHidden = false;
           } else {
-            // TODO: figure out if this is a game over condition?
-            throw new Error("No cards left in deck");
+            game.stage = GameStage.End;
+            Rune.gameOver({
+              players: {
+                [game.players.one.playerId]: "WON",
+                [game.players.two.playerId]: "LOST",
+              }
+            })
           }
         }
-      }
-
-      const isPlayerOneDeckEmpty = game.players.one.deck.length < 1;
-      const isPlayerTwoDeckEmpty = game.players.two.deck.length < 1;
-
-      // If player 1 has no cards in deck
-      if (isPlayerOneDeckEmpty) {
-        game.stage = GameStage.End;
-        Rune.gameOver({
-          players: {
-            [game.players.two.playerId]: "WON",
-            [game.players.one.playerId]: "LOST",
-          }
-        })
-      }
-
-      // If player 2 has no cards in deck
-      if (isPlayerTwoDeckEmpty) {
-        game.stage = GameStage.End;
-        Rune.gameOver({
-          players: {
-            [game.players.one.playerId]: "WON",
-            [game.players.two.playerId]: "LOST",
-          }
-        })
       }
 
       if (game.stage !== GameStage.End) {
