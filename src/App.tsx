@@ -39,6 +39,16 @@ function App() {
     return <div>Loading...</div>;
   }
 
+  if (!playerId) {
+    return (
+      <div>
+        Sorry!
+        <br /> We don't support Spectator View yet...
+        <br /> coming soon!
+      </div>
+    );
+  }
+
   return (
     <GameContext.Provider value={gameContext}>
       <Game />
