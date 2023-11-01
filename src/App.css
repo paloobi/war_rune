@@ -62,6 +62,20 @@ img {
   background-color: #C7D7EC;
 }
 
+
+footer {
+  position: fixed;
+  bottom: 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  line-height: 1;
+}
+
+footer p {
+  margin: 8px;
+  color: #000;
+}
+
 .player_debug_info {
   display: flex;
   flex-direction: column;
