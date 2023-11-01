@@ -35,8 +35,14 @@ function App() {
     });
   }, []);
 
-  if (!game) {
-    return <div>Loading...</div>;
+  if (!game || !playerId) {
+    return (
+      <div>
+        Sorry!
+        <br /> We don't support Spectator View yet...
+        <br /> coming soon!
+      </div>
+    );
   }
 
   return (
