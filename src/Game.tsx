@@ -116,18 +116,11 @@ const Game = () => {
           <footer>
             <p>
               <small>
-                Made by <a href="https://github.com/dyazdani">@dyazdani</a>{" "}
-                <a href="https://github.com/jvaneyken">@jvaneyken</a>{" "}
-                <a href="https://github.com/paloobi/">@paloobi</a> for React Jam
-                Fall 2023
+                Made by @dyazdani @jvaneyken @paloobi for React Jam Fall 2023
               </small>
             </p>
             <p>
-              <small>
-                logo by{" "}
-                <a href="https://github.com/AnthonyPinto">@anthonypinto</a> -
-                art from <a href="https://kenney.nl/">Kenney.nl</a>
-              </small>
+              <small>logo by @anthonypinto and card art from Kenney.nl</small>
             </p>
           </footer>
         ))}
