@@ -35,7 +35,11 @@ function App() {
     });
   }, []);
 
-  if (!game || !playerId) {
+  if (!game) {
+    return <div>Loading...</div>;
+  }
+
+  if (!playerId) {
     return (
       <div>
         Sorry!
